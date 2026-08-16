@@ -567,9 +567,10 @@ figure.shot figcaption b {
 
 /* Hinweisstreifen (z. B. Download noch nicht verfuegbar). */
 .notice {
-  display: flex;
-  gap: .7rem;
-  align-items: flex-start;
+  /* Bewusst Block statt Flex: der Hinweis enthaelt Links und
+   * Code-Schnipsel im Fliesstext; als Flex-Items wuerde jedes davon
+   * eine eigene Spalte aufmachen und den Satz zerreissen. */
+  display: block;
   padding: .9rem 1.1rem;
   border-radius: 16px;
   border: 1px solid #f0d8a8;
@@ -577,7 +578,7 @@ figure.shot figcaption b {
   color: #6b4d09;
   font-size: .96rem;
 }
-.notice b { color: #573f07; }
+.notice b { color: #573f07; margin-right: .35rem; }
 
 /* Rechtsseiten ohne eigene Sektionen (Impressum, Datenschutz). */
 main.page {
