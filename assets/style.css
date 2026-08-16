@@ -616,3 +616,12 @@ main.page p, main.page li { color: var(--text); }
   border-radius: 4px;
   overflow-wrap: anywhere;
 }
+
+/* Sachlicher Hinweis (blau) neben dem warnenden (bernstein). */
+.notice--info {
+  border-color: #bcd9f5;
+  background: var(--blue-100);
+  color: #123f6b;
+}
+.notice--info b { color: #0a3563; }
+.notice--info a { color: #0a3563; }
