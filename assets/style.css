@@ -597,3 +597,22 @@ main.page p, main.page li { color: var(--text); }
   .subhero-inner { padding: 2.5rem 1rem 2.25rem; }
   .figure-grid { grid-template-columns: 1fr; }
 }
+
+/* Pruefsumme im Download-Block: umbrechbar, damit sie auf schmalen
+ * Bildschirmen nicht die Seite verbreitert. */
+.download dd.hash {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: .82rem;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+  color: var(--muted);
+}
+
+.notice code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: .88em;
+  background: rgba(0, 0, 0, .05);
+  padding: .1rem .35rem;
+  border-radius: 4px;
+  overflow-wrap: anywhere;
+}
