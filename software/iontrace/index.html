@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="IONTRACE: 3D-Simulationscode für die Extraktionsoptik von Gitterionenquellen - Ionenbahnen, Raumladung, Umladung, Restgas und Elektrodenerosion in einem Werkzeug.">
+  <title>IONTRACE - Software - Ref4EP</title>
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#inhalt">Zum Inhalt springen</a>
+
+  <header>
+    <div class="nav">
+      <a class="brand" href="/" aria-label="Ref4EP Startseite">
+        <span class="brand-mark">R4</span>
+        <span>Ref4EP</span>
+      </a>
+      <nav aria-label="Hauptnavigation">
+        <ul>
+          <li><a href="/#projekt">Projekt</a></li>
+          <li><a href="/#ziele">Ziele</a></li>
+          <li><a href="/#partner">Akteure</a></li>
+          <li><a href="/#arbeit">Arbeitsfelder</a></li>
+          <li><a href="/#daten">Daten &amp; Standards</a></li>
+          <li><a href="/software/" aria-current="page">Software</a></li>
+          <li><a href="/#kontakt">Kontakt</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <section class="subhero">
+    <div class="subhero-inner">
+      <p class="breadcrumb">
+        <a href="/">Start</a><span aria-hidden="true">/</span>
+        <a href="/software/">Software</a><span aria-hidden="true">/</span>IONTRACE
+      </p>
+      <h1>IONTRACE</h1>
+      <p class="lead">
+        Dreidimensionaler Simulationscode für die Extraktionsoptik von Gitterionenquellen.
+        IONTRACE verfolgt Ionen durch das elektrostatische Gittersystem und berechnet dabei
+        Raumladung, Neutralgashintergrund, Umladungsstöße und den Abtrag an den Elektroden in
+        einem gemeinsamen, selbstkonsistenten Ablauf.
+      </p>
+      <div class="pills">
+        <span class="pill">Windows 64 Bit</span>
+        <span class="pill">Version 1.0.0-beta</span>
+        <span class="pill">Grafische Oberfläche</span>
+        <span class="pill">Installation ohne Adminrechte</span>
+      </div>
+    </div>
+  </section>
+
+  <main id="inhalt">
+
+    <section>
+      <div class="split">
+        <div class="panel">
+          <h2>Wozu IONTRACE?</h2>
+          <p>
+            Die Extraktionsoptik entscheidet darüber, wie viel Strahl eine Gitterionenquelle
+            liefert, wie er geformt ist und wie lange die Gitter halten. Diese drei Fragen hängen
+            zusammen: Die Raumladung des Strahls verformt das Feld, das den Strahl formt; aus dem
+            Restgas entstehen durch Umladung langsame Ionen, die von den Elektroden angezogen
+            werden und sie abtragen; die abgetragene Geometrie verändert wiederum das Feld.
+          </p>
+          <p>
+            IONTRACE rechnet diese Rückkopplungen gemeinsam statt nacheinander - dreidimensional,
+            an der realen Lochgeometrie, über die Betriebsdauer hinweg.
+          </p>
+        </div>
+        <figure class="shot">
+          <img src="bilder/trajektorien-3d.jpg" width="1600" height="998"
+               alt="Dreidimensionale Ansicht des Gittersystems mit Ionenbahnen; transmittierte Bahnen blau, Bahnen mit Elektrodentreffer rot.">
+          <figcaption>
+            <b>Ionenbahnen im Gittersystem</b>
+            Blau die transmittierten Bahnen, rot jene, die eine Elektrode treffen. Die Bilanz aus
+            beiden ist das Maß für die Qualität der Optik - und die Ursache des Abtrags.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-heading">
+        <h2>Was der Code rechnet</h2>
+        <p>
+          IONTRACE ist kein reiner Bahnverfolger: Feld, Plasma, Gas und Materialabtrag sind
+          miteinander verbunden und lassen sich einzeln zu- und abschalten.
+        </p>
+      </div>
+      <ul class="feature-list">
+        <li><b>Plasmamodelle</b> - Newton-Boltzmann mit räumlich begrenzter Plasmaregion und
+          selbstkonsistenter Randschicht, eine strahlgekoppelte Variante, ein Meniskus-Vorlauf
+          sowie ein reiner Trajektorienmodus mit explizitem Emitter.</li>
+        <li><b>Feldlöser</b> - algebraisches Mehrgitterverfahren als Standard, wahlweise
+          Gauß-Seidel-SOR oder ein direkter Löser; inexaktes Newton-Verfahren für weniger innere
+          Iterationen.</li>
+        <li><b>Randbehandlung</b> - stufenförmig oder mit Teilzellen nach Shortley-Weller, damit
+          runde Aperturen nicht als Treppe gerechnet werden.</li>
+        <li><b>Symmetrie</b> - wählbare Spiegelebenen für Viertel- oder Halbzellen; die Auswertung
+          rechnet daraus den vollen Strahl zurück.</li>
+        <li><b>Mehrere Aperturen</b> - Einheitszellen mit mehreren Löchern pro Rechengebiet.</li>
+        <li><b>Geometrie</b> - parametrischer Editor mit geometrischen Grundkörpern und
+          Textformat, also versionierbare Geometriedateien statt undurchsichtiger Binärdateien.</li>
+        <li><b>Restgas</b> - Monte-Carlo-Rechnung der Gasverteilung im Rechengebiet mit
+          dreidimensionaler Druckkarte.</li>
+        <li><b>Umladung</b> - Sekundärionen mit Entstehungs- und Auftreffkarte, an Spiegelebenen
+          korrekt behandelt.</li>
+        <li><b>Erosion und Lebensdauer</b> - voxelbasierter Abtrag mit einstellbaren Materialien,
+          Rückkopplung der abgetragenen Form auf Feld und Gas.</li>
+        <li><b>Auswertung</b> - eingebettete 3D-Ansicht, Verlaufsanzeige mit Restlaufzeit sowie
+          Export als Tabelle, Bild oder für externe Visualisierung.</li>
+      </ul>
+    </section>
+
+    <section>
+      <div class="section-heading">
+        <h2>Felder und Bahnen</h2>
+        <p>
+          Alle Schnitte stammen aus demselben Lauf einer Zweigitteroptik: Screen-Gitter auf
+          +1500 V, Beschleunigungsgitter auf -150 V.
+        </p>
+      </div>
+      <div class="figure-grid figure-grid--wide">
+        <figure class="shot">
+          <img src="bilder/potential-xy.jpg" width="1800" height="735"
+               alt="Farbdarstellung des elektrischen Potenzials in der XY-Ebene mit überlagerten Ionenbahnen; die Elektroden sind als Rechtecke eingezeichnet.">
+          <figcaption>
+            <b>Potenzial in der XY-Ebene</b>
+            Der Verlauf von der Plasmarandschicht links über das Screen-Gitter bis zum
+            Beschleunigungsgitter, mit den Ionenbahnen darüber gelegt. Gut zu sehen ist die
+            Krümmung des Meniskus, die den Strahl formt.
+          </figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="bilder/feldstaerke-xy.jpg" width="1800" height="767"
+               alt="Betrag der elektrischen Feldstärke in der XY-Ebene mit eingezeichneten Feldlinien.">
+          <figcaption>
+            <b>Feldstärke und Feldlinien</b>
+            Der Betrag des Feldes im selben Schnitt. Die Feldlinien zeigen, warum langsame
+            Umladungsionen zwischen den Gittern zur Beschleunigungselektrode hin abgelenkt werden.
+          </figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="bilder/ladungsdichte-xy.jpg" width="1800" height="756"
+               alt="Ladungsdichte in der XY-Ebene als Konturdarstellung, Differenz aus Strahl- und Elektronenanteil.">
+          <figcaption>
+            <b>Ladungsdichte</b>
+            Die resultierende Raumladung aus Strahlionen und Elektronenanteil. Sie ist die Größe,
+            über die Strahl und Feld aneinander gekoppelt sind.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-heading">
+        <h2>Restgas</h2>
+        <p>
+          Aus der Gasverteilung im Extraktionsspalt entstehen die Umladungsionen - sie bestimmt
+          damit unmittelbar, wo abgetragen wird.
+        </p>
+      </div>
+      <div class="figure-grid">
+        <figure class="shot">
+          <img src="bilder/restgas-karte.jpg" width="1500" height="1053"
+               alt="Karte der Restgasdichte im XY-Schnitt, oben das gesamte Rechengebiet, unten ein Ausschnitt am Beschleunigungsgitter, mit Iso-Dichtelinien.">
+          <figcaption>
+            <b>Restgasdichte im Schnitt</b>
+            Oben das gesamte Rechengebiet, unten der Bereich zwischen den Elektroden. Die Linien
+            markieren Dekaden der Dichte; hinter dem Beschleunigungsgitter fällt sie um mehr als
+            eine Größenordnung ab.
+          </figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="bilder/restgas-profil.jpg" width="1100" height="1261"
+               alt="Axialer Verlauf der Restgasdichte über die Strahlachse, logarithmische Achse, Lage von Screen- und Beschleunigungsgitter markiert.">
+          <figcaption>
+            <b>Axialer Verlauf</b>
+            Dieselbe Rechnung als Mittelwert über den Querschnitt. Der Abfall liegt genau im
+            Beschleunigungsspalt - dort entstehen die Umladungsionen mit der größten Wirkung.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-heading">
+        <h2>Erosion und Lebensdauer</h2>
+        <p>
+          Aus Treffern, Einfallswinkeln und Sputterausbeute wird die örtliche Abtragsrate. Über
+          viele Betriebsstunden fortgeschrieben ergibt sich daraus die Aufweitung der Bohrung.
+        </p>
+      </div>
+      <div class="figure-grid">
+        <figure class="shot">
+          <img src="bilder/erosion-zelle.jpg" width="1351" height="1091"
+               alt="Dreidimensionale Ansicht einer Einheitszelle mit farbcodierter örtlicher Erosionsrate auf der Elektrodenoberfläche.">
+          <figcaption>
+            <b>Abtragsrate an der Einheitszelle</b>
+            Die örtliche Erosionsrate in Nanometern pro Stunde auf dem Erosionsgitter. Der Abtrag
+            konzentriert sich auf die Austrittskante der Bohrung.
+          </figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="bilder/erosion-periodisch.jpg" width="1400" height="879"
+               alt="Periodische Darstellung der Erosionsrate: zentrale Sechseckzelle mit sechs Nachbarzellen, jeweils mit Bohrung.">
+          <figcaption>
+            <b>Fortsetzung ins Lochmuster</b>
+            Gerechnet wird eine Einheitszelle; für die Beurteilung wird sie mit ihren sechs
+            Nachbarn dargestellt. So wird sichtbar, wie sich das Abtragsmuster über das
+            Gitterfeld wiederholt.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-heading">
+        <h2>Nachweise</h2>
+        <p>
+          Der Code wird gegen analytische Lösungen und gegen etablierte Programme geprüft.
+        </p>
+      </div>
+      <ul class="feature-list">
+        <li><b>Analytischer Vergleich</b> - Plattenkondensator gegen die geschlossene Lösung.</li>
+        <li><b>Netzstudien</b> - Teilzellen-Randbehandlung auf unterschiedlich feinen Gittern.</li>
+        <li><b>Programmvergleich</b> - Gegenrechnung mit KOBRA; die Absolutströme unterscheiden
+          sich modellbedingt, weil dort ein thermisches Bohm-Modell zugrunde liegt.</li>
+        <li><b>Konsistenz über die Lebensdauer</b> - eigene Prüfläufe für den Erosionspfad.</li>
+        <li><b>Gasrechnung</b> - Vergleich mit dem Clausing-Faktor für Rohrleitwerte.</li>
+      </ul>
+    </section>
+
+    <section id="download">
+      <div class="download">
+        <div>
+          <h3>Download</h3>
+          <p>
+            IONTRACE wird als Installationsprogramm für Windows ausgeliefert. Es installiert in
+            das Benutzerprofil und benötigt keine Administratorrechte.
+          </p>
+          <dl>
+            <dt>Version</dt><dd>1.0.0-beta</dd>
+            <dt>Betriebssystem</dt><dd>Windows 10 / 11, 64 Bit</dd>
+            <dt>Datei</dt><dd>IONTRACE-Setup-1.0.0-beta.exe</dd>
+            <dt>Herausgeber</dt><dd>PlasmaTrace &ndash; Dr. Kristof Holste</dd>
+          </dl>
+        </div>
+        <a class="button button-solid" href="/software/iontrace/download/IONTRACE-Setup-1.0.0-beta.exe"
+           aria-disabled="true" title="Der Download wird in Kürze freigeschaltet.">
+          Setup herunterladen
+        </a>
+      </div>
+      <p class="notice" style="margin-top:1rem">
+        <b>Noch nicht verfügbar.</b>
+        Die Installationsdatei wird derzeit für die Veröffentlichung vorbereitet. Der Link ist
+        bereits angelegt und wird freigeschaltet, sobald die Datei hinterlegt ist.
+      </p>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <span>&copy; Ref4EP-Konsortium</span>
+      <span>Referenzdiagnostik für elektrische Raumfahrtantriebe</span>
+      <a href="/impressum.html">Impressum</a>
+      <a href="/datenschutz.html">Datenschutzerklärung</a>
+    </div>
+  </footer>
+</body>
+</html>

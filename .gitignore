@@ -1,0 +1,12 @@
+# Vorschaubilder aus der lokalen Abnahme — gehoeren nicht auf den Server.
+_vorschau-screenshots/
+
+# Sicherungskopien, die frueher direkt auf dem Server angelegt wurden.
+*.bak
+*.bak-*
+
+# Betriebssystem- und Editorreste
+Thumbs.db
+desktop.ini
+.DS_Store
+*.swp

@@ -1,0 +1,599 @@
+/* Ref4EP - gemeinsame Gestaltung.
+ * Aus index.html herausgeloest, damit Startseite, Rechtsseiten und der
+ * Bereich Software dieselbe Grundlage nutzen. Inhalt unveraendert;
+ * Ergaenzungen stehen am Dateiende ab "Bereich Software".
+ */
+
+:root {
+  --blue-950: #06213f;
+  --blue-900: #082a4d;
+  --blue-800: #0a3563;
+  --blue-700: #00549f;
+  --blue-500: #1376c8;
+  --blue-100: #e8f2fb;
+  --cyan-300: #9ed8ff;
+  --green-500: #25a66a;
+  --orange-500: #f59e0b;
+  --bg: #f4f7fb;
+  --card: #ffffff;
+  --text: #10243b;
+  --muted: #5d7188;
+  --line: #d9e4ef;
+  --shadow: 0 18px 45px rgba(6, 33, 63, .12);
+  --radius: 22px;
+  --max: 1160px;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  line-height: 1.6;
+}
+a { color: inherit; }
+.skip-link {
+  position: absolute;
+  left: -999px;
+  top: 1rem;
+  background: white;
+  padding: .75rem 1rem;
+  border-radius: 999px;
+  z-index: 999;
+}
+.skip-link:focus { left: 1rem; }
+
+header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: rgba(255,255,255,.86);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(217,228,239,.85);
+}
+.nav {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: .9rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: .8rem;
+  text-decoration: none;
+  font-weight: 800;
+  color: var(--blue-950);
+  letter-spacing: .02em;
+}
+.brand-mark {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  color: white;
+  background: linear-gradient(135deg, var(--blue-700), var(--blue-950));
+  box-shadow: 0 10px 25px rgba(0,84,159,.25);
+}
+nav ul {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .3rem;
+  margin: 0;
+  padding: 0;
+  justify-content: flex-end;
+}
+nav a {
+  text-decoration: none;
+  color: var(--blue-900);
+  padding: .55rem .8rem;
+  border-radius: 999px;
+  font-size: .94rem;
+}
+nav a:hover, nav a:focus-visible { background: var(--blue-100); outline: none; }
+
+.hero {
+  background:
+    radial-gradient(circle at 12% 12%, rgba(158,216,255,.42), transparent 26rem),
+    radial-gradient(circle at 82% 20%, rgba(37,166,106,.16), transparent 24rem),
+    linear-gradient(135deg, var(--blue-950), var(--blue-800));
+  color: white;
+  overflow: hidden;
+}
+.hero-inner {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 6rem 1.25rem 5rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(280px, .65fr);
+  gap: 3rem;
+  align-items: center;
+}
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  padding: .35rem .75rem;
+  border: 1px solid rgba(255,255,255,.24);
+  border-radius: 999px;
+  color: #d8ecff;
+  background: rgba(255,255,255,.08);
+  font-weight: 700;
+  font-size: .9rem;
+}
+.hero h1 {
+  font-size: clamp(2.2rem, 5vw, 4.7rem);
+  line-height: 1.03;
+  margin: 1.25rem 0 1rem;
+  letter-spacing: -.05em;
+}
+.hero p {
+  font-size: clamp(1.08rem, 2vw, 1.35rem);
+  color: #dceeff;
+  margin: 0;
+  max-width: 760px;
+}
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .8rem;
+  margin-top: 2rem;
+}
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  text-decoration: none;
+  font-weight: 800;
+  border-radius: 999px;
+  padding: .9rem 1.15rem;
+  border: 1px solid transparent;
+}
+.button-primary { background: white; color: var(--blue-900); }
+.button-secondary { border-color: rgba(255,255,255,.36); color: white; }
+.hero-card {
+  background: rgba(255,255,255,.1);
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: var(--radius);
+  padding: 1.2rem;
+  box-shadow: 0 20px 80px rgba(0,0,0,.18);
+}
+.hero-card strong {
+  display: block;
+  font-size: 2.25rem;
+  line-height: 1;
+  margin: .2rem 0 .4rem;
+}
+.hero-card .mini {
+  color: #d8ecff;
+  font-size: .92rem;
+  margin: 0;
+}
+.stat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .9rem;
+  margin-top: 1rem;
+}
+.stat {
+  padding: 1rem;
+  border-radius: 18px;
+  background: rgba(255,255,255,.12);
+}
+.stat span { color: #cfe8ff; font-size: .85rem; }
+
+main section {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 4.25rem 1.25rem;
+}
+.section-heading {
+  max-width: 760px;
+  margin-bottom: 2rem;
+}
+h2 {
+  color: var(--blue-950);
+  font-size: clamp(1.75rem, 3vw, 2.65rem);
+  line-height: 1.15;
+  margin: 0 0 .9rem;
+  letter-spacing: -.035em;
+}
+.section-heading p { color: var(--muted); font-size: 1.08rem; margin: 0; }
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.4rem;
+  box-shadow: 0 8px 25px rgba(6,33,63,.055);
+}
+.card h3 { margin: 0 0 .55rem; color: var(--blue-950); line-height: 1.25; }
+.card p { margin: 0; color: var(--muted); }
+.card .tag {
+  display: inline-flex;
+  margin-bottom: .85rem;
+  border-radius: 999px;
+  padding: .25rem .6rem;
+  font-size: .78rem;
+  font-weight: 800;
+  color: var(--blue-900);
+  background: var(--blue-100);
+}
+
+.split {
+  display: grid;
+  grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr);
+  gap: 1.25rem;
+  align-items: stretch;
+}
+.panel {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.6rem;
+  box-shadow: var(--shadow);
+}
+.timeline {
+  display: grid;
+  gap: 1rem;
+}
+.timeline-item {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: #fff;
+}
+.timeline-date {
+  font-weight: 900;
+  color: var(--blue-700);
+}
+
+.partners {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: .9rem;
+}
+.partner {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 1rem;
+  min-height: 148px;
+}
+.partner b {
+  display: inline-grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 15px;
+  color: white;
+  background: var(--blue-700);
+  margin-bottom: .8rem;
+}
+.partner h3 { margin: 0 0 .35rem; font-size: 1rem; color: var(--blue-950); }
+.partner p { margin: 0; color: var(--muted); font-size: .92rem; }
+
+.workpackages {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+.wp {
+  border-left: 5px solid var(--blue-700);
+  background: white;
+  border-radius: 18px;
+  padding: 1.1rem 1.25rem;
+  box-shadow: 0 8px 20px rgba(6,33,63,.05);
+}
+.wp h3 { margin: 0 0 .35rem; color: var(--blue-950); }
+.wp p { margin: 0; color: var(--muted); }
+
+.callout {
+  background: linear-gradient(135deg, var(--blue-900), var(--blue-700));
+  color: white;
+  border-radius: calc(var(--radius) + 8px);
+  padding: 2rem;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1rem;
+  align-items: center;
+  box-shadow: var(--shadow);
+}
+.callout h2 { color: white; margin-bottom: .5rem; }
+.callout p { color: #dceeff; margin: 0; max-width: 760px; }
+
+footer {
+  padding: 2rem 1.25rem 3rem;
+  color: var(--muted);
+}
+.footer-inner {
+  max-width: var(--max);
+  margin: 0 auto;
+  border-top: 1px solid var(--line);
+  padding-top: 1.4rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 900px) {
+  .hero-inner, .split, .callout { grid-template-columns: 1fr; }
+  .cards, .workpackages { grid-template-columns: 1fr; }
+  .partners { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .nav { align-items: flex-start; flex-direction: column; }
+  nav ul { justify-content: flex-start; }
+}
+@media (max-width: 560px) {
+  .hero-inner { padding: 4rem 1rem 3rem; }
+  main section { padding: 3rem 1rem; }
+  .partners { grid-template-columns: 1fr; }
+  .timeline-item { grid-template-columns: 1fr; }
+  .stat-grid { grid-template-columns: 1fr; }
+  .callout { padding: 1.35rem; }
+}
+
+/* ===================================================================
+ * Bereich Software
+ *
+ * Ergaenzt die bestehende Gestaltung um: Unterseiten-Kopf, Produkt-
+ * Kacheln, Merkmalslisten, Bildstrecke mit Bildunterschriften und
+ * Download-Block. Alle Klassen sind neu; nichts oben Stehendes wird
+ * ueberschrieben.
+ * =================================================================== */
+
+/* Unterseiten nutzen denselben Kopf wie die Startseite, aber flacher. */
+.subhero {
+  background:
+    radial-gradient(circle at 12% 18%, rgba(158, 216, 255, .34), transparent 24rem),
+    linear-gradient(135deg, var(--blue-950), var(--blue-800));
+  color: white;
+}
+.subhero-inner {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 3.5rem 1.25rem 3rem;
+}
+.subhero h1 {
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  line-height: 1.05;
+  letter-spacing: -.04em;
+  margin: 1rem 0 .9rem;
+}
+.subhero p.lead {
+  font-size: clamp(1.02rem, 1.6vw, 1.22rem);
+  color: #dceeff;
+  margin: 0;
+  max-width: 70ch;
+}
+
+/* Brotkrumen-Pfad: zeigt, wo man ist, ohne eine zweite Navigation. */
+.breadcrumb {
+  font-size: .92rem;
+  color: #bcd9f5;
+  margin: 0;
+}
+.breadcrumb a { color: #dceeff; }
+.breadcrumb span[aria-hidden] { padding: 0 .4rem; opacity: .6; }
+
+/* Kennzeichnungen im Kopf (Plattform, Version, Stand). */
+.pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  margin-top: 1.4rem;
+}
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  padding: .35rem .8rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, .26);
+  background: rgba(255, 255, 255, .1);
+  color: #eaf5ff;
+  font-size: .88rem;
+  font-weight: 700;
+}
+
+/* Produktkacheln im Software-Ueberblick. */
+.software-grid {
+  display: grid;
+  /* auto-fit statt auto-fill: solange erst wenige Programme gelistet
+   * sind, fuellen sie die Breite aus, statt eine leere Spalte offen zu
+   * lassen. */
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.1rem;
+}
+.software-card {
+  display: flex;
+  flex-direction: column;
+  gap: .9rem;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  box-shadow: 0 8px 25px rgba(6, 33, 63, .055);
+}
+.software-card h3 {
+  margin: 0;
+  color: var(--blue-950);
+  font-size: 1.35rem;
+  line-height: 1.2;
+}
+.software-card p { margin: 0; color: var(--muted); }
+.software-card .meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem .8rem;
+  font-size: .9rem;
+  color: var(--muted);
+}
+.software-card .actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .6rem;
+  margin-top: auto;
+  padding-top: .4rem;
+}
+
+/* Kompakte Buttons ausserhalb des dunklen Kopfes. */
+.button-solid {
+  background: var(--blue-700);
+  color: white;
+  border-color: var(--blue-700);
+}
+.button-solid:hover { background: var(--blue-800); border-color: var(--blue-800); }
+.button-outline {
+  border-color: var(--line);
+  color: var(--blue-900);
+  background: white;
+}
+.button-outline:hover { border-color: var(--blue-700); color: var(--blue-700); }
+.button-small { padding: .6rem .95rem; font-size: .94rem; }
+.button[aria-disabled="true"] {
+  opacity: .55;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Platzhalter fuer eine noch nicht veroeffentlichte Software. */
+.software-card--soon {
+  border-style: dashed;
+  box-shadow: none;
+  background: transparent;
+}
+
+/* Merkmalsliste: zwei Spalten, ohne Aufzaehlungspunkte. */
+.feature-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: .9rem 1.6rem;
+}
+.feature-list li {
+  padding-left: 1.4rem;
+  position: relative;
+  color: var(--muted);
+}
+.feature-list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: .62em;
+  width: .5rem;
+  height: .5rem;
+  border-radius: 2px;
+  background: var(--blue-700);
+}
+.feature-list b { color: var(--text); font-weight: 700; }
+
+/* Bildstrecke: Abbildung plus erklaerende Unterschrift. */
+.figure-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 1.25rem;
+}
+.figure-grid--wide { grid-template-columns: 1fr; }
+figure.shot {
+  margin: 0;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(6, 33, 63, .055);
+  display: flex;
+  flex-direction: column;
+}
+figure.shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: #fbfdff;
+  border-bottom: 1px solid var(--line);
+}
+figure.shot figcaption {
+  padding: 1rem 1.15rem;
+  font-size: .95rem;
+  color: var(--muted);
+}
+figure.shot figcaption b {
+  display: block;
+  color: var(--blue-950);
+  margin-bottom: .25rem;
+}
+
+/* Download-Block. */
+.download {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1.25rem;
+  align-items: center;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.6rem;
+  box-shadow: var(--shadow);
+}
+.download h3 { margin: 0 0 .4rem; color: var(--blue-950); }
+.download p { margin: 0; color: var(--muted); }
+.download dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: .35rem 1rem;
+  margin: 1rem 0 0;
+  font-size: .95rem;
+}
+.download dt { color: var(--muted); }
+.download dd { margin: 0; color: var(--text); }
+
+/* Hinweisstreifen (z. B. Download noch nicht verfuegbar). */
+.notice {
+  display: flex;
+  gap: .7rem;
+  align-items: flex-start;
+  padding: .9rem 1.1rem;
+  border-radius: 16px;
+  border: 1px solid #f0d8a8;
+  background: #fdf6e7;
+  color: #6b4d09;
+  font-size: .96rem;
+}
+.notice b { color: #573f07; }
+
+/* Rechtsseiten ohne eigene Sektionen (Impressum, Datenschutz). */
+main.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 3rem 1.25rem 4rem;
+}
+main.page h1 { color: var(--blue-950); letter-spacing: -.035em; }
+main.page h2 { font-size: clamp(1.3rem, 2.2vw, 1.7rem); margin-top: 2rem; }
+main.page h3 { color: var(--blue-900); margin-top: 1.5rem; }
+main.page p, main.page li { color: var(--text); }
+
+@media (max-width: 900px) {
+  .download { grid-template-columns: 1fr; }
+}
+@media (max-width: 560px) {
+  .subhero-inner { padding: 2.5rem 1rem 2.25rem; }
+  .figure-grid { grid-template-columns: 1fr; }
+}
