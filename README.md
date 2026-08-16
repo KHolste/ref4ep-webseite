@@ -43,13 +43,41 @@ Repo — sie werden direkt auf dem Server unter
 
 ## Ausliefern
 
-Auf dem Server liegt ein Klon unter `/opt/ref4ep-webseite`, den nginx
-direkt ausliefert.
+Auf dem Server liegt ein Klon unter `/opt/ref4ep-webseite`. Von dort
+wird das Web-Root `/var/www/ref4ep` abgeglichen, das nginx ausliefert.
 
 ```bash
 ssh forge
-cd /opt/ref4ep-webseite
-git pull
+/opt/ref4ep-webseite/deploy.sh
 ```
 
 Kein Neustart noetig — es sind statische Dateien.
+
+Warum der Umweg ueber zwei Verzeichnisse statt `root` direkt auf den
+Klon: Der vhost hat `try_files $uri $uri/ =404` ohne Ausnahme fuer
+versteckte Dateien. Laege das Repo im Web-Root, waere
+`https://www.ref4ep.de/.git/config` oeffentlich abrufbar und darueber
+die ganze Historie herunterladbar. So bleibt `.git` ausserhalb, und die
+nginx-Konfiguration muss nicht angefasst werden.
+
+`deploy.sh` laesst beim Abgleich absichtlich stehen:
+
+- `software/*/download/` — Installationsdateien liegen nur auf dem
+  Server, nicht im Repo,
+- `*.bak-*` — aeltere Sicherungen, die von Hand angelegt wurden.
+
+### Einmalige Einrichtung
+
+```bash
+ssh forge
+sudo mkdir -p /opt/ref4ep-webseite
+sudo chown forgeadmin:forgeadmin /opt/ref4ep-webseite
+sudo chown -R forgeadmin:forgeadmin /var/www/ref4ep
+git clone https://github.com/KHolste/ref4ep-webseite.git /opt/ref4ep-webseite
+/opt/ref4ep-webseite/deploy.sh
+```
+
+Das Web-Root gehoert danach dem Auslieferungsbenutzer statt `www-data`.
+nginx liest es weiterhin (Rechte 755); der Webserver selbst kann dort
+aber nicht mehr schreiben — das ist beabsichtigt. Ab dann kommt
+`deploy.sh` ohne sudo aus.
