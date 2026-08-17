@@ -3,19 +3,22 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="IONTRACE: 3D-Simulationscode für die Extraktionsoptik von Gitterionenquellen - Ionenbahnen, Raumladung, Umladung, Restgas und Elektrodenerosion in einem Werkzeug.">
-  <title>IONTRACE - Software - Ref4EP</title>
+  <meta name="description"
+        content="IONTRACE: dreidimensionaler Simulationscode für statische und zeitabhängige Ionenoptiken, Gitterionenquellen, Raumladung, Neutralgas, Ladungsaustausch und Elektrodenerosion.">
+  <title>IONTRACE – Software – Ref4EP</title>
   <link rel="stylesheet" href="/assets/style.css">
 </head>
+
 <body>
   <a class="skip-link" href="#inhalt">Zum Inhalt springen</a>
 
   <header>
     <div class="nav">
-      <a class="brand" href="/" aria-label="Ref4EP Startseite">
+      <a class="brand" href="/" aria-label="Ref4EP-Startseite">
         <span class="brand-mark">R4</span>
         <span>Ref4EP</span>
       </a>
+
       <nav aria-label="Hauptnavigation">
         <ul>
           <li><a href="/#projekt">Projekt</a></li>
@@ -33,22 +36,29 @@
   <section class="subhero">
     <div class="subhero-inner">
       <p class="breadcrumb">
-        <a href="/">Start</a><span aria-hidden="true">/</span>
-        <a href="/software/">Software</a><span aria-hidden="true">/</span>IONTRACE
+        <a href="/">Start</a>
+        <span aria-hidden="true">/</span>
+        <a href="/software/">Software</a>
+        <span aria-hidden="true">/</span>
+        IONTRACE
       </p>
+
       <h1>IONTRACE</h1>
+
       <p class="lead">
-        Dreidimensionaler Simulationscode für die Ionenoptik und Extraktion aus 
-        Gitterionenquellen. IONTRACE berechnet elektrische Felder und Ionenbahnen 
-        selbstkonsistent unter Berücksichtigung von Raumladung, Neutralgashintergrund 
-        und Ladungsaustauschstößen. Darüber hinaus simuliert das Programm die Erosion 
-        der Elektroden und ermöglicht die Abschätzung ihrer Lebensdauer.
+        IONTRACE ist ein dreidimensionaler Simulationscode für statische und
+        zeitabhängige Ionenoptiken, insbesondere für die Extraktion von Ionen aus
+        Gitterionenquellen. Elektrisches Feld, Ionenbahnen und Raumladung werden
+        selbstkonsistent gekoppelt berechnet. Ergänzend lassen sich Neutralgas,
+        Ladungsaustausch, Elektrodenerosion und die daraus resultierende
+        Gitterlebensdauer untersuchen.
       </p>
+
       <div class="pills">
-        <span class="pill">Windows 64 Bit</span>
+        <span class="pill">Windows 10/11, 64 Bit</span>
         <span class="pill">Version 1.0.0-beta</span>
         <span class="pill">Grafische Oberfläche</span>
-        <span class="pill">Installation ohne Adminrechte</span>
+        <span class="pill">Installation ohne Administratorrechte</span>
         <span class="pill">Zugang auf Anfrage</span>
       </div>
     </div>
@@ -60,28 +70,39 @@
       <div class="split">
         <div class="panel">
           <h2>Wozu IONTRACE?</h2>
+
           <p>
-  Die Extraktionsoptik bestimmt maßgeblich den Strahlstrom, die Strahlform und die
-  Lebensdauer der Gitter. Diese Größen sind eng miteinander gekoppelt: Die Raumladung
-  beeinflusst das elektrische Feld und damit die Ionenbahnen. Durch Ladungsaustauschstöße
-  zwischen Strahlionen und dem neutralen Hintergrundgas entstehen langsame Ionen, die zu
-  den Gittern beschleunigt werden und dort Erosion verursachen können. Die fortschreitende
-  Veränderung der Gittergeometrie wirkt sich wiederum auf das elektrische Feld und den
-  extrahierten Ionenstrahl aus.
-</p>
+            Die Extraktionsoptik bestimmt maßgeblich den Strahlstrom, die
+            Strahlform und die Lebensdauer der Gitter. Diese Größen sind eng
+            miteinander gekoppelt: Die Raumladung beeinflusst das elektrische
+            Feld und damit die Ionenbahnen. Durch Ladungsaustauschstöße zwischen
+            Strahlionen und dem Neutralgas entstehen langsame Ionen, die vom
+            elektrischen Feld zu den Gittern beschleunigt werden und dort Erosion
+            verursachen können. Die fortschreitende Veränderung der
+            Gittergeometrie wirkt sich wiederum auf das elektrische Feld und den
+            extrahierten Ionenstrahl aus.
+          </p>
+
           <p>
-  IONTRACE bildet diese Wechselwirkungen in einer gekoppelten dreidimensionalen
-  Simulation ab. Dabei werden die tatsächliche Gitter- und Aperturgeometrie sowie
-  deren Veränderung über die Betriebsdauer berücksichtigt.
-</p>
+            IONTRACE bildet diese Wechselwirkungen in einer gekoppelten
+            dreidimensionalen Simulation ab. Die Gittergeometrie kann über
+            aufeinanderfolgende Betriebsintervalle fortgeschrieben werden, sodass
+            die Auswirkungen der Erosion auf Feld, Teilchenbahnen und
+            Neutralgasverteilung berücksichtigt werden können.
+          </p>
         </div>
+
         <figure class="shot">
-          <img src="bilder/trajektorien-3d.jpg" width="1600" height="998"
-               alt="Dreidimensionale Ansicht des Gittersystems mit Ionenbahnen; transmittierte Bahnen blau, Bahnen mit Elektrodentreffer rot.">
+          <img src="bilder/trajektorien-3d.jpg"
+               width="1600"
+               height="998"
+               alt="Dreidimensionale Ansicht des Gittersystems mit Ionenbahnen; transmittierte Bahnen sind blau, Bahnen mit Elektrodentreffer rot dargestellt.">
+
           <figcaption>
             <b>Ionenbahnen im Gittersystem</b>
-            Blau die transmittierten Bahnen, rot jene, die eine Elektrode treffen. Die Bilanz aus
-            beiden ist das Maß für die Qualität der Optik - und die Ursache des Abtrags.
+            Blau dargestellt sind transmittierte Ionenbahnen, rot direkte Treffer
+            auf den Elektroden. Dadurch werden die Transmission des Gittersystems
+            und die Orte primärer Ionenverluste sichtbar.
           </figcaption>
         </figure>
       </div>
@@ -89,147 +110,185 @@
 
     <section>
       <div class="section-heading">
-        <h2>Was der Code rechnet</h2>
+        <h2>Physikalische Modelle und Funktionen</h2>
+
         <p>
-  IONTRACE geht über die reine Berechnung von Ionenbahnen hinaus: Elektrisches Feld,
-  Raumladung, Neutralgashintergrund, Ladungsaustausch und Elektrodenerosion können
-  in einer gekoppelten Simulation berücksichtigt werden. Die benötigten Modelle
-  lassen sich je nach Aufgabenstellung einzeln aktivieren.
-</p>
+          Der Funktionsumfang ist modular aufgebaut. Je nach Aufgabenstellung
+          können die folgenden Modelle und Auswertungen miteinander kombiniert
+          werden.
+        </p>
       </div>
+
       <ul class="feature-list">
-  <li>
-    <b>Plasma und Ionenemission</b> – verschiedene Modelle von der selbstkonsistenten
-    Plasmaextraktion mit Boltzmann-Elektronen bis zur Berechnung vorgegebener
-    Ionenemitter und Anfangsverteilungen.
-  </li>
+        <li>
+          <b>Plasma und Ionenemission</b> – Modelle für die selbstkonsistente
+          Plasmaextraktion mit Boltzmann-Elektronen sowie für vorgegebene
+          Emitterflächen und Anfangsverteilungen.
+        </li>
 
-  <li>
-    <b>Elektrostatische Feldberechnung</b> – Lösung der Poisson-Gleichung mit
-    Raumladung und nichtlinearen Plasmarandbedingungen. Für die linearen
-    Gleichungssysteme stehen Mehrgitter-, SOR- und direkte Verfahren zur Verfügung.
-  </li>
+        <li>
+          <b>Elektrische Feldberechnung</b> – Lösung der Poisson- beziehungsweise
+          Poisson-Boltzmann-Gleichung unter Berücksichtigung der Raumladung. Für
+          die entstehenden linearen Gleichungssysteme stehen Mehrgitter-, SOR- und
+          direkte Lösungsverfahren zur Verfügung.
+        </li>
 
-  <li>
-    <b>Gekoppelte Teilchenrechnung</b> – Ionenbahnen und Raumladungsdichte werden
-    iterativ mit dem elektrischen Feld gekoppelt.
-  </li>
+        <li>
+          <b>Gekoppelte Teilchenrechnung</b> – Ionenbahnen und Raumladungsdichte
+          werden iterativ mit dem elektrischen Feld gekoppelt.
+        </li>
 
-  <li>
-    <b>Gekrümmte Elektrodenoberflächen</b> – wahlweise klassische
-    Treppendarstellung oder Teilzellenkorrektur nach Shortley–Weller zur genaueren
-    Abbildung gekrümmter Grenzflächen.
-  </li>
+        <li>
+          <b>Zeitabhängige Potentiale</b> – zeitlich veränderliche
+          Elektrodenspannungen ermöglichen die Untersuchung dynamischer
+          Ionenoptiken, beispielsweise von Time-of-Flight-Anordnungen.
+        </li>
 
-  <li>
-    <b>Symmetrien und mehrere Aperturen</b> – Spiegelrandbedingungen ermöglichen
-    reduzierte Rechengebiete. Auch Geometrien mit mehreren Aperturen können in einem
-    gemeinsamen Rechengebiet untersucht werden.
-  </li>
+        <li>
+          <b>Gekrümmte Elektrodenoberflächen</b> – wahlweise klassische
+          Treppendarstellung oder Teilzellenkorrektur nach Shortley–Weller zur
+          genaueren Abbildung gekrümmter Grenzflächen.
+        </li>
 
-  <li>
-    <b>Geometrieerstellung</b> – parametrischer Aufbau aus geometrischen
-    Grundkörpern sowie ein lesbares, textbasiertes und versionierbares Dateiformat.
-  </li>
+        <li>
+          <b>Symmetrien und mehrere Aperturen</b> – Spiegelrandbedingungen
+          ermöglichen reduzierte Rechengebiete. Auch Geometrien mit mehreren
+          Aperturen können in einem gemeinsamen Rechengebiet untersucht werden.
+        </li>
 
-  <li>
-    <b>Neutralgas</b> – Testteilchen-Monte-Carlo-Simulation der räumlichen
-    Neutralgasverteilung innerhalb der Elektrodengeometrie.
-  </li>
+        <li>
+          <b>Geometrieerstellung</b> – parametrischer Aufbau aus geometrischen
+          Grundkörpern sowie ein lesbares, textbasiertes und versionierbares
+          Dateiformat.
+        </li>
 
-  <li>
-    <b>Ladungsaustausch</b> – Erzeugung und Verfolgung von
-    Ladungsaustauschionen auf Grundlage des Ionenstrahls und der berechneten
-    Neutralgasverteilung. Entstehungsorte und Elektrodenauftreffpunkte können
-    räumlich ausgewertet werden.
-  </li>
+        <li>
+          <b>Neutralgas</b> – Testteilchen-Monte-Carlo-Simulation der räumlichen
+          Neutralgasverteilung innerhalb der Elektrodengeometrie.
+        </li>
 
-  <li>
-    <b>Erosion und Lebensdauer</b> – Berechnung des material- und
-    energieabhängigen Elektrodenabtrags mit räumlich aufgelösten Auftreff- und
-    Erosionsdaten. Die veränderte Geometrie kann in nachfolgenden
-    Simulationsschritten berücksichtigt werden.
-  </li>
+        <li>
+          <b>Ladungsaustausch</b> – Erzeugung und Verfolgung von
+          Ladungsaustauschionen auf Grundlage der lokalen Neutralgasdichte, des
+          Ionenstrahls und der entsprechenden Wirkungsquerschnitte.
+          Entstehungsorte und Elektrodenauftreffpunkte können räumlich ausgewertet
+          werden.
+        </li>
 
-  <li>
-    <b>Visualisierung und Auswertung</b> – integrierte 3D-Darstellung,
-    Konvergenz- und Fortschrittsanzeige sowie Export von Simulations- und
-    Auswertungsdaten.
-  </li>
-</ul>
+        <li>
+          <b>Erosion und Lebensdauer</b> – Berechnung des material-, energie- und
+          winkelabhängigen Elektrodenabtrags. Die fortschreitend veränderte
+          Geometrie kann in die anschließende Feld-, Teilchen- und
+          Neutralgasrechnung übernommen werden.
+        </li>
+
+        <li>
+          <b>Visualisierung und Auswertung</b> – integrierte 3D-Darstellung,
+          Konvergenz- und Fortschrittsanzeige sowie Export von Simulations- und
+          Auswertungsdaten.
+        </li>
+      </ul>
     </section>
 
     <section>
       <div class="section-heading">
         <h2>Felder und Bahnen</h2>
+
         <p>
-          Alle Schnitte stammen aus demselben Lauf einer Zweigitteroptik: Screen-Gitter auf
-          +1500 V, Beschleunigungsgitter auf -150 V.
+          Alle Darstellungen stammen aus demselben Simulationslauf einer
+          Zweigitteroptik mit einem Screen-Gitter auf +1.500 V und einem
+          Beschleunigungsgitter auf &minus;150 V.
         </p>
       </div>
+
       <div class="figure-grid figure-grid--wide">
         <figure class="shot">
-          <img src="bilder/potential-xy.jpg" width="1800" height="735"
-               alt="Farbdarstellung des elektrischen Potenzials in der XY-Ebene mit überlagerten Ionenbahnen; die Elektroden sind als Rechtecke eingezeichnet.">
+          <img src="bilder/potential-xy.jpg"
+               width="1800"
+               height="735"
+               alt="Farbdarstellung des elektrischen Potentials in der XY-Ebene mit überlagerten Ionenbahnen und eingezeichneten Elektroden.">
+
           <figcaption>
-            <b>Potenzial in der XY-Ebene</b>
-            Der Verlauf von der Plasmarandschicht links über das Screen-Gitter bis zum
-            Beschleunigungsgitter, mit den Ionenbahnen darüber gelegt. Gut zu sehen ist die
-            Krümmung des Meniskus, der den Strahl formt.
+            <b>Potential und Ionenbahnen</b>
+            Dargestellt ist die Potentialverteilung zwischen Plasma, Screen-Gitter
+            und Beschleunigungsgitter. Die überlagerten Ionenbahnen zeigen die
+            Fokussierung des Strahls beim Durchtritt durch die Aperturen.
           </figcaption>
         </figure>
+
         <figure class="shot">
-          <img src="bilder/feldstaerke-xy.jpg" width="1800" height="767"
+          <img src="bilder/feldstaerke-xy.jpg"
+               width="1800"
+               height="767"
                alt="Betrag der elektrischen Feldstärke in der XY-Ebene mit eingezeichneten Feldlinien.">
+
           <figcaption>
             <b>Feldstärke und Feldlinien</b>
-            Der Betrag des Feldes im selben Schnitt. Die Feldlinien zeigen, warum langsame
-            Umladungsionen zwischen den Gittern zur Beschleunigungselektrode hin abgelenkt werden.
+            Dargestellt sind der Betrag der elektrischen Feldstärke und der
+            Verlauf der Feldlinien. Sie veranschaulichen, in welche Richtung
+            positive Ladungsaustauschionen beschleunigt werden und auf welche
+            Gitterbereiche sie treffen können.
           </figcaption>
         </figure>
+
         <figure class="shot">
-          <img src="bilder/ladungsdichte-xy.jpg" width="1800" height="756"
-               alt="Ladungsdichte in der XY-Ebene als Konturdarstellung, Differenz aus Strahl- und Elektronenanteil.">
+          <img src="bilder/ladungsdichte-xy.jpg"
+               width="1800"
+               height="756"
+               alt="Farbdarstellung der lokalen Nettoladungsdichte der berücksichtigten Ionen und Elektronen in der XY-Ebene.">
+
           <figcaption>
-  <b>Raumladungsdichte</b>
-  Die lokale Nettoladungsdichte der berücksichtigten Ionen und Elektronen. Sie geht
-  als Quellterm in die Poisson-Gleichung ein und beschreibt, wie die
-  Teilchenverteilung das elektrische Feld beeinflusst.
-</figcaption>
+            <b>Raumladungsdichte</b>
+            Die lokale Nettoladungsdichte der berücksichtigten Ionen und
+            Elektronen geht als Quellterm in die Poisson-Gleichung ein. Über sie
+            beeinflusst die Teilchenverteilung das elektrische Feld.
+          </figcaption>
         </figure>
       </div>
     </section>
 
     <section>
       <div class="section-heading">
-        <h2>Restgas</h2>
+        <h2>Neutralgas und Ladungsaustausch</h2>
+
         <p>
-  Wo Ladungsaustauschionen entstehen, hängt vom räumlichen Zusammentreffen des
-  Ionenstrahls mit dem Neutralgas ab. Das elektrische Feld bestimmt anschließend
-  ihre Bahnen und Auftreffenergien; daraus ergibt sich zusammen mit den
-  Materialeigenschaften die räumliche Verteilung des Elektrodenabtrags.
-</p>
+          Wo Ladungsaustauschionen entstehen, hängt vom räumlichen Zusammentreffen
+          des Ionenstrahls mit dem Neutralgas ab. Das elektrische Feld bestimmt
+          anschließend ihre Bahnen und Auftreffenergien. Daraus ergibt sich
+          zusammen mit den Materialeigenschaften die räumliche Verteilung des
+          Elektrodenabtrags.
+        </p>
       </div>
+
       <div class="figure-grid">
         <figure class="shot">
-          <img src="bilder/restgas-karte.jpg" width="1500" height="1053"
-               alt="Karte der Restgasdichte im XY-Schnitt, oben das gesamte Rechengebiet, unten ein Ausschnitt am Beschleunigungsgitter, mit Iso-Dichtelinien.">
+          <img src="bilder/restgas-karte.jpg"
+               width="1500"
+               height="1053"
+               alt="Karte der Neutralgasdichte im XY-Schnitt; oben ist das gesamte Rechengebiet, unten ein Ausschnitt am Beschleunigungsgitter mit Iso-Dichtelinien dargestellt.">
+
           <figcaption>
-            <b>Restgasdichte im Schnitt</b>
-            Oben das gesamte Rechengebiet, unten der Bereich zwischen den Elektroden. Die Linien
-            markieren Dekaden der Dichte; hinter dem Beschleunigungsgitter fällt sie um mehr als
-            eine Größenordnung ab.
+            <b>Neutralgasdichte im Schnitt</b>
+            Oben ist das gesamte Rechengebiet dargestellt, unten der Bereich
+            zwischen den Gittern. Die Linien markieren Dekaden der Dichte. Hinter
+            dem Beschleunigungsgitter fällt die Neutralgasdichte um mehr als eine
+            Größenordnung ab.
           </figcaption>
         </figure>
+
         <figure class="shot">
-          <img src="bilder/restgas-profil.jpg" width="1100" height="1261"
-               alt="Axialer Verlauf der Restgasdichte über die Strahlachse, logarithmische Achse, Lage von Screen- und Beschleunigungsgitter markiert.">
+          <img src="bilder/restgas-profil.jpg"
+               width="1100"
+               height="1261"
+               alt="Über den Querschnitt gemittelter axialer Verlauf der Neutralgasdichte mit logarithmischer Achse und markierter Lage von Screen- und Beschleunigungsgitter.">
+
           <figcaption>
-  <b>Axialer Verlauf der Neutralgasdichte</b>
-  Die über den Querschnitt gemittelte Neutralgasdichte entlang der Strahlachse.
-  Zusammen mit der Verteilung des Ionenstrahls bildet sie die Grundlage für die
-  Berechnung der räumlichen Entstehungsrate von Ladungsaustauschionen.
-</figcaption>
+            <b>Axialer Verlauf der Neutralgasdichte</b>
+            Die über den Querschnitt gemittelte Neutralgasdichte entlang der
+            Strahlachse bildet zusammen mit der Verteilung des Ionenstrahls die
+            Grundlage für die Berechnung der räumlichen Entstehungsrate von
+            Ladungsaustauschionen.
+          </figcaption>
         </figure>
       </div>
     </section>
@@ -237,127 +296,166 @@
     <section>
       <div class="section-heading">
         <h2>Erosion und Lebensdauer</h2>
-<p>
-  Aus der räumlichen Verteilung der Ionenauftreffraten, ihren Energien und
-  Einfallswinkeln sowie der materialabhängigen Sputterausbeute wird die lokale
-  Abtragsrate berechnet. Durch die zeitliche Fortschreibung der Gittergeometrie
-  lässt sich deren Entwicklung über die Betriebsdauer untersuchen und die
-  Lebensdauer abschätzen.
-</p>
+
+        <p>
+          Aus der räumlichen Auftreffrate der Ionen, ihren Energien und
+          Einfallswinkeln sowie der materialabhängigen Sputterausbeute wird die
+          lokale Abtragsrate berechnet. Durch die zeitliche Fortschreibung der
+          Gittergeometrie lässt sich deren Entwicklung über die Betriebsdauer
+          untersuchen und die Lebensdauer abschätzen.
+        </p>
       </div>
+
       <div class="figure-grid">
         <figure class="shot">
-          <img src="bilder/erosion-zelle.jpg" width="1351" height="1091"
-               alt="Dreidimensionale Ansicht einer Einheitszelle mit farbcodierter örtlicher Erosionsrate auf der Elektrodenoberfläche.">
+          <img src="bilder/erosion-zelle.jpg"
+               width="1351"
+               height="1091"
+               alt="Dreidimensionale Ansicht einer Einheitszelle mit farbcodierter lokaler Abtragsrate auf der Gitteroberfläche.">
+
           <figcaption>
-  <b>Lokale Abtragsrate</b>
-  Die berechnete Abtragsrate auf der Gitteroberfläche innerhalb der simulierten
-  Einheitszelle in Nanometern pro Stunde. In diesem Beispiel treten die höchsten
-  Werte an der Austrittskante der Apertur auf.
-</figcaption>
+            <b>Lokale Abtragsrate</b>
+            Dargestellt ist die berechnete Abtragsrate auf der Gitteroberfläche
+            innerhalb der simulierten Einheitszelle in Nanometern pro Stunde. In
+            diesem Beispiel treten die höchsten Werte an der Austrittskante der
+            Apertur auf.
+          </figcaption>
         </figure>
+
         <figure class="shot">
-          <img src="bilder/erosion-periodisch.jpg" width="1400" height="879"
-               alt="Periodische Darstellung der Erosionsrate: zentrale Sechseckzelle mit sechs Nachbarzellen, jeweils mit Bohrung.">
+          <img src="bilder/erosion-periodisch.jpg"
+               width="1400"
+               height="879"
+               alt="Periodische Darstellung der Abtragsrate mit einer zentralen hexagonalen Einheitszelle und sechs benachbarten Zellen.">
+
           <figcaption>
-  <b>Periodisches Gittermuster</b>
-  Simuliert wird eine einzelne Einheitszelle. Zur Visualisierung wird ihr Ergebnis
-  auf die sechs benachbarten Zellen des hexagonalen Lochmusters übertragen. Dadurch
-  wird die periodische Wiederholung des berechneten Abtragsmusters sichtbar.
-</figcaption>
+            <b>Periodisches Gittermuster</b>
+            Simuliert wird eine einzelne Einheitszelle. Zur Visualisierung wird
+            ihr Ergebnis auf die sechs benachbarten Zellen des hexagonalen
+            Lochmusters übertragen. Dadurch wird die periodische Wiederholung des
+            berechneten Abtragsmusters sichtbar.
+          </figcaption>
         </figure>
       </div>
     </section>
 
     <section>
       <div class="section-heading">
-        <h2>Nachweise</h2>
+        <h2>Verifikation und Vergleich</h2>
+
         <p>
-          Der Code wird gegen analytische Lösungen und gegen etablierte Programme geprüft.
+          Die einzelnen Rechenmodelle werden anhand analytischer Referenzfälle,
+          Netzkonvergenzstudien und Vergleichen mit unabhängigen
+          Simulationsprogrammen geprüft.
         </p>
       </div>
+
       <ul class="feature-list">
-  <li>
-    <b>Analytische Verifikation</b> – Vergleich des elektrostatischen Feldlösers
-    mit der exakten Lösung für einen Plattenkondensator.
-  </li>
+        <li>
+          <b>Analytische Verifikation</b> – Vergleich des elektrostatischen
+          Feldlösers mit der exakten Lösung für einen Plattenkondensator.
+        </li>
 
-  <li>
-    <b>Netzkonvergenz</b> – Untersuchung der Lösung auf zunehmend feineren
-    Rechengittern und Vergleich der klassischen Treppendarstellung mit der
-    Teilzellenbehandlung nach Shortley–Weller.
-  </li>
+        <li>
+          <b>Netzkonvergenz</b> – Untersuchung der Lösung auf zunehmend feineren
+          Rechengittern und Vergleich der klassischen Treppendarstellung mit der
+          Teilzellenbehandlung nach Shortley–Weller.
+        </li>
 
-  <li>
-    <b>Vergleich mit KOBRA</b> – Gegenüberstellung von Feld-, Strahl- und
-    Stromgrößen unter möglichst vergleichbaren Randbedingungen. Unterschiede
-    werden unter Berücksichtigung der jeweiligen Plasma- und Emissionsmodelle
-    bewertet.
-  </li>
+        <li>
+          <b>Vergleich mit KOBRA</b> – Gegenüberstellung ausgewählter Feld-,
+          Strahl- und Stromgrößen für einen gemeinsamen Referenzfall.
+          Verbleibende Unterschiede werden unter Berücksichtigung der jeweiligen
+          Plasma- und Emissionsmodelle bewertet.
+        </li>
 
-  <li>
-    <b>Prüfung der Erosionsrechnung</b> – definierte Testfälle für die
-    Verarbeitung von Ionenauftreffern, die Berechnung des Materialabtrags und
-    die schrittweise Aktualisierung der Geometrie.
-  </li>
+        <li>
+          <b>Prüfung der Erosionsrechnung</b> – definierte Testfälle für die
+          Verarbeitung von Ionenauftreffern, die Berechnung des Materialabtrags
+          und die schrittweise Aktualisierung der Geometrie.
+        </li>
 
-  <li>
-    <b>Verifikation der Neutralgasrechnung</b> – Vergleich der berechneten
-    Transmission durch eine zylindrische Apertur mit dem entsprechenden
-    Clausing-Faktor im molekularen Strömungsbereich.
-  </li>
-</ul>
+        <li>
+          <b>Verifikation der Neutralgasrechnung</b> – Vergleich der berechneten
+          Transmission durch eine zylindrische Apertur mit dem entsprechenden
+          Clausing-Faktor im molekularen Strömungsbereich.
+        </li>
+      </ul>
     </section>
 
     <section id="download">
       <div class="download">
         <div>
-          <h3>Download</h3>
+          <h2>Download</h2>
+
           <p>
-  IONTRACE wird über ein Installationsprogramm für Windows bereitgestellt. Die
-  Installation erfolgt benutzerspezifisch und erfordert in der Regel keine
-  Administratorrechte. <strong>Das Installationspaket ist passwortgeschützt; das
-  zugehörige Passwort wird beim Start der Installation abgefragt.</strong>
-</p>
+            IONTRACE wird über ein Installationsprogramm für Windows
+            bereitgestellt. Die Installation erfolgt für das aktuelle
+            Benutzerkonto und erfordert keine Administratorrechte.
+          </p>
+
           <dl>
-            <dt>Version</dt><dd>1.0.0-beta</dd>
-            <dt>Betriebssystem</dt><dd>Windows 10 / 11, 64 Bit</dd>
-            <dt>Datei</dt><dd>IONTRACE-Setup-1.0.0-beta.exe</dd>
-            <dt>Größe</dt><dd>179 MB</dd>
-            <dt>SHA-256</dt><dd class="hash">2ce1de976449715983359062a82f2b79b56d29675745dc266d3f15c4adc528bb</dd>
-            <dt>Herausgeber</dt><dd>PlasmaTrace &ndash; Dr. Kristof Holste</dd>
+            <dt>Version</dt>
+            <dd>1.0.0-beta</dd>
+
+            <dt>Betriebssystem</dt>
+            <dd>Windows 10/11, 64 Bit</dd>
+
+            <dt>Datei</dt>
+            <dd>IONTRACE-Setup-1.0.0-beta.exe</dd>
+
+            <dt>Größe</dt>
+            <dd>179 MB</dd>
+
+            <dt>SHA-256</dt>
+            <dd class="hash">
+              2ce1de976449715983359062a82f2b79b56d29675745dc266d3f15c4adc528bb
+            </dd>
+
+            <dt>Entwicklung</dt>
+            <dd>Dr. Kristof Holste, Justus-Liebig-Universität Gießen</dd>
           </dl>
         </div>
-        <a class="button button-solid" href="/software/iontrace/download/IONTRACE-Setup-1.0.0-beta.exe"
+
+        <a class="button button-solid"
+           href="/software/iontrace/download/IONTRACE-Setup-1.0.0-beta.exe"
            download>
           Setup herunterladen
         </a>
       </div>
-      <p class="notice notice--info" style="margin-top:1rem">
-  <b>Installationspasswort erforderlich.</b>
-  Die Installationsdatei ist frei zugänglich, ihr Inhalt jedoch
-  passwortgeschützt. Das Passwort erhalten Sie auf Anfrage per E-Mail an
-  <a href="mailto:Kristof.Holste@physik.jlug.de?subject=IONTRACE%20-%20Installationspasswort">
-    Kristof.Holste@physik.jlug.de
-  </a>.
-  Bitte nennen Sie dabei kurz den vorgesehenen Einsatz von IONTRACE.
-</p>
 
-<p class="notice" style="margin-top:.75rem">
-  <b>Hinweis zur Windows-Installation.</b>
-  Das Installationsprogramm ist derzeit nicht digital signiert. Windows kann
-  deshalb beim Start eine Warnung über einen unbekannten Herausgeber anzeigen.
-  Nach Auswahl von „Weitere Informationen“ kann die Installation über
-  „Trotzdem ausführen“ fortgesetzt werden.
-</p>
+      <p class="notice" style="margin-top:1rem">
+        <b>Nutzung und Lizenz.</b>
+        IONTRACE darf von Hochschulen und öffentlich getragenen
+        Forschungseinrichtungen unentgeltlich für nichtkommerzielle
+        wissenschaftliche Zwecke genutzt werden. Für jede kommerzielle Nutzung
+        ist vorab eine schriftliche Genehmigung des Autors erforderlich.
+        Maßgeblich sind die dem Installationspaket beigefügten Lizenzbedingungen.
+      </p>
 
-<p class="notice" style="margin-top:.75rem">
-  <b>Dateiintegrität prüfen.</b>
-  Vergleichen Sie vor der Installation die SHA-256-Prüfsumme der heruntergeladenen
-  Datei mit der auf dieser Seite angegebenen Prüfsumme. Unter PowerShell verwenden
-  Sie dazu:
-  <code>Get-FileHash .\IONTRACE-Setup-1.0.0-beta.exe -Algorithm SHA256</code>
-</p>
+      <p class="notice notice--info" style="margin-top:.75rem">
+        <b>Installationspasswort erforderlich.</b>
+        Die Installationsdatei ist frei zugänglich, ihr Inhalt jedoch
+        passwortgeschützt. Das Passwort erhalten Sie auf Anfrage per E-Mail an
+        <a href="mailto:Kristof.Holste@physik.jlug.de?subject=IONTRACE%20-%20Installationspasswort">Kristof.Holste@physik.jlug.de</a>.
+        Bitte nennen Sie dabei kurz den vorgesehenen Einsatz von IONTRACE.
+      </p>
+
+      <p class="notice" style="margin-top:.75rem">
+        <b>Hinweis zur Windows-Installation.</b>
+        Das Installationsprogramm ist derzeit nicht digital signiert. Windows
+        kann deshalb beim Start eine Warnung über einen unbekannten Herausgeber
+        anzeigen. Nach Auswahl von „Weitere Informationen“ kann die Installation
+        über „Trotzdem ausführen“ fortgesetzt werden.
+      </p>
+
+      <p class="notice" style="margin-top:.75rem">
+        <b>Dateiintegrität prüfen.</b>
+        Vergleichen Sie vor der Installation die SHA-256-Prüfsumme der
+        heruntergeladenen Datei mit der auf dieser Seite angegebenen Prüfsumme.
+        Unter PowerShell verwenden Sie dazu:
+        <code>Get-FileHash .\IONTRACE-Setup-1.0.0-beta.exe -Algorithm SHA256</code>
+      </p>
     </section>
 
   </main>
