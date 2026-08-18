@@ -56,7 +56,7 @@
 
       <div class="pills">
         <span class="pill">Windows 10/11, 64 Bit</span>
-        <span class="pill">Version 1.0.0-beta</span>
+        <span class="pill">Version 1.1.0</span>
         <span class="pill">Grafische Oberfläche</span>
         <span class="pill">Installation ohne Administratorrechte</span>
         <span class="pill">Zugang auf Anfrage</span>
@@ -389,30 +389,31 @@
           <h2>Download</h2>
 
           <p>
-            IONTRACE wird über ein Installationsprogramm für Windows
-            bereitgestellt. Die Installation erfolgt für das aktuelle
-            Benutzerkonto und erfordert keine Administratorrechte.
+            IONTRACE wird als Installationsprogramm für Windows
+            bereitgestellt. Die Installation erfolgt ausschließlich für das
+            aktuelle Benutzerkonto, benötigt keine Administratorrechte und
+            verändert keine systemweiten Einstellungen.
           </p>
 
           <dl>
             <dt>Version</dt>
-            <dd>1.0.0-beta</dd>
+            <dd>1.1.1</dd>
 
             <dt>Bereitgestellt</dt>
-            <dd>17.08.2026</dd>
+            <dd>18.08.2026, 13:17 Uhr (MESZ)</dd>
 
             <dt>Betriebssystem</dt>
             <dd>Windows 10/11, 64 Bit</dd>
 
             <dt>Datei</dt>
-            <dd>IONTRACE-Setup-1.0.0-beta.exe</dd>
+            <dd>IONTRACE-Setup-1.1.1.exe</dd>
 
             <dt>Größe</dt>
-            <dd>179 MB</dd>
+            <dd>181 MB</dd>
 
             <dt>SHA-256</dt>
             <dd class="hash">
-              ecdeb731c700f413d987a42698d22996bad9bc5ce975b739dfd8a7214845bd14
+              796df396ddbac12bc14ad9d6569381d55b87fc89378c15ed68fded4cdcff1657
             </dd>
 
             <dt>Entwicklung</dt>
@@ -421,43 +422,108 @@
         </div>
 
         <a class="button button-solid"
-           href="/software/iontrace/download/IONTRACE-Setup-1.0.0-beta.exe"
+           href="/software/iontrace/download/IONTRACE-Setup-1.1.1.exe"
            download>
-          Setup herunterladen
+          IONTRACE 1.1.1 herunterladen
         </a>
       </div>
+
+      <h3 style="margin-top:1.5rem">Neuerungen in Version 1.1.1</h3>
+      <ul class="feature-list">
+        <li>
+          <b>Neuer Exportdialog für alle Abbildungen.</b> Jede Grafik wird
+          über denselben Dialog gespeichert: links eine Vorschau dessen, was
+          tatsächlich in die Datei geschrieben wird, rechts die Einstellungen.
+          Größe und Schrift werden in Zentimetern und typografischen Punkten
+          festgelegt und hängen damit nicht mehr von Fenstergröße,
+          Bildschirmauflösung oder Anzeigeskalierung ab. Die eingetragenen
+          Maße sind verbindlich: 16 × 11 cm ergeben eine Datei mit 16 × 11 cm.
+        </li>
+        <li>
+          <b>Fehlerhafte SVG- und EPS-Dateien behoben.</b> In SVG bleiben die
+          Beschriftungen jetzt wählbarer Text statt reiner Umrisse; EPS
+          erhält den vorgeschriebenen Dateiabschluss und eine geprüfte
+          Bounding Box. Transparenz, die EPS nicht darstellen kann, wird
+          wahlweise gegen den Hintergrund verrechnet oder gerastert — statt
+          stillschweigend deckend gezeichnet zu werden. Überlange
+          Achsenbeschriftungen werden in keinem Format mehr abgeschnitten.
+        </li>
+        <li>
+          <b>Exportprofile und Standardwerte.</b> Einstellungen werden je
+          Dateiformat gemerkt; eigene Profile lassen sich anlegen,
+          umbenennen, ein- und ausgeben sowie als Standard für ein Format
+          oder eine Diagrammart festlegen. Mitgeliefert sind Profile für
+          einspaltige und zweispaltige Veröffentlichungen sowie für
+          Präsentationen.
+        </li>
+        <li>
+          <b>Auswählbare Bildinhalte.</b> Titel, Legende, Elektroden- und
+          Potentialbeschriftungen sowie Hinweistexte lassen sich für den
+          Export einzeln ein- und ausblenden, ohne die Darstellung im
+          Programm zu verändern.
+        </li>
+        <li>
+          <b>Überarbeiteter Ergebnisbereich der Parameterstudien.</b> Der
+          Platz gehört jetzt dem Diagramm: eine schmale Werkzeugspalte mit
+          den Umschaltern Kurven, Darstellung und Analyse, eine zweizeilige
+          Kopfzeile mit Studienauswahl und Zustand, lesbare Kurvennamen und
+          ein Exportmenü.
+        </li>
+        <li>
+          <b>Fortschrittsmonitor für Parameterstudien.</b> Während eines
+          Laufs entsteht die Kennlinie live: Elektrodenströme über dem
+          variierten Parameter, dazu eine Variantentabelle mit Status,
+          Rechenzeit und Fehlermeldungen sowie eine Restzeitschätzung.
+        </li>
+        <li>
+          Abgeschnittene Beschriftungen in den Seitenleisten behoben; ihre
+          Breite richtet sich jetzt nach dem Inhalt und wächst mit der
+          Schriftgröße und der Windows-Anzeigeskalierung mit.
+        </li>
+      </ul>
+
+      <h3 style="margin-top:1.5rem">Neuerungen in Version 1.1.0</h3>
+      <ul class="feature-list">
+        <li>
+          Deutlich beschleunigte Feldberechnung durch einen parallelisierten
+          AMG-Löser.
+        </li>
+        <li>
+          Optimierte Speicherverwaltung und schnellere Verarbeitung der
+          Teilchenbahnen.
+        </li>
+        <li>
+          Verbesserte Laufzeitdiagnostik und zahlreiche Stabilitäts- und
+          Detailverbesserungen.
+        </li>
+      </ul>
 
       <p class="notice" style="margin-top:1rem">
         <b>Nutzung und Lizenz.</b>
         IONTRACE darf von Hochschulen und öffentlich getragenen
         Forschungseinrichtungen unentgeltlich für nichtkommerzielle
-        wissenschaftliche Zwecke genutzt werden. Für jede kommerzielle Nutzung
-        ist vorab eine schriftliche Genehmigung des Autors erforderlich.
+        wissenschaftliche Zwecke verwendet werden. Jede kommerzielle Nutzung
+        erfordert die vorherige schriftliche Genehmigung des Autors.
         Maßgeblich sind die dem Installationspaket beigefügten Lizenzbedingungen.
       </p>
 
       <p class="notice notice--info" style="margin-top:.75rem">
         <b>Installationspasswort erforderlich.</b>
-        Die Installationsdatei ist frei zugänglich, ihr Inhalt jedoch
-        passwortgeschützt. Das Passwort erhalten Sie auf Anfrage per E-Mail an
+        Die Installationsdatei kann frei heruntergeladen werden; für die
+        Installation wird jedoch ein Passwort benötigt. Dieses erhalten Sie auf
+        Anfrage per E-Mail an
         <a href="mailto:Kristof.Holste@physik.jlug.de?subject=IONTRACE%20-%20Installationspasswort">Kristof.Holste@physik.jlug.de</a>.
-        Bitte nennen Sie dabei kurz den vorgesehenen Einsatz von IONTRACE.
+        Bitte nennen Sie dabei kurz Ihre Institution und den vorgesehenen
+        Einsatz von IONTRACE.
       </p>
 
       <p class="notice" style="margin-top:.75rem">
         <b>Hinweis zur Windows-Installation.</b>
         Das Installationsprogramm ist derzeit nicht digital signiert. Windows
-        kann deshalb beim Start eine Warnung über einen unbekannten Herausgeber
-        anzeigen. Nach Auswahl von „Weitere Informationen“ kann die Installation
-        über „Trotzdem ausführen“ fortgesetzt werden.
-      </p>
-
-      <p class="notice" style="margin-top:.75rem">
-        <b>Dateiintegrität prüfen.</b>
-        Vergleichen Sie vor der Installation die SHA-256-Prüfsumme der
-        heruntergeladenen Datei mit der auf dieser Seite angegebenen Prüfsumme.
-        Unter PowerShell verwenden Sie dazu:
-        <code>Get-FileHash .\IONTRACE-Setup-1.0.0-beta.exe -Algorithm SHA256</code>
+        kann deshalb beim Start eine Warnung über eine unbekannte oder nicht
+        erkannte Anwendung anzeigen. Über „Weitere Informationen“ und
+        anschließend „Trotzdem ausführen“ kann die Installation fortgesetzt
+        werden.
       </p>
     </section>
 
