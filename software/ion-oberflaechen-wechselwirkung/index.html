@@ -1,0 +1,554 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description"
+        content="Ion-Oberflaechen-Wechselwirkung: Simulationsprogramm fuer Ionenreflexion, Sputtern, Sekundaerionen und Umladung an Festkoerperoberflaechen auf Basis der Binary Collision Approximation (RustBCA).">
+  <title>Ion-Oberflächen-Wechselwirkung – Software – Ref4EP</title>
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+
+<body>
+  <a class="skip-link" href="#inhalt">Zum Inhalt springen</a>
+
+  <header>
+    <div class="nav">
+      <a class="brand" href="/" aria-label="Ref4EP-Startseite">
+        <span class="brand-mark">R4</span>
+        <span>Ref4EP</span>
+      </a>
+
+      <nav aria-label="Hauptnavigation">
+        <ul>
+          <li><a href="/#projekt">Projekt</a></li>
+          <li><a href="/#ziele">Ziele</a></li>
+          <li><a href="/#partner">Akteure</a></li>
+          <li><a href="/#arbeit">Arbeitsfelder</a></li>
+          <li><a href="/#daten">Daten &amp; Standards</a></li>
+          <li><a href="/software/" aria-current="page">Software</a></li>
+          <li><a href="/#kontakt">Kontakt</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <section class="subhero">
+    <div class="subhero-inner">
+      <p class="breadcrumb">
+        <a href="/">Start</a>
+        <span aria-hidden="true">/</span>
+        <a href="/software/">Software</a>
+        <span aria-hidden="true">/</span>
+        Ion-Oberflächen-Wechselwirkung
+      </p>
+
+      <h1>Ion-Oberflächen-Wechselwirkung</h1>
+
+      <p class="lead">
+        Die Software berechnet, was geschieht, wenn Ionen auf eine
+        Festkörperoberfläche treffen: Reflexion und Rückstreuung der Projektile,
+        Zerstäubung des Targets sowie den Ladungszustand der zurückkehrenden und
+        der herausgeschlagenen Teilchen. Die Stoßkinematik wird mit dem
+        Binary-Collision-Code RustBCA gerechnet, der Ladungsaustausch an der
+        Oberfläche über ein eigenes Drei-Kanal-Modell darübergelegt. Zielbereich
+        ist die niederenergetische Ion-Oberflächen-Wechselwirkung von etwa
+        1&nbsp;eV bis in den keV-Bereich.
+      </p>
+
+      <div class="pills">
+        <span class="pill">Windows 10/11, 64 Bit</span>
+        <span class="pill">Version 1.0.0</span>
+        <span class="pill">Grafische Oberfläche</span>
+        <span class="pill">Freier Download</span>
+      </div>
+    </div>
+  </section>
+
+  <main id="inhalt">
+
+    <section>
+      <div class="split">
+        <div class="panel">
+          <h2>Wozu diese Software?</h2>
+
+          <p>
+            In elektrischen Raumfahrtantrieben und in der Oberflächenanalytik
+            treffen Ionen niedriger und mittlerer Energie auf Werkstoffe. Aus
+            dieser Wechselwirkung folgen die praktisch wichtigen Größen: Wie
+            viele Ionen werden zurückgestreut und mit welcher Energie- und
+            Winkelverteilung? Wie stark wird das Material abgetragen? Und in
+            welchem Ladungszustand verlassen die Teilchen die Oberfläche &ndash;
+            eine Frage, die für jede ionenoptische oder massenspektrometrische
+            Diagnostik entscheidend ist, weil dort nur geladene Teilchen erfasst
+            werden.
+          </p>
+
+          <p>
+            Das Programm verbindet beide Aspekte in einer Oberfläche. Die
+            Stoßkinematik liefert für jedes zurückkehrende oder gesputterte
+            Teilchen Energie und Austrittswinkel; daraus ergibt sich die
+            Senkrechtgeschwindigkeit, die den Ladungsaustausch mit der
+            Oberfläche steuert. Reflexion, Zerstäubung und Ladungszustand werden
+            damit aus einem gemeinsamen Simulationslauf konsistent bestimmt und
+            lassen sich unmittelbar gegeneinander bewerten.
+          </p>
+        </div>
+
+        <figure class="shot">
+          <img src="bilder/verteilungen.jpg"
+               width="1600"
+               height="870"
+               alt="Programmfenster mit Energie- und Winkelverteilung der reflektierten Teilchen sowie Kennzahlen für Reflexion und Ladungsfraktionen.">
+
+          <figcaption>
+            <b>Verteilungen der reflektierten Teilchen</b>
+            Energie- und Winkelverteilung eines Simulationslaufs, darüber die
+            Kennzahlen für Teilchen- und Energiereflexion sowie die Aufteilung
+            in positive, neutrale und negative Teilchen.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-heading">
+        <h2>Physikalische Modelle und Funktionen</h2>
+
+        <p>
+          Der Funktionsumfang ist modular aufgebaut. Je nach Fragestellung
+          lassen sich Projektil, Target, Oberflächenform,
+          Wechselwirkungspotential und Ladungsmodell frei kombinieren.
+        </p>
+      </div>
+
+      <ul class="feature-list">
+        <li>
+          <b>Projektile</b> &ndash; Edelgase (He, Ne, Ar, Kr, Xe) und die
+          reaktiven Elemente H, N, O, dazu molekulare Ionen (O₂⁺, N₂⁺, NO⁺,
+          H₂⁺) über die Dissoziationsnäherung. Beliebige weitere Elemente lassen
+          sich mit Ordnungszahl und Masse frei definieren.
+        </li>
+
+        <li>
+          <b>Targetmaterialien</b> &ndash; 18 Elementvorgaben mit
+          Literaturwerten für Oberflächenbindungsenergie und Teilchendichte,
+          Verbindungen und Legierungen (TiO₂, Al₂O₃, SiO₂, TiN, Messing,
+          Edelstahl) sowie ein Baukasten für eigene Verbindungen mit bis zu vier
+          Komponenten und freier Stöchiometrie.
+        </li>
+
+        <li>
+          <b>Oberflächengeometrie</b> &ndash; halbunendliche glatte Fläche,
+          Kugel für Nanopartikel, Schicht auf Substrat, raue Oberfläche mit
+          einstellbarer Amplitude und Wellenlänge in zwei oder drei Dimensionen
+          sowie Import eigener Dreiecksnetze im OBJ-Format.
+        </li>
+
+        <li>
+          <b>Wechselwirkungspotentiale</b> &ndash; abgeschirmte
+          Coulomb-Potentiale (KR_C, ZBL, Molière, TRIDYN, Lenz-Jensen) für den
+          Standardfall sowie anziehende Potentiale (Morse, Lennard-Jones, WW,
+          KRC-Morse, 4-8) mit frei einstellbaren Parametern für chemisch
+          gebundene und sehr leichte Spezies.
+        </li>
+
+        <li>
+          <b>Numerische Verfahren</b> &ndash; wählbare Streuintegrale
+          (Mendenhall-Weller, MAGIC, Gauß-Verfahren), Nullstellensucher
+          (Newton, CPR, Polynomial), Modelle für das elektronische Bremsen und
+          für die mittlere freie Weglänge. Beim Potentialwechsel setzt das
+          Programm automatisch eine gültige Kombination.
+        </li>
+
+        <li>
+          <b>Oberflächenbindungsmodell</b> &ndash; planare oder isotrope
+          Austrittsbarriere und wählbare Zuordnung der Bindungsenergie zu
+          Projektil, Target oder beidem im Mittel. Damit lässt sich untersuchen,
+          wie das Oberflächenpotential die Austrittsenergie reflektierter
+          Teilchen und in der Folge deren Ladungszustand beeinflusst.
+        </li>
+
+        <li>
+          <b>Umladung als Drei-Kanal-Modell</b> &ndash; Auger-Neutralisation
+          nach Hagstrum für den positiven Kanal, resonanter Ladungstransfer nach
+          Los und Geerlings für den negativen Kanal, der neutrale Anteil als
+          Rest. Austrittsarbeit des Targets und Elektronenaffinität des
+          Projektils gehen explizit ein; die charakteristischen
+          Geschwindigkeiten lassen sich an Messwerte kalibrieren.
+        </li>
+
+        <li>
+          <b>Zerstäubung</b> &ndash; Ausbeute, Energie- und Winkelverteilung der
+          gesputterten Atome, bei Verbindungen elementaufgelöst mit
+          Teilausbeuten, sodass präferenzielles Sputtern sichtbar wird.
+        </li>
+
+        <li>
+          <b>Sekundärionen und SIMS-Spektrum</b> &ndash;
+          Ionisierungswahrscheinlichkeit der gesputterten Atome aus
+          Ionisierungspotential, Elektronenaffinität und Austrittsarbeit;
+          daraus ein Massenspektrum über dem Masse-zu-Ladung-Verhältnis mit
+          natürlicher Isotopenverteilung, wahlweise positiv oder negativ.
+        </li>
+
+        <li>
+          <b>Teilchenbahnen</b> &ndash; Darstellung der Ionen- und Recoil-Bahnen
+          im Target als zweidimensionaler Schnitt und als drehbare
+          dreidimensionale Ansicht, eingefärbt nach Energie beziehungsweise nach
+          Element.
+        </li>
+
+        <li>
+          <b>Parameterstudien</b> &ndash; automatisierte Serien über Energie,
+          Einfallswinkel oder Materialauswahl. Pro Rasterpunkt werden alle
+          Kennzahlen berechnet, die Darstellung füllt sich fortlaufend und lässt
+          sich jederzeit anhalten.
+        </li>
+
+        <li>
+          <b>Auswertung und Export</b> &ndash; Grafikexport mit wählbarem
+          Hintergrund, Beschriftungssprache, Auflösung und Farbpalette sowie
+          Export aller Rohdaten als CSV mit selbstbeschreibendem Metadatenkopf
+          im Sinne der FAIR-Prinzipien.
+        </li>
+      </ul>
+    </section>
+
+    <section>
+      <div class="section-heading">
+        <h2>Reflexion, Zerstäubung und Ladungszustand</h2>
+
+        <p>
+          Aus einem einzelnen Simulationslauf gehen mehrere Auswertungen
+          hervor, die das Programm in eigenen Reitern bereitstellt.
+        </p>
+      </div>
+
+      <ul class="feature-list">
+        <li>
+          <b>Energie-Winkel-Korrelation</b> &ndash; ein zweidimensionales
+          Histogramm der reflektierten Teilchen zeigt den Zusammenhang zwischen
+          Austrittsenergie und Austrittswinkel, der in getrennten
+          eindimensionalen Verteilungen verlorengeht. Die Darstellung ist
+          wahlweise als drehbare dreidimensionale Landschaft verfügbar.
+        </li>
+
+        <li>
+          <b>Energiespektrum der gesputterten Atome</b> &ndash; das Spektrum
+          zeigt das charakteristische Thompson-Maximum bei etwa der halben
+          Oberflächenbindungsenergie. Aus der überlagerten Modellkurve wird die
+          effektive Oberflächenbindungsenergie zurückgewonnen.
+        </li>
+
+        <li>
+          <b>Sekundärionen-Massenspektrum</b> &ndash; aus den gesputterten
+          Atomen und ihren Ionisierungswahrscheinlichkeiten ergibt sich ein
+          Massenspektrum mit natürlichem Isotopenmuster. Eine niedrige
+          Austrittsarbeit erhöht die Ausbeute negativer Sekundärionen deutlich.
+        </li>
+      </ul>
+    </section>
+
+    <section>
+      <div class="section-heading">
+        <h2>Teilchenbahnen und Parameterstudien</h2>
+
+        <p>
+          Neben den integralen Kennzahlen lassen sich einzelne Stoßkaskaden
+          verfolgen und ganze Parameterbereiche automatisiert durchrechnen.
+        </p>
+      </div>
+
+      <div class="figure-grid">
+        <figure class="shot">
+          <img src="bilder/trajektorien-2d.jpg"
+               width="973"
+               height="1127"
+               alt="Zweidimensionaler Schnitt durch die Stoßkaskade: Bahnen der Ionen und der angestoßenen Targetatome über Tiefe und lateraler Ablage.">
+
+          <figcaption>
+            <b>Stoßkaskade im Schnitt</b>
+            Tiefe gegen laterale Ablage für einen einzelnen Auftreffpunkt.
+            Sichtbar werden die Aufweitung der Kaskade, die Reichweite der
+            angestoßenen Targetatome und die Teilchen, die das Material wieder
+            verlassen.
+          </figcaption>
+        </figure>
+
+        <figure class="shot">
+          <img src="bilder/trajektorien-3d.jpg"
+               width="1600"
+               height="771"
+               alt="Dreidimensionale Ansicht der Ionen- und Recoil-Bahnen unterhalb der Targetoberfläche.">
+
+          <figcaption>
+            <b>Bahnen im Target</b>
+            Dargestellt sind die Bahnen der eindringenden Ionen und der
+            angestoßenen Targetatome. Sichtbar werden Eindringtiefe,
+            Kaskadenbildung und die Orte, an denen Teilchen die Oberfläche
+            wieder verlassen.
+          </figcaption>
+        </figure>
+
+      </div>
+    </section>
+
+    <section>
+      <div class="section-heading">
+        <h2>Verifikation und Vergleich</h2>
+
+        <p>
+          Die Rechenmodelle werden gegen etablierte Referenzwerte, analytische
+          Modellkurven und physikalische Konsistenzbedingungen geprüft.
+        </p>
+      </div>
+
+      <ul class="feature-list">
+        <li>
+          <b>Referenzfall Argon auf Wolfram</b> &ndash; bei 1000&nbsp;eV und
+          senkrechtem Einfall ergeben sich eine Teilchenreflexion von 0,34, eine
+          Energiereflexion von 0,10 und eine Sputterausbeute von 1,05. Die Werte
+          stimmen mit den etablierten RustBCA-Benchmarks überein, die ihrerseits
+          gegen SDTrimSP und Experiment geprüft sind.
+        </li>
+
+        <li>
+          <b>Massenverhältnis und Rückstreuung</b> &ndash; der ausgeprägte
+          Unterschied zwischen schweren und leichten Targets wird korrekt
+          wiedergegeben. Argon auf Wolfram reflektiert stark, Argon auf Titan
+          dringt bei nahezu gleicher Masse überwiegend ein und zerstäubt
+          stärker.
+        </li>
+
+        <li>
+          <b>Analytische Modellkurven</b> &ndash; Thompson-Verteilung für das
+          Sputterspektrum sowie Ausbeute- und Reflexionsformeln vom
+          Bohdansky-Yamamura- beziehungsweise Eckstein-Typ werden an die
+          simulierten Punkte angepasst. Die abgeleiteten Parameter und das
+          Bestimmtheitsmaß werden ausgewiesen.
+        </li>
+
+        <li>
+          <b>Konsistenz bei Verbindungen</b> &ndash; die Reflexion einer
+          Legierung reproduziert die ihrer Hauptkomponente; Messing verhält sich
+          wie Kupfer, Edelstahl wie Eisen.
+        </li>
+
+        <li>
+          <b>Ladungsmodell</b> &ndash; die berechnete Überlebensfraktion von
+          Argon auf Metallen liegt über den gesamten Energiebereich unterhalb
+          eines Prozents und entspricht damit der Erfahrung aus der
+          niederenergetischen Ionenstreuspektroskopie. Für Sauerstoff liefert
+          der negative Kanal erwartungsgemäß hohe Ausbeuten, für Stickstoff
+          nahezu keine.
+        </li>
+      </ul>
+    </section>
+
+    <section>
+      <div class="section-heading">
+        <h2>Gültigkeitsbereich</h2>
+
+        <p>
+          Die folgenden Einschränkungen ergeben sich aus den zugrunde liegenden
+          Modellen und sollten bei der Interpretation berücksichtigt werden.
+        </p>
+      </div>
+
+      <ul class="feature-list">
+        <li>
+          <b>Untere Energiegrenze</b> &ndash; die Binary Collision Approximation
+          setzt voraus, dass ein Teilchen im Wesentlichen mit einem Targetatom
+          zugleich stößt. Unterhalb von etwa 10 bis 20&nbsp;eV gewinnen
+          Vielteilchen- und Bindungseffekte an Bedeutung; Ergebnisse in diesem
+          Bereich sind als Tendenz zu lesen.
+        </li>
+
+        <li>
+          <b>Kalibrierung des Ladungsmodells</b> &ndash; die charakteristischen
+          Geschwindigkeiten des Umladungsmodells sind systemabhängig. Ohne
+          Kalibrierung an Messdaten liefert das Modell belastbare Trends, für
+          quantitative Absolutwerte ist eine Anpassung erforderlich. Das
+          Programm enthält dafür eine Kalibrierfunktion.
+        </li>
+
+        <li>
+          <b>Reaktive Spezies</b> &ndash; für Sauerstoff, Stickstoff und
+          molekulare Ionen ist die Stoßkinematik ebenso belastbar wie für
+          Edelgase, der Ladungsaustausch dagegen nur qualitativ, da er über
+          abweichende Mechanismen verläuft.
+        </li>
+
+        <li>
+          <b>Statisches Target</b> &ndash; das Material wird als homogen und
+          amorph behandelt. Fluenzabhängige Effekte wie Aufrauung, Implantation
+          oder Änderung der Zusammensetzung im Betrieb werden nicht
+          fortgeschrieben.
+        </li>
+
+        <li>
+          <b>Gekrümmte und raue Geometrien</b> &ndash; diese Modi nutzen einen
+          anderen Geometriekern und eignen sich für den Vergleich rauer gegen
+          glatte Oberflächen innerhalb desselben Modus, nicht als Ersatz für die
+          validierte Rechnung an der ebenen Fläche.
+        </li>
+
+        <li>
+          <b>Atomare Sekundärteilchen</b> &ndash; zerstäubt werden ausschließlich
+          einzelne Atome. Molekül- und Clusterionen, wie sie in realen
+          Sekundärionen-Massenspektren auftreten, werden nicht modelliert.
+        </li>
+      </ul>
+    </section>
+
+    <section id="download">
+      <div class="download">
+        <div>
+          <h2>Download</h2>
+
+          <p>
+            Die Software wird als Installationsprogramm für Windows
+            bereitgestellt und bringt alle benötigten Komponenten
+            einschließlich des Simulationskerns mit. Eine gesonderte
+            Installation von Python oder weiteren Bibliotheken ist nicht
+            erforderlich. Die Installation erfolgt standardmäßig für das
+            aktuelle Benutzerkonto, benötigt keine Administratorrechte und
+            verändert keine systemweiten Einstellungen.
+          </p>
+
+          <dl>
+            <dt>Version</dt>
+            <dd>1.0.0</dd>
+
+            <dt>Bereitgestellt</dt>
+            <dd>21.08.2026, 11:41 Uhr (MESZ)</dd>
+
+            <dt>Betriebssystem</dt>
+            <dd>Windows 10/11, 64 Bit</dd>
+
+            <dt>Datei</dt>
+            <dd>IonSurfaceInteraction-Setup-1.0.0.exe</dd>
+
+            <dt>Größe</dt>
+            <dd>181 MB</dd>
+
+            <dt>SHA-256</dt>
+            <dd class="hash">
+              e2dc8654233d300dfe9f1d147c7815fe6c80f205e506effeb5637c3b91a667e4
+            </dd>
+
+            <dt>Simulationskern</dt>
+            <dd>RustBCA (im Paket enthalten)</dd>
+
+            <dt>Entwicklung</dt>
+            <dd>Dr. Kristof Holste, Justus-Liebig-Universität Gießen</dd>
+          </dl>
+        </div>
+
+        <a class="button button-solid"
+           href="/software/ion-oberflaechen-wechselwirkung/download/IonSurfaceInteraction-Setup-1.0.0.exe"
+           download>
+          Version 1.0.0 herunterladen
+        </a>
+      </div>
+
+      <h3 style="margin-top:1.5rem">Neuerungen in Version 1.0.0</h3>
+
+      <p>
+        Erste öffentlich bereitgestellte Fassung. Sie umfasst den vollständigen
+        Funktionsumfang der bisherigen Entwicklung:
+      </p>
+
+      <ul class="feature-list">
+        <li>
+          Reflexion und Zerstäubung mit Energie-, Winkel- und
+          Tiefenverteilungen sowie Energie-Winkel-Korrelation.
+        </li>
+        <li>
+          Umladung als Drei-Kanal-Modell mit positiver, neutraler und negativer
+          Fraktion, einschließlich Kalibrierfunktion.
+        </li>
+        <li>
+          Sekundärionen und daraus abgeleitetes SIMS-Massenspektrum mit
+          natürlicher Isotopenverteilung.
+        </li>
+        <li>
+          Verbindungen und Legierungen mit elementaufgelöster Auswertung
+          präferenziellen Sputterns.
+        </li>
+        <li>
+          Fünf Oberflächengeometrien von der ebenen Fläche bis zum importierten
+          Dreiecksnetz.
+        </li>
+        <li>
+          Wählbare Wechselwirkungspotentiale, numerische Verfahren und
+          Oberflächenbindungsmodelle.
+        </li>
+        <li>
+          Automatisierte Parameterstudien über Energie, Einfallswinkel und
+          Materialauswahl mit fortlaufender Darstellung.
+        </li>
+        <li>
+          Grafikexport mit wählbarem Hintergrund, Sprache, Auflösung und
+          Farbpalette sowie Datenexport als CSV mit vollständigem
+          Metadatenkopf.
+        </li>
+        <li>
+          Integrierte Anleitung mit physikalischer Einordnung aller
+          Eingabegrößen.
+        </li>
+      </ul>
+
+      <p class="notice" style="margin-top:1rem">
+        <b>Nutzung und Lizenz.</b>
+        Das Paket enthält den Simulationskern RustBCA, der unter der GNU General
+        Public License Version 3 steht; die Lizenzbedingungen liegen dem
+        Installationspaket bei und sind für die Weitergabe maßgeblich. Die
+        Nutzung für wissenschaftliche Zwecke ist unentgeltlich. Bei Verwendung
+        in Veröffentlichungen wird um Zitation dieser Software sowie der
+        RustBCA-Originalarbeit gebeten.
+      </p>
+
+      <p class="notice notice--info" style="margin-top:.75rem">
+        <b>Fragen und Rückmeldungen.</b>
+        Hinweise auf Fehler, Wünsche zu weiteren Materialien oder Modellen sowie
+        Fragen zur Kalibrierung des Ladungsmodells richten Sie bitte an
+        <a href="mailto:Kristof.Holste@physik.jlug.de?subject=Ion-Oberflaechen-Wechselwirkung">Kristof.Holste@physik.jlug.de</a>.
+        Für die Einordnung Ihrer Rückmeldung ist eine kurze Angabe zu
+        Institution und Anwendungsfall hilfreich.
+      </p>
+
+      <p class="notice" style="margin-top:.75rem">
+        <b>Hinweis zur Windows-Installation.</b>
+        Das Installationsprogramm ist derzeit nicht digital signiert. Windows
+        kann deshalb beim Start eine Warnung über eine unbekannte oder nicht
+        erkannte Anwendung anzeigen. Über &bdquo;Weitere Informationen&ldquo;
+        und anschließend &bdquo;Trotzdem ausführen&ldquo; kann die Installation
+        fortgesetzt werden. Die angegebene SHA-256-Prüfsumme ermöglicht es, die
+        heruntergeladene Datei vorab zu verifizieren.
+      </p>
+
+      <p class="notice" style="margin-top:.75rem">
+        <b>Hinweis zum Speicherort der Ergebnisse.</b>
+        Simulationsergebnisse werden nicht im Installationsverzeichnis, sondern
+        im Benutzerprofil unter
+        <code>%LOCALAPPDATA%\IonSurfaceInteraction\results\</code> abgelegt. Die
+        Deinstallation über &bdquo;Apps &amp; Features&ldquo; entfernt das
+        Programm; bereits erzeugte Ergebnisse bleiben erhalten und können bei
+        Bedarf manuell gelöscht werden.
+      </p>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <span>&copy; Ref4EP-Konsortium</span>
+      <span>Referenzdiagnostik für elektrische Raumfahrtantriebe</span>
+      <a href="/impressum.html">Impressum</a>
+      <a href="/datenschutz.html">Datenschutzerklärung</a>
+    </div>
+  </footer>
+</body>
+</html>
