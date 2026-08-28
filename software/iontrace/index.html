@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description"
-        content="IONTRACE: dreidimensionaler Simulationscode für statische und zeitabhängige Ionenoptiken, Gitterionenquellen, Raumladung, Neutralgas, Ladungsaustausch und Elektrodenerosion.">
+        content="IONTRACE: Simulationscode für statische und zeitabhängige Ionenoptiken – dreidimensional oder translationssymmetrisch in zwei Dimensionen – mit Gitterionenquellen, Raumladung, Neutralgas, Ladungsaustausch und Elektrodenerosion.">
   <title>IONTRACE – Software – Ref4EP</title>
   <link rel="stylesheet" href="/assets/style.css">
 </head>
@@ -46,9 +46,11 @@
       <h1>IONTRACE</h1>
 
       <p class="lead">
-        IONTRACE ist ein dreidimensionaler Simulationscode für statische und
-        zeitabhängige Ionenoptiken, insbesondere für die Extraktion von Ionen aus
-        Gitterionenquellen. Elektrisches Feld, Ionenbahnen und Raumladung werden
+        IONTRACE ist ein Simulationscode für statische und zeitabhängige
+        Ionenoptiken, insbesondere für die Extraktion von Ionen aus
+        Gitterionenquellen. Gerechnet wird wahlweise dreidimensional oder
+        translationssymmetrisch in zwei Dimensionen.
+        Elektrisches Feld, Ionenbahnen und Raumladung werden
         selbstkonsistent gekoppelt berechnet. Ergänzend lassen sich Neutralgas,
         Ladungsaustausch, Elektrodenerosion und die daraus resultierende
         Gitterlebensdauer untersuchen.
@@ -56,7 +58,8 @@
 
       <div class="pills">
         <span class="pill">Windows 10/11, 64 Bit</span>
-        <span class="pill">Version 1.1.0</span>
+        <span class="pill">Version 1.2.1</span>
+        <span class="pill">2D- und 3D-Rechnung</span>
         <span class="pill">Grafische Oberfläche</span>
         <span class="pill">Installation ohne Administratorrechte</span>
         <span class="pill">Zugang auf Anfrage</span>
@@ -121,6 +124,15 @@
 
       <ul class="feature-list">
         <li>
+          <b>Zwei- und dreidimensionale Rechnung</b> – dieselbe Software rechnet
+          wahlweise vollständig dreidimensional oder translationssymmetrisch in
+          zwei Dimensionen. Der 2D-Modus nutzt dieselbe Oberfläche und dieselben
+          Auswertungen, löst große Gitter jedoch deutlich schneller und eignet
+          sich damit für Voruntersuchungen und für translationssymmetrische
+          Anordnungen wie den Zylinderanalysator.
+        </li>
+
+        <li>
           <b>Plasma und Ionenemission</b> – Modelle für die selbstkonsistente
           Plasmaextraktion mit Boltzmann-Elektronen sowie für vorgegebene
           Emitterflächen und Anfangsverteilungen.
@@ -158,8 +170,10 @@
 
         <li>
           <b>Geometrieerstellung</b> – parametrischer Aufbau aus geometrischen
-          Grundkörpern sowie ein lesbares, textbasiertes und versionierbares
-          Dateiformat.
+          Grundkörpern – darunter Zylindersegment, Halbzylinder und gekrümmte
+          Elektroden –, die frei im Raum positioniert und um beliebige Winkel
+          gedreht werden können, sowie ein lesbares, textbasiertes und
+          versionierbares Dateiformat.
         </li>
 
         <li>
@@ -397,13 +411,54 @@
 
           <dl>
             <dt>Version</dt>
+            <dd>1.2.1</dd>
+
+            <dt>Bereitgestellt</dt>
+            <dd>28.08.2026</dd>
+
+            <dt>Betriebssystem</dt>
+            <dd>Windows 10/11, 64 Bit</dd>
+
+            <dt>Datei</dt>
+            <dd>IONTRACE-Setup-1.2.1.exe</dd>
+
+            <dt>Größe</dt>
+            <dd>184 MB</dd>
+
+            <dt>SHA-256</dt>
+            <dd class="hash">
+              7661e023007129452b9e6523314d04c648e6c49ab5612a9f610b1ab2774dae84
+            </dd>
+
+            <dt>Entwicklung</dt>
+            <dd>Dr. Kristof Holste, Justus-Liebig-Universität Gießen</dd>
+          </dl>
+        </div>
+
+        <a class="button button-solid"
+           href="/software/iontrace/download/IONTRACE-Setup-1.2.1.exe"
+           download>
+          IONTRACE 1.2.1 herunterladen
+        </a>
+      </div>
+
+      <div class="download" style="margin-top:1rem">
+        <div>
+          <h3>Vorherige Version</h3>
+
+          <p>
+            Version 1.1.1 bleibt herunterladbar, falls mit der neuen Fassung in
+            einer bestehenden Arbeitsumgebung etwas nicht wie erwartet
+            funktioniert. Setups und Ergebnisse aus 1.1.1 lassen sich in 1.2.1
+            weiterhin öffnen.
+          </p>
+
+          <dl>
+            <dt>Version</dt>
             <dd>1.1.1</dd>
 
             <dt>Bereitgestellt</dt>
             <dd>18.08.2026, 13:17 Uhr (MESZ)</dd>
-
-            <dt>Betriebssystem</dt>
-            <dd>Windows 10/11, 64 Bit</dd>
 
             <dt>Datei</dt>
             <dd>IONTRACE-Setup-1.1.1.exe</dd>
@@ -415,18 +470,83 @@
             <dd class="hash">
               796df396ddbac12bc14ad9d6569381d55b87fc89378c15ed68fded4cdcff1657
             </dd>
-
-            <dt>Entwicklung</dt>
-            <dd>Dr. Kristof Holste, Justus-Liebig-Universität Gießen</dd>
           </dl>
         </div>
 
-        <a class="button button-solid"
+        <a class="button button-outline"
            href="/software/iontrace/download/IONTRACE-Setup-1.1.1.exe"
            download>
           IONTRACE 1.1.1 herunterladen
         </a>
       </div>
+
+      <h3 style="margin-top:1.5rem">Neuerungen in Version 1.2.1</h3>
+
+      <p style="margin:0 0 1rem; color:var(--muted)">
+        Der Rechenkern der dreidimensionalen Simulation ist unverändert
+        geblieben; bestehende Setups und Ergebnisse aus 1.1.1 lassen sich
+        weiterhin öffnen. Die HPC-Anbindung ist wie bisher nicht Teil des
+        Installationspakets.
+      </p>
+
+      <ul class="feature-list">
+        <li>
+          <b>Zweidimensionaler Rechenmodus.</b> IONTRACE rechnet jetzt wahlweise
+          dreidimensional oder translationssymmetrisch in zwei Dimensionen. Der
+          2D-Modus ist keine zweite Software, sondern eine Rechenart innerhalb
+          desselben Programms: gleiche Oberfläche, gleicher Öffnen-Dialog,
+          gleiche Reiter. Große Gitter lösen deutlich schneller, die Rechnung
+          lässt sich während des Laufs abbrechen, und das Rechengitter kann
+          eingeblendet werden. Als vollständiges Anwendungsbeispiel liegt ein
+          2D-Modell des 127-Grad-Zylinderanalysators bei.
+        </li>
+        <li>
+          <b>Restgas aus den Betriebsdaten der Quelle.</b> Der Neutralgaszustand
+          wird aus Strom, Zufuhr und Wirkungsgrad bestimmt statt aus einer
+          freihändig gesetzten Dichte. Die Betriebsrechnung führt über drei
+          Arbeitsseiten mit Bereitschaftsprüfung, Skizze der echten Geometrie und
+          Genauigkeitsangabe. Die Karte zeigt die örtliche Dichte aus den
+          Geschwindigkeitsmomenten statt eines Mittelwerts.
+        </li>
+        <li>
+          <b>Frei drehbare Körper in der Geometrie.</b> Körper lassen sich frei im
+          Raum positionieren und um beliebige Winkel drehen; die Körperform bleibt
+          dabei längentreu. Neu sind Zylindersegment, Halbzylinder und gekrümmte
+          Elektroden. Zusammengesetzte Körper dürfen ein eigenes Potential
+          bekommen, und die Schnittebene lässt sich um 90 Grad drehen.
+        </li>
+        <li>
+          <b>Genauere Erosions- und Lebensdauerrechnung.</b> Der Aperturradius
+          wird aus der offenen Fläche bestimmt statt aus einer Schwelle; das
+          beseitigt einen systematischen Versatz von knapp drei Mikrometern. Neben
+          dem Ringmittel steht jetzt der Abtrag am tiefsten Punkt – das Ringmittel
+          allein verdünnt lokale Grubenbildung erheblich. Die Abtragsfläche wird
+          zwischen Ausgangs- und Endkontur dargestellt, und der Erosionsverlauf
+          lässt sich als Video schreiben.
+        </li>
+        <li>
+          <b>Parameterstudien und Flugzeitpfad.</b> Auch eine freie Spannung ohne
+          hinterlegte Formel kann als Studiengröße durchgefahren werden; einzelne
+          Parameterpunkte lassen sich gezielt ansehen, und fehlgeschlagene
+          Varianten nennen einen benannten Grund statt einer Nummer. Die Reiter des
+          Flugzeitpfades hängen wieder am Flugzeitergebnis, und die Linien des
+          Flugzeitspektrums stehen zusätzlich in einer Tabelle.
+        </li>
+        <li>
+          <b>Überarbeiteter Bildexport.</b> Titel, Legende und Farbskala lassen sich
+          im Exportbild mit der Maus setzen. Maßstäblich gezeichnete Feldbilder
+          stehen mittig statt am rechten Rand, Feldlinien und Pfeile richten sich
+          nach der gewählten Farbpalette, und die Leinwand wird nicht mehr
+          aufgebläht.
+        </li>
+        <li>
+          <b>Durchgehende Diagnose.</b> Kein Programmende bleibt ohne
+          Diagnoseeintrag: Jede Sitzung schreibt einen eigenen Ordner mit
+          Herzschlag und Abschlussmeldung. Ein externer Aufpasser erkennt hängende
+          Sitzungen, startet aber von sich aus nichts neu und beendet nichts. Eine
+          Belastungsprüfung mit 472 Einzelprüfungen wurde bestanden.
+        </li>
+      </ul>
 
       <h3 style="margin-top:1.5rem">Neuerungen in Version 1.1.1</h3>
       <ul class="feature-list">
