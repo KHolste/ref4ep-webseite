@@ -58,8 +58,9 @@
 
       <div class="pills">
         <span class="pill">Windows 10/11, 64 Bit</span>
-        <span class="pill">Version 1.2.1</span>
+        <span class="pill">Version 2.0.1</span>
         <span class="pill">2D- und 3D-Rechnung</span>
+        <span class="pill">Deutsch und Englisch</span>
         <span class="pill">Grafische Oberfläche</span>
         <span class="pill">Installation ohne Administratorrechte</span>
         <span class="pill">Zugang auf Anfrage</span>
@@ -411,13 +412,57 @@
 
           <dl>
             <dt>Version</dt>
+            <dd>2.0.1</dd>
+
+            <dt>Bereitgestellt</dt>
+            <dd>30.09.2026</dd>
+
+            <dt>Betriebssystem</dt>
+            <dd>Windows 10/11, 64 Bit</dd>
+
+            <dt>Sprache</dt>
+            <dd>Deutsch und Englisch, umschaltbar</dd>
+
+            <dt>Datei</dt>
+            <dd>IONTRACE-Setup-2.0.1.exe</dd>
+
+            <dt>Größe</dt>
+            <dd>184 MB</dd>
+
+            <dt>SHA-256</dt>
+            <dd class="hash">
+              ab319326dd5da9bd9e754df2e6c2cd4c66456be4d2524790b551e7bd2175c307
+            </dd>
+
+            <dt>Entwicklung</dt>
+            <dd>Dr. Kristof Holste, Justus-Liebig-Universität Gießen</dd>
+          </dl>
+        </div>
+
+        <a class="button button-solid"
+           href="/software/iontrace/download/IONTRACE-Setup-2.0.1.exe"
+           download>
+          IONTRACE 2.0.1 herunterladen
+        </a>
+      </div>
+
+      <div class="download" style="margin-top:1rem">
+        <div>
+          <h3>Vorherige Version</h3>
+
+          <p>
+            Version 1.2.1 bleibt herunterladbar, falls mit der neuen Fassung in
+            einer bestehenden Arbeitsumgebung etwas nicht wie erwartet
+            funktioniert. Setups und Ergebnisse aus 1.2.1 sollten sich in 2.0.1
+            weiterhin öffnen lassen; zugesichert ist das nicht.
+          </p>
+
+          <dl>
+            <dt>Version</dt>
             <dd>1.2.1</dd>
 
             <dt>Bereitgestellt</dt>
             <dd>28.08.2026</dd>
-
-            <dt>Betriebssystem</dt>
-            <dd>Windows 10/11, 64 Bit</dd>
 
             <dt>Datei</dt>
             <dd>IONTRACE-Setup-1.2.1.exe</dd>
@@ -429,56 +474,103 @@
             <dd class="hash">
               7661e023007129452b9e6523314d04c648e6c49ab5612a9f610b1ab2774dae84
             </dd>
-
-            <dt>Entwicklung</dt>
-            <dd>Dr. Kristof Holste, Justus-Liebig-Universität Gießen</dd>
           </dl>
         </div>
 
-        <a class="button button-solid"
+        <a class="button button-outline"
            href="/software/iontrace/download/IONTRACE-Setup-1.2.1.exe"
            download>
           IONTRACE 1.2.1 herunterladen
         </a>
       </div>
 
-      <div class="download" style="margin-top:1rem">
-        <div>
-          <h3>Vorherige Version</h3>
+      <h3 style="margin-top:1.5rem">Neuerungen in Version 2.0.1</h3>
 
-          <p>
-            Version 1.1.1 bleibt herunterladbar, falls mit der neuen Fassung in
-            einer bestehenden Arbeitsumgebung etwas nicht wie erwartet
-            funktioniert. Setups und Ergebnisse aus 1.1.1 lassen sich in 1.2.1
-            weiterhin öffnen.
-          </p>
+      <p style="margin:0 0 1rem; color:var(--muted)">
+        Der Sprung auf Version 2 bündelt drei Entwicklungen: Die Software ist
+        zweisprachig geworden, die Modelle für Ionensorten und Materialabtrag
+        stehen auf einer belegten und benannten Grundlage, und die
+        Lebensdauerrechnung berücksichtigt, wie der Abtrag selbst auf Restgas
+        und Feld zurückwirkt. Setups und Ergebnisse aus 1.2.1 sollten sich
+        weiterhin öffnen lassen, ohne Gewähr. Der Rahmen, in dem die Software
+        benutzt werden darf, steht beim Start in der Oberfläche und wird dort
+        bestätigt. Die Anbindung an Rechenverbünde ist wie bisher nicht Teil
+        des Installationspakets.
+      </p>
 
-          <dl>
-            <dt>Version</dt>
-            <dd>1.1.1</dd>
-
-            <dt>Bereitgestellt</dt>
-            <dd>18.08.2026, 13:17 Uhr (MESZ)</dd>
-
-            <dt>Datei</dt>
-            <dd>IONTRACE-Setup-1.1.1.exe</dd>
-
-            <dt>Größe</dt>
-            <dd>181 MB</dd>
-
-            <dt>SHA-256</dt>
-            <dd class="hash">
-              796df396ddbac12bc14ad9d6569381d55b87fc89378c15ed68fded4cdcff1657
-            </dd>
-          </dl>
-        </div>
-
-        <a class="button button-outline"
-           href="/software/iontrace/download/IONTRACE-Setup-1.1.1.exe"
-           download>
-          IONTRACE 1.1.1 herunterladen
-        </a>
-      </div>
+      <ul class="feature-list">
+        <li>
+          <b>Zweisprachige Bedienung.</b> Die gesamte Oberfläche lässt sich
+          zwischen Deutsch und Englisch umschalten: Menüs, Einstellungen,
+          Erklärungen, Meldungen, Tabellen, die Achsen- und Legendentexte aller
+          Diagramme sowie der Assistent für neue Aufbauten. Englisch ist die
+          Vorgabe. Auch das Installationsprogramm folgt der Sprache des Systems.
+        </li>
+        <li>
+          <b>Neu geordnete Oberfläche.</b> Der Startbereich bietet die drei Wege
+          in eine Rechnung unmittelbar an und führt von dort zu den
+          mitgelieferten Beispielaufbauten. Die Bedienelemente eines
+          Ergebnisreiters stehen in einer Spalte neben dem Bild, die wichtigsten
+          Kennzahlen als Karten. Fachwerte lassen sich hinter einem Schalter
+          verbergen, und Zahlenfelder wirken erst nach bestätigter Eingabe.
+        </li>
+        <li>
+          <b>Ionensorten und Umladung.</b> Eine Ionensorte wird über ihre
+          Zusammensetzung eingestellt; Masse und Ladungszustand folgen daraus und
+          sind zwei getrennte Größen. Neben Xenon und Krypton ist Stickstoff mit
+          eigenem Umladungsquerschnitt hinterlegt, mit Quellenangabe.
+          Molekülionen fliegen als ganzes Teilchen und werden erst an der
+          Oberfläche in ihre Atome aufgeteilt. Jede Energieangabe benennt, welche
+          Energie sie meint.
+        </li>
+        <li>
+          <b>Modelle für den Materialabtrag.</b> Die Ausbeuterechnung nach
+          Yamamura und Tawara ist quellentreu nach NIFS-DATA-23 umgesetzt,
+          einschließlich der Thomas-Fermi-Bremsung, des Elektronennenners und der
+          veröffentlichten Materialparameter. Als zweites Modell steht die
+          Beschreibung von Tartz und Neumann (2007) für Xenon auf Kohlenstoff
+          bereit, dazu eine gemischte Wahl, die je Material das passende Modell
+          zieht. Die Ausbeute lässt sich mit einem Faktor an eigene Messungen
+          anpassen; der Vergleich mit veröffentlichten Messungen ist
+          dokumentiert, auch dort, wo das Modell abweicht.
+        </li>
+        <li>
+          <b>Lebensdauer und Erosion mit Rückwirkung.</b> Die Restgaskarte wird
+          auf der tatsächlichen, aufgeweiteten Kanalform gerechnet, und jeder
+          Erosionsschritt beginnt beim Feld des vorigen. Die
+          Neutralgastransparenz wird über die Laufzeit mitgeschrieben, und ein
+          beendeter Lauf kann um weitere Stunden verlängert werden, ohne von
+          vorn zu beginnen. Zu jedem Zeitschritt entstehen Kontrollbilder; neu
+          sind außerdem eine modellunabhängige Trefferliste je Erosionsschritt,
+          die sich nachträglich mit anderen Annahmen auswerten lässt, und eine
+          Bilanz des wieder abgeschiedenen Materials.
+        </li>
+        <li>
+          <b>Kürzere Rechenzeiten.</b> Der Feldlöser rechnet in einem eigenen
+          Prozess, und das Programm bleibt während eines Laufs bedienbar. Die
+          Lösertoleranz wandert mit der Konvergenz mit, der Umladungsdurchgang
+          nutzt alle Kerne, und der Restgaslauf braucht ein Zehntel der früheren
+          Zeit. Parameterstudien rechnen mehrere Punkte gleichzeitig, und der
+          Programmstart dauert nur noch halb so lang.
+        </li>
+        <li>
+          <b>Auswertung und Bildausgabe.</b> Ein Messcursor liest Werte in den
+          Schnitt- und Oberflächenbildern ab. Jeder Ergebnisreiter nennt, aus
+          welchem Rechenschritt sein Bild stammt, und gibt seine Zahlen auf
+          Knopfdruck als Tabelle heraus. Ein eigenes Exportfenster für
+          Veröffentlichungen erlaubt frei gesetzte Beschriftungen und gibt Bild-
+          wie Vektorformate aus; Feldlinien und Äquipotentiallinien sind als
+          Darstellung hinzugekommen.
+        </li>
+        <li>
+          <b>Beispielaufbauten und Vergleichsrechnungen.</b> Mitgeliefert wird
+          ein frei entworfener Dreigitterstapel in vier Ausführungen, mit dem
+          sich die Software ohne eigene Geometriedaten erproben lässt. Für die
+          Validierung sind Aufbauten nach veröffentlichten Arbeiten
+          hinzugekommen, darunter eine hexagonale Einheitszelle für Xenon und
+          Krypton sowie ein Vergleich mit einem 2500-Stunden-Dauerlauf.
+        </li>
+      </ul>
 
       <h3 style="margin-top:1.5rem">Neuerungen in Version 1.2.1</h3>
 
