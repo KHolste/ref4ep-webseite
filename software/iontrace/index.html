@@ -58,7 +58,7 @@
 
       <div class="pills">
         <span class="pill">Windows 10/11, 64 Bit</span>
-        <span class="pill">Version 2.0.1</span>
+        <span class="pill">Version 2.1.0</span>
         <span class="pill">2D- und 3D-Rechnung</span>
         <span class="pill">Deutsch und Englisch</span>
         <span class="pill">Grafische Oberfläche</span>
@@ -98,8 +98,8 @@
 
         <figure class="shot">
           <img src="bilder/trajektorien-3d.jpg"
-               width="1600"
-               height="998"
+               width="1565"
+               height="1159"
                alt="Dreidimensionale Ansicht des Gittersystems mit Ionenbahnen; transmittierte Bahnen sind blau, Bahnen mit Elektrodentreffer rot dargestellt.">
 
           <figcaption>
@@ -211,8 +211,8 @@
 
         <p>
           Alle Darstellungen stammen aus demselben Simulationslauf einer
-          Zweigitteroptik mit einem Screen-Gitter auf +1.500 V und einem
-          Beschleunigungsgitter auf &minus;150 V.
+          Zweigitteroptik mit einem Screen-Gitter auf +1.400 V und einem
+          Beschleunigungsgitter auf &minus;180 V.
         </p>
       </div>
 
@@ -220,7 +220,7 @@
         <figure class="shot">
           <img src="bilder/potential-xy.jpg"
                width="1800"
-               height="735"
+               height="364"
                alt="Farbdarstellung des elektrischen Potentials in der XY-Ebene mit überlagerten Ionenbahnen und eingezeichneten Elektroden.">
 
           <figcaption>
@@ -234,7 +234,7 @@
         <figure class="shot">
           <img src="bilder/feldstaerke-xy.jpg"
                width="1800"
-               height="767"
+               height="372"
                alt="Betrag der elektrischen Feldstärke in der XY-Ebene mit eingezeichneten Feldlinien.">
 
           <figcaption>
@@ -249,7 +249,7 @@
         <figure class="shot">
           <img src="bilder/ladungsdichte-xy.jpg"
                width="1800"
-               height="756"
+               height="365"
                alt="Farbdarstellung der lokalen Nettoladungsdichte der berücksichtigten Ionen und Elektronen in der XY-Ebene.">
 
           <figcaption>
@@ -257,6 +257,35 @@
             Die lokale Nettoladungsdichte der berücksichtigten Ionen und
             Elektronen geht als Quellterm in die Poisson-Gleichung ein. Über sie
             beeinflusst die Teilchenverteilung das elektrische Feld.
+          </figcaption>
+        </figure>
+
+        <figure class="shot">
+          <img src="bilder/debye-aufloesung.jpg"
+               width="1800"
+               height="363"
+               alt="Karte des Verhältnisses von Maschenweite zu Debye-Länge in der XY-Ebene; farbig belegt ist nur der Plasmabereich vor dem Screen-Gitter.">
+
+          <figcaption>
+            <b>Auflösung der Debye-Länge</b>
+            Dargestellt ist das Verhältnis der Maschenweite zur lokalen
+            Debye-Länge im Plasmabereich. Werte unter eins zeigen, dass das
+            Rechengitter die Debye-Länge auflöst.
+          </figcaption>
+        </figure>
+
+        <figure class="shot">
+          <img src="bilder/energie-achse.jpg"
+               width="1600"
+               height="896"
+               alt="Verlauf der Ionenenergie entlang der Strahlachse mit Median und Streubändern der Bahnen; darunter die Zahl der beitragenden Bahnen je Ortsabschnitt.">
+
+          <figcaption>
+            <b>Ionenenergie entlang der Strahlachse</b>
+            Median und Streubänder der Energie über alle Bahnen, verglichen mit
+            der idealen Energie aus der Potentialdifferenz. Der untere Teil
+            zeigt, wie viele Bahnen zum jeweiligen Ortsabschnitt beitragen; der
+            Rückgang am Screen-Gitter entspricht den dort abgefangenen Ionen.
           </figcaption>
         </figure>
       </div>
@@ -278,23 +307,22 @@
       <div class="figure-grid">
         <figure class="shot">
           <img src="bilder/restgas-karte.jpg"
-               width="1500"
-               height="1053"
-               alt="Karte der Neutralgasdichte im XY-Schnitt; oben ist das gesamte Rechengebiet, unten ein Ausschnitt am Beschleunigungsgitter mit Iso-Dichtelinien dargestellt.">
+               width="1600"
+               height="910"
+               alt="Karte der Neutralgasdichte im XY-Schnitt für den Bereich um Screen- und Beschleunigungsgitter, logarithmisch farbcodiert und mit Iso-Dichtelinien.">
 
           <figcaption>
             <b>Neutralgasdichte im Schnitt</b>
-            Oben ist das gesamte Rechengebiet dargestellt, unten der Bereich
-            zwischen den Gittern. Die Linien markieren Dekaden der Dichte. Hinter
-            dem Beschleunigungsgitter fällt die Neutralgasdichte um mehr als eine
-            Größenordnung ab.
+            Dargestellt ist der Bereich um die beiden Gitter. Die Linien
+            markieren Dekaden der Dichte. Hinter dem Beschleunigungsgitter fällt
+            die Neutralgasdichte um mehr als eine Größenordnung ab.
           </figcaption>
         </figure>
 
         <figure class="shot">
           <img src="bilder/restgas-profil.jpg"
-               width="1100"
-               height="1261"
+               width="1600"
+               height="898"
                alt="Über den Querschnitt gemittelter axialer Verlauf der Neutralgasdichte mit logarithmischer Achse und markierter Lage von Screen- und Beschleunigungsgitter.">
 
           <figcaption>
@@ -303,6 +331,22 @@
             Strahlachse bildet zusammen mit der Verteilung des Ionenstrahls die
             Grundlage für die Berechnung der räumlichen Entstehungsrate von
             Ladungsaustauschionen.
+          </figcaption>
+        </figure>
+
+        <figure class="shot">
+          <img src="bilder/ladungsaustausch-rate.jpg"
+               width="1600"
+               height="831"
+               alt="Entstehungsrate der Ladungsaustauschionen: oben als logarithmisch farbcodierte Karte im Schnitt, unten als über den Querschnitt gemittelter axialer Verlauf.">
+
+          <figcaption>
+            <b>Entstehungsrate der Ladungsaustauschionen</b>
+            Oben die räumliche Verteilung im Schnitt, unten der über den
+            Querschnitt gemittelte Verlauf entlang der Strahlachse. Die Rate ist
+            dort am höchsten, wo der gebündelte Strahl auf dichtes Neutralgas
+            trifft, und fällt hinter dem Beschleunigungsgitter mit der Gasdichte
+            ab.
           </figcaption>
         </figure>
       </div>
@@ -324,16 +368,16 @@
       <div class="figure-grid">
         <figure class="shot">
           <img src="bilder/erosion-zelle.jpg"
-               width="1351"
-               height="1091"
-               alt="Dreidimensionale Ansicht einer Einheitszelle mit farbcodierter lokaler Abtragsrate auf der Gitteroberfläche.">
+               width="1565"
+               height="1073"
+               alt="Dreidimensionale Ansicht der Rechenzelle mit farbcodiertem lokalem Abtrag auf der Oberfläche des Beschleunigungsgitters.">
 
           <figcaption>
-            <b>Lokale Abtragsrate</b>
-            Dargestellt ist die berechnete Abtragsrate auf der Gitteroberfläche
-            innerhalb der simulierten Einheitszelle in Nanometern pro Stunde. In
-            diesem Beispiel treten die höchsten Werte an der Austrittskante der
-            Apertur auf.
+            <b>Lokaler Abtrag</b>
+            Dargestellt ist der berechnete Abtrag auf der Oberfläche des
+            Beschleunigungsgitters innerhalb der simulierten Zelle. In diesem
+            Beispiel liegen die höchsten Werte auf der Lochwand, in der dem
+            Austritt zugewandten Hälfte der Apertur.
           </figcaption>
         </figure>
 
@@ -349,6 +393,49 @@
             ihr Ergebnis auf die sechs benachbarten Zellen des hexagonalen
             Lochmusters übertragen. Dadurch wird die periodische Wiederholung des
             berechneten Abtragsmusters sichtbar.
+          </figcaption>
+        </figure>
+
+        <figure class="shot">
+          <img src="bilder/erosion-profil.jpg"
+               width="1600"
+               height="892"
+               alt="Lochprofil des Beschleunigungsgitters nach 2500 Betriebsstunden mit Ausgangskontur, aktueller Kontur, abgetragenem Material und markierter kritischer Stelle.">
+
+          <figcaption>
+            <b>Lochprofil nach 2500 Stunden</b>
+            Ausgangskontur, aktuelle Kontur und abgetragenes Material am
+            Beschleunigungsgitter, gemittelt über die beiden Löcher der
+            Rechenzelle. An der kritischen Stelle hat sich der Lochradius um
+            65 µm aufgeweitet.
+          </figcaption>
+        </figure>
+
+        <figure class="shot" style="grid-column:1 / -1">
+          <img src="bilder/erosion-verlauf.gif"
+               width="1400"
+               height="802"
+               alt="Animation der fortschreitenden Aufweitung der beiden Löcher des Beschleunigungsgitters in 25 Schritten bis 2500 Betriebsstunden.">
+
+          <figcaption>
+            <b>Zeitlicher Verlauf der Erosion</b>
+            Die Animation zeigt die Aufweitung der beiden Löcher der Rechenzelle
+            in 25 Schritten von je 100 Stunden bis zu einer Betriebsdauer von
+            2500 Stunden.
+          </figcaption>
+        </figure>
+
+        <figure class="shot" style="grid-column:1 / -1">
+          <img src="bilder/potential-erodiert.jpg"
+               width="1800"
+               height="345"
+               alt="Farbdarstellung des elektrischen Potentials in der XY-Ebene nach 2500 Betriebsstunden mit Ionenbahnen und eingezeichneter erodierter Kontur des Beschleunigungsgitters.">
+
+          <figcaption>
+            <b>Potential auf der erodierten Geometrie</b>
+            Feld und Ionenbahnen nach 2500 Stunden. Die Rechnung läuft auf der
+            fortgeschriebenen Geometrie; die orangefarbene Linie markiert die
+            erodierte Kontur des Beschleunigungsgitters.
           </figcaption>
         </figure>
       </div>
@@ -412,16 +499,57 @@
 
           <dl>
             <dt>Version</dt>
-            <dd>2.0.1</dd>
+            <dd>2.1.0</dd>
 
             <dt>Bereitgestellt</dt>
-            <dd>30.09.2026</dd>
+            <dd>04.10.2026</dd>
 
             <dt>Betriebssystem</dt>
             <dd>Windows 10/11, 64 Bit</dd>
 
             <dt>Sprache</dt>
             <dd>Deutsch und Englisch, umschaltbar</dd>
+
+            <dt>Datei</dt>
+            <dd>IONTRACE-Setup-2.1.0.exe</dd>
+
+            <dt>Größe</dt>
+            <dd>184 MB</dd>
+
+            <dt>SHA-256</dt>
+            <dd class="hash">
+              63334486742fd0e544c3fe19d76caa5552dc911b41e02f2e6e2b5b2d4de186d9
+            </dd>
+
+            <dt>Entwicklung</dt>
+            <dd>Dr. Kristof Holste, Justus-Liebig-Universität Gießen</dd>
+          </dl>
+        </div>
+
+        <a class="button button-solid"
+           href="/software/iontrace/download/IONTRACE-Setup-2.1.0.exe"
+           download>
+          IONTRACE 2.1.0 herunterladen
+        </a>
+      </div>
+
+      <div class="download" style="margin-top:1rem">
+        <div>
+          <h3>Vorherige Version</h3>
+
+          <p>
+            Version 2.0.1 bleibt herunterladbar, falls mit der neuen Fassung in
+            einer bestehenden Arbeitsumgebung etwas nicht wie erwartet
+            funktioniert. Setups und Ergebnisse aus 2.0.1 sollten sich in 2.1.0
+            weiterhin öffnen lassen; zugesichert ist das nicht.
+          </p>
+
+          <dl>
+            <dt>Version</dt>
+            <dd>2.0.1</dd>
+
+            <dt>Bereitgestellt</dt>
+            <dd>30.09.2026</dd>
 
             <dt>Datei</dt>
             <dd>IONTRACE-Setup-2.0.1.exe</dd>
@@ -433,56 +561,88 @@
             <dd class="hash">
               ab319326dd5da9bd9e754df2e6c2cd4c66456be4d2524790b551e7bd2175c307
             </dd>
-
-            <dt>Entwicklung</dt>
-            <dd>Dr. Kristof Holste, Justus-Liebig-Universität Gießen</dd>
           </dl>
         </div>
 
-        <a class="button button-solid"
+        <a class="button button-outline"
            href="/software/iontrace/download/IONTRACE-Setup-2.0.1.exe"
            download>
           IONTRACE 2.0.1 herunterladen
         </a>
       </div>
 
-      <div class="download" style="margin-top:1rem">
-        <div>
-          <h3>Vorherige Version</h3>
+      <h3 style="margin-top:1.5rem">Neuerungen in Version 2.1.0</h3>
 
-          <p>
-            Version 1.2.1 bleibt herunterladbar, falls mit der neuen Fassung in
-            einer bestehenden Arbeitsumgebung etwas nicht wie erwartet
-            funktioniert. Setups und Ergebnisse aus 1.2.1 sollten sich in 2.0.1
-            weiterhin öffnen lassen; zugesichert ist das nicht.
-          </p>
+      <p style="margin:0 0 1rem; color:var(--muted)">
+        Version 2.1.0 erweitert Strahl und Umladung um gemischte
+        Ladungszustände und eigene Querschnittstabellen, senkt den
+        Speicherbedarf langer Lebensdauerläufe deutlich und beschleunigt die
+        Auswertungsreiter. Setups und Ergebnisse aus 2.0.1 sollten sich
+        weiterhin öffnen lassen, ohne Gewähr. Die Anbindung an Rechenverbünde
+        ist wie bisher nicht Teil des Installationspakets.
+      </p>
 
-          <dl>
-            <dt>Version</dt>
-            <dd>1.2.1</dd>
-
-            <dt>Bereitgestellt</dt>
-            <dd>28.08.2026</dd>
-
-            <dt>Datei</dt>
-            <dd>IONTRACE-Setup-1.2.1.exe</dd>
-
-            <dt>Größe</dt>
-            <dd>184 MB</dd>
-
-            <dt>SHA-256</dt>
-            <dd class="hash">
-              7661e023007129452b9e6523314d04c648e6c49ab5612a9f610b1ab2774dae84
-            </dd>
-          </dl>
-        </div>
-
-        <a class="button button-outline"
-           href="/software/iontrace/download/IONTRACE-Setup-1.2.1.exe"
-           download>
-          IONTRACE 1.2.1 herunterladen
-        </a>
-      </div>
+      <ul class="feature-list">
+        <li>
+          <b>Gemischte Ladungszustände im Strahl.</b> Der Strahl kann einfach
+          und doppelt geladene Ionen zugleich enthalten; der Anteil wird als
+          Teilchen- oder als Stromanteil angegeben und geht über Raumladung und
+          Plasmadichte in die Feldrechnung ein. Direkt auftreffende Ionen tragen
+          je Ladungszustand mit eigener Energie und eigenem Teilchenstrom ab.
+          Die Umladung berücksichtigt für Xe<sup>2+</sup> den doppelten und den
+          einfachen Austausch nach Miller (2002), und der Lebensdauerlauf
+          rechnet die Mischung mit.
+        </li>
+        <li>
+          <b>Eigene Umladungsquerschnitte.</b> Querschnitte lassen sich als
+          eigene Tabelle laden. Die Datei nennt in ihrem Kopf die Reaktion sowie
+          Bezugssystem und Einheit der Energie; ein Hilfeknopf erklärt das
+          Format. Eigene Zahlen werden verwendet, sobald der Aufbau ihre
+          Reaktion nennt.
+        </li>
+        <li>
+          <b>Abtrag an der Lochwand.</b> Der Einfallswinkel folgt in der Vorgabe
+          der bereits erodierten Wand statt der Ausgangsform, und die Lochwand
+          behält ihre Richtung bis an beide Plattenenden. Bei Rechenzellen mit
+          mehreren Löchern wird das abgetragene Volumen je Loch ausgewiesen.
+        </li>
+        <li>
+          <b>Weniger Speicherbedarf.</b> Ein Lebensdauerlauf hält nur noch einen
+          Bahnsatz im Arbeitsspeicher, und die Umladungsrechnung kommt ohne
+          gespeicherten Bahnsatz aus. Vor dem Start wird der Speicherbedarf
+          abgeschätzt und bei knappem Arbeitsspeicher nachgefragt; während des
+          Laufs zeigt das Live-Fenster die Belegung.
+        </li>
+        <li>
+          <b>Protokoll des Lebensdauerlaufs.</b> Jeder Lauf schreibt von sich
+          aus eine Datei in seinen Ergebnisordner: Aufbau, Betriebspunkt und
+          Modellwahl im Kopf, eine Zeile je Erosionsschritt und ein Abschluss
+          mit Abbruchgrund, Summen und Laufzeit. Auch ein abgebrochener Lauf ist
+          damit vollständig dokumentiert.
+        </li>
+        <li>
+          <b>Schnellere Auswertung.</b> Der Energiereiter wertet alle Bahnen in
+          einem Durchgang aus, und die Feldschnitte zeichnen nach einem
+          Neuaufbau nur noch einmal. Die Obergrenze der dargestellten Bahnen
+          gilt jetzt auch auf den Feldkarten, und ein Reiterwechsel zeichnet ein
+          fertiges Bild nicht neu.
+        </li>
+        <li>
+          <b>Aufbauten und Vergleichsrechnungen.</b> Die Betriebsrechnung des
+          Restgases verarbeitet auch Spiegelzellen mit zwei Viertelkanälen; die
+          entsprechenden Hexzellen liegen als Aufbauten bei. Für Krypton ist ein
+          Vergleich der Ausbeuterechnung mit den Messungen von Manova et al.
+          (2026) dokumentiert, einschließlich der Abweichungen des Modells.
+        </li>
+        <li>
+          <b>Bedienung und Export.</b> Ein geladenes Setup behält seine
+          Restgaskarte und seine Lebensdauer-Einstellungen. Einstellungsfenster
+          öffnen in der Größe, die ihr Inhalt braucht, die räumliche Ansicht des
+          Aufbaureiters zeigt die Startfläche der Teilchen und erscheint
+          korrekt im gespeicherten Bild, und der Erosions-Export schreibt den
+          Umriss der ganzen Elektroden samt Rand des Rechengebiets.
+        </li>
+      </ul>
 
       <h3 style="margin-top:1.5rem">Neuerungen in Version 2.0.1</h3>
 
