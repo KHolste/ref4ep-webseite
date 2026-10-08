@@ -58,10 +58,11 @@
 
       <div class="pills">
         <span class="pill">Windows 10/11, 64 Bit</span>
-        <span class="pill">Version 2.1.0</span>
+        <span class="pill">Version 2.1.1</span>
         <span class="pill">2D- und 3D-Rechnung</span>
         <span class="pill">Deutsch und Englisch</span>
         <span class="pill">Grafische Oberfläche</span>
+        <span class="pill">Handbuch (PDF)</span>
         <span class="pill">Installation ohne Administratorrechte</span>
         <span class="pill">Zugang auf Anfrage</span>
       </div>
@@ -485,6 +486,51 @@
       </ul>
     </section>
 
+    <section id="handbuch">
+      <div class="download">
+        <div>
+          <h2>Handbuch</h2>
+
+          <p>
+            Das Benutzerhandbuch beschreibt die Plasma-Ionenextraktion Schritt
+            für Schritt am mitgelieferten Beispielaufbau: von der Geometrie
+            über Plasma, Löser und Konvergenz bis zu Restgas, Ladungsaustausch,
+            Erosion, Lebensdauerrechnung und Parameterstudien. Zahlreiche
+            Bildschirmfotos zeigen die Oberfläche und die Auswertungen; ein
+            eigenes Kapitel behandelt, wie sich die Verlässlichkeit eines
+            Ergebnisses prüfen lässt. Das Handbuch ist frei zugänglich und
+            lässt sich ohne Installation im Browser lesen.
+          </p>
+
+          <dl>
+            <dt>Titel</dt>
+            <dd>IONTRACE User Manual, Part I: Plasma ion extraction</dd>
+
+            <dt>Stand</dt>
+            <dd>Erster Entwurf zu Version 2.1.1, 08.10.2026</dd>
+
+            <dt>Sprache</dt>
+            <dd>Englisch</dd>
+
+            <dt>Umfang</dt>
+            <dd>76 Seiten</dd>
+
+            <dt>Datei</dt>
+            <dd>IONTRACE-Manual-2.1.1.pdf</dd>
+
+            <dt>Größe</dt>
+            <dd>5,1 MB</dd>
+          </dl>
+        </div>
+
+        <a class="button button-solid"
+           href="/software/iontrace/download/IONTRACE-Manual-2.1.1.pdf"
+           type="application/pdf">
+          Handbuch öffnen (PDF)
+        </a>
+      </div>
+    </section>
+
     <section id="download">
       <div class="download">
         <div>
@@ -499,16 +545,60 @@
 
           <dl>
             <dt>Version</dt>
-            <dd>2.1.0</dd>
+            <dd>2.1.1</dd>
 
             <dt>Bereitgestellt</dt>
-            <dd>04.10.2026</dd>
+            <dd>08.10.2026</dd>
 
             <dt>Betriebssystem</dt>
             <dd>Windows 10/11, 64 Bit</dd>
 
             <dt>Sprache</dt>
             <dd>Deutsch und Englisch, umschaltbar</dd>
+
+            <dt>Datei</dt>
+            <dd>IONTRACE-Setup-2.1.1.exe</dd>
+
+            <dt>Größe</dt>
+            <dd>205 MB</dd>
+
+            <dt>SHA-256</dt>
+            <dd class="hash">
+              1c8f5c5b0a6f3a428b5ec5c05d8c61b99597ba113b2e087787b9880e91a34048
+            </dd>
+
+            <dt>Handbuch</dt>
+            <dd><a href="#handbuch">Benutzerhandbuch als PDF</a></dd>
+
+            <dt>Entwicklung</dt>
+            <dd>Dr. Kristof Holste, Justus-Liebig-Universität Gießen</dd>
+          </dl>
+        </div>
+
+        <a class="button button-solid"
+           href="/software/iontrace/download/IONTRACE-Setup-2.1.1.exe"
+           download>
+          IONTRACE 2.1.1 herunterladen
+        </a>
+      </div>
+
+      <div class="download" style="margin-top:1rem">
+        <div>
+          <h3>Vorherige Version</h3>
+
+          <p>
+            Version 2.1.0 bleibt herunterladbar, falls mit der neuen Fassung in
+            einer bestehenden Arbeitsumgebung etwas nicht wie erwartet
+            funktioniert. Setups und Ergebnisse aus 2.1.0 sollten sich in 2.1.1
+            weiterhin öffnen lassen; zugesichert ist das nicht.
+          </p>
+
+          <dl>
+            <dt>Version</dt>
+            <dd>2.1.0</dd>
+
+            <dt>Bereitgestellt</dt>
+            <dd>04.10.2026</dd>
 
             <dt>Datei</dt>
             <dd>IONTRACE-Setup-2.1.0.exe</dd>
@@ -520,56 +610,82 @@
             <dd class="hash">
               63334486742fd0e544c3fe19d76caa5552dc911b41e02f2e6e2b5b2d4de186d9
             </dd>
-
-            <dt>Entwicklung</dt>
-            <dd>Dr. Kristof Holste, Justus-Liebig-Universität Gießen</dd>
           </dl>
         </div>
 
-        <a class="button button-solid"
+        <a class="button button-outline"
            href="/software/iontrace/download/IONTRACE-Setup-2.1.0.exe"
            download>
           IONTRACE 2.1.0 herunterladen
         </a>
       </div>
 
-      <div class="download" style="margin-top:1rem">
-        <div>
-          <h3>Vorherige Version</h3>
+      <h3 style="margin-top:1.5rem">Neuerungen in Version 2.1.1</h3>
 
-          <p>
-            Version 2.0.1 bleibt herunterladbar, falls mit der neuen Fassung in
-            einer bestehenden Arbeitsumgebung etwas nicht wie erwartet
-            funktioniert. Setups und Ergebnisse aus 2.0.1 sollten sich in 2.1.0
-            weiterhin öffnen lassen; zugesichert ist das nicht.
-          </p>
+      <p style="margin:0 0 1rem; color:var(--muted)">
+        Version 2.1.1 vervollständigt die englische Oberfläche, lässt die
+        Ionentemperatur in den Teilchenstart eingehen und bringt die
+        Darstellung der erodierten Wand mit der Rechnung in Deckung. Erstmals
+        gibt es ein Benutzerhandbuch. Die thermische Streuung der Ionen und die
+        neue Wandlage für Umladungsionen sind in der Vorgabe eingeschaltet;
+        Zahlenwerte können sich dadurch gegenüber 2.1.0 ändern. Setups und
+        Ergebnisse aus 2.1.0 sollten sich weiterhin öffnen lassen, ohne Gewähr.
+        Die Anbindung an Rechenverbünde ist wie bisher nicht Teil des
+        Installationspakets.
+      </p>
 
-          <dl>
-            <dt>Version</dt>
-            <dd>2.0.1</dd>
-
-            <dt>Bereitgestellt</dt>
-            <dd>30.09.2026</dd>
-
-            <dt>Datei</dt>
-            <dd>IONTRACE-Setup-2.0.1.exe</dd>
-
-            <dt>Größe</dt>
-            <dd>184 MB</dd>
-
-            <dt>SHA-256</dt>
-            <dd class="hash">
-              ab319326dd5da9bd9e754df2e6c2cd4c66456be4d2524790b551e7bd2175c307
-            </dd>
-          </dl>
-        </div>
-
-        <a class="button button-outline"
-           href="/software/iontrace/download/IONTRACE-Setup-2.0.1.exe"
-           download>
-          IONTRACE 2.0.1 herunterladen
-        </a>
-      </div>
+      <ul class="feature-list">
+        <li>
+          <b>Benutzerhandbuch.</b> Ein englischsprachiges Handbuch beschreibt
+          die Plasma-Ionenextraktion von der Geometrie bis zur
+          Lebensdauerrechnung am mitgelieferten Beispielaufbau, mit
+          Referenzwerten zum Nachrechnen und einem Kapitel zur Prüfung der
+          Verlässlichkeit eines Ergebnisses. Es steht
+          <a href="#handbuch">auf dieser Seite als PDF</a> bereit.
+        </li>
+        <li>
+          <b>Englische Oberfläche vervollständigt.</b> Die Beschriftungen
+          wurden systematisch auf verbliebene deutsche Texte geprüft und
+          ergänzt, unter anderem in den Statuszeilen des Konvergenzreiters, den
+          Kennwertkarten, den Beschreibungen der Sputtermodelle, der
+          Parameterstudie sowie im Export- und im Körperdialog. Behoben sind
+          dabei Bedienelemente, die auf Englisch nicht reagierten: der
+          Durchfahren-Knopf der Strahlführung, die Auswahl der Punktwolke im
+          Strahlprofil und der Vorschau-Knopf des Aufbau-Assistenten.
+        </li>
+        <li>
+          <b>Ionentemperatur im Teilchenstart.</b> Die Ionentemperatur streut
+          die Startgeschwindigkeit der Ionen quer zur Strahlrichtung und längs
+          um die Bohm-Geschwindigkeit; bisher starteten alle Ionen exakt
+          parallel. Die Streuung ist im Plasma-Dialog schaltbar; ausgeschaltet
+          rechnet das Programm wie zuvor.
+        </li>
+        <li>
+          <b>Anteil doppelt geladener Xenon-Ionen abschätzen.</b> Ein
+          Vorschlagsknopf neben dem Eingabefeld schätzt den Anteil aus
+          Elektronentemperatur, Plasmadichte und Neutralgasdichte der
+          Entladung: direkte Doppelionisation nach Rejoub et al. (2002),
+          stufenweise Ionisation über Xe<sup>+</sup> mit dem gemessenen
+          Querschnitt von Bell, Djurić und Dunn (1993). Eingetragen wird nur,
+          was ausdrücklich übernommen wird.
+        </li>
+        <li>
+          <b>Wandlage für Umladungsionen.</b> Ob ein Umladungsion die Wand
+          trifft, wird an derselben Wand geprüft, mit der der Feldlöser
+          rechnet. Bisher stand sie für diese Ionen um eine halbe Zellweite
+          versetzt; in Rechenzellen mit zwei Viertellöchern wirkte dadurch ein
+          Loch zu weit und das andere zu eng.
+        </li>
+        <li>
+          <b>Erodierte Wand in Bild und Auswertung.</b> Die Feldreiter zeichnen
+          die erodierte Kontur aus dem Füllstand der Zellen und damit die Wand,
+          mit der gerechnet wird; dünne Materialreste erscheinen nicht mehr als
+          Zähne. Die 3D-Ansicht zeigt zu einem Schnappschuss des
+          Lebensdauerlaufs dessen Wand und die Treffer der zugehörigen
+          Erosionsrunde. Der Radiusverlauf der Bohrung reicht über die ganze
+          Länge der Elektrode einschließlich der Stirnschichten.
+        </li>
+      </ul>
 
       <h3 style="margin-top:1.5rem">Neuerungen in Version 2.1.0</h3>
 

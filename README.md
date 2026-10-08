@@ -37,8 +37,8 @@ sind mehrere Megabyte gross und gehoeren nicht ins Repo.
 2. Kachel in `software/index.html` ergaenzen.
 3. Bilder nach `software/<name>/bilder/` legen, vorher verkleinern.
 
-Download-Dateien (Installationsprogramme) liegen bewusst **nicht** im
-Repo — sie werden direkt auf dem Server unter
+Download-Dateien (Installationsprogramme, Handbuch-PDF) liegen bewusst
+**nicht** im Repo — sie werden direkt auf dem Server unter
 `software/<name>/download/` abgelegt.
 
 ## Ausliefern
