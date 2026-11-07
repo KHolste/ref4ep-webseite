@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description"
+        content="FORCETRACE: Simulationsprogramm für die Wirkung von keV-Ionenstrahlen auf Körper und Vakuumanlagen – Kraft und Drehmoment, Wärmeeintrag, Zerstäubung, Messplanung an der Schubwaage, Neutralgasdichte, Umladung und Faraday-Cups.">
+  <title>FORCETRACE – Software – Ref4EP</title>
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+
+<body>
+  <a class="skip-link" href="#inhalt">Zum Inhalt springen</a>
+
+  <header>
+    <div class="nav">
+      <a class="brand" href="/" aria-label="Ref4EP-Startseite">
+        <span class="brand-mark">R4</span>
+        <span>Ref4EP</span>
+      </a>
+
+      <nav aria-label="Hauptnavigation">
+        <ul>
+          <li><a href="/#projekt">Projekt</a></li>
+          <li><a href="/#ziele">Ziele</a></li>
+          <li><a href="/#partner">Akteure</a></li>
+          <li><a href="/#arbeit">Arbeitsfelder</a></li>
+          <li><a href="/#daten">Daten &amp; Standards</a></li>
+          <li><a href="/software/" aria-current="page">Software</a></li>
+          <li><a href="/#kontakt">Kontakt</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <section class="subhero">
+    <div class="subhero-inner">
+      <p class="breadcrumb">
+        <a href="/">Start</a>
+        <span aria-hidden="true">/</span>
+        <a href="/software/">Software</a>
+        <span aria-hidden="true">/</span>
+        FORCETRACE
+      </p>
+
+      <h1>FORCETRACE</h1>
+
+      <p class="lead">
+        FORCETRACE berechnet, was ein divergenter Edelgas-Ionenstrahl im
+        keV-Bereich an Festkörpern und in einer Vakuumanlage bewirkt: Kraft
+        und Drehmoment auf einen beliebig angestellten Körper, Wärmeeintrag,
+        Zerstäubung und Abscheidung, die zu erwartende Anzeige einer
+        Schubwaage, die Neutralgasdichte in der Anlage sowie Umladung und
+        Streuung des Strahls bis zu den Faraday-Cups.
+      </p>
+
+      <div class="pills">
+        <span class="pill">Windows 10/11, 64 Bit</span>
+        <span class="pill">Version 0.9</span>
+        <span class="pill">Deutsch und Englisch</span>
+        <span class="pill">Grafische Oberfläche</span>
+        <span class="pill">Handbuch und Tutorial im Programm</span>
+        <span class="pill">Installation ohne Administratorrechte</span>
+        <span class="pill">Zugang auf Anfrage</span>
+      </div>
+    </div>
+  </section>
+
+  <main id="inhalt">
+
+    <section>
+      <div class="split">
+        <div class="panel">
+          <h2>Wozu FORCETRACE?</h2>
+
+          <p>
+            Entstanden ist das Programm für Laborversuche zum
+            Ion-Beam-Shepherd-Prinzip: Ein Ionenstrahl soll ein Objekt im
+            Orbit – etwa ein Stück Weltraumschrott – berührungslos anschieben.
+            Wie groß die übertragene Kraft ist, hängt von Form, Lage und
+            Werkstoff des Körpers ab, von der Energie und Aufweitung des
+            Strahls und davon, welche Teile des Körpers andere abschatten.
+            Im Labor wird diese Kraft mit einer Schubwaage gemessen; deren
+            Anzeige enthält zusätzlich das Drehmoment, Rauschen und
+            Wärmedrift.
+          </p>
+
+          <p>
+            Der zweite Einsatzbereich ist die Strahldiagnostik in großen
+            Vakuumanlagen wie JUMBO an der Justus-Liebig-Universität Gießen:
+            Wie hoch ist der Druck bei laufendem Triebwerk, was zeigen die
+            Messröhren, und wie viel Strom geht den Faraday-Cups durch
+            Umladung und Streuung im Restgas verloren? Andere Anlagen lassen
+            sich als Oberflächennetz einlesen.
+          </p>
+        </div>
+
+        <figure class="shot">
+          <img src="bilder/kraft-3d.jpg"
+               width="1600"
+               height="960"
+               alt="Hauptfenster von FORCETRACE: links die Einstellungen für Strahl und Körper, rechts die räumliche Ansicht eines Zylinders mit Platte im Ionenstrahl mit Stromdichte auf der Oberfläche sowie Kraft- und Drehmomentpfeil.">
+
+          <figcaption>
+            <b>Kraft und Drehmoment auf einen Körper</b>
+            Zylinder mit Platte aus Aluminium im Xe⁺-Strahl (50 mA, 1500 eV),
+            25° angestellt. Farbig ist die Stromdichte auf der Oberfläche;
+            oben stehen Kraft, Drehmoment, Trefferstrom und die erwartete
+            Anzeige der Schubwaage.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-heading">
+        <h2>Physikalische Modelle und Funktionen</h2>
+
+        <p>
+          Die Stoßphysik an der Oberfläche stammt aus vorab gerechneten
+          Tabellen des Binary-Collision-Codes RustBCA. Strahl, Geometrie,
+          Abschattung, Gastransport und Umladung rechnet FORCETRACE selbst.
+        </p>
+      </div>
+
+      <ul class="feature-list">
+        <li>
+          <b>Impulsübertrag aus RustBCA</b> – für jede Kombination aus Ion,
+          Werkstoff, Energie und Einfallswinkel die Impulsbilanz aus
+          rückgestreuten Ionen und zerstäubten Atomen, dazu
+          Zerstäubungsausbeute und Wärmeanteil. Zwischen den Stützstellen
+          wird interpoliert, außerhalb des gerechneten Bereichs nicht
+          extrapoliert.
+        </li>
+
+        <li>
+          <b>Strahlmodell</b> – Quellendurchmesser, Strom, Divergenz und
+          Profil (gaußförmig, gleichmäßig oder gemessen aus Datei); die
+          Verteilung am Ziel ist die Faltung aus Quellprofil und
+          Winkelverteilung, mit gekrümmten Bahnen für Laborabstände.
+        </li>
+
+        <li>
+          <b>Kraft, Drehmoment, Wärme und Abtrag</b> – Bilanz je Abtastpunkt
+          eines Dreiecksnetzes; Grundkörper (Platte, Würfel, Zylinder, Kegel,
+          Kugel, Blech) lassen sich zusammensetzen, Masse, Schwerpunkt und
+          Trägheitstensor werden mitgerechnet.
+        </li>
+
+        <li>
+          <b>Abschattung</b> – bei nicht konvexen und mehrteiligen Körpern
+          wird jeder Abtastpunkt längs seiner Strahlbahn zur Quelle
+          zurückverfolgt. Ohne Abschattung würde der Trefferstrom bei
+          verwinkelten Körpern um 20 bis 30 % überschätzt.
+        </li>
+
+        <li>
+          <b>Abscheidung</b> – Flug des zerstäubten Materials mit den
+          Austrittsverteilungen aus RustBCA, Haftwahrscheinlichkeit und
+          diffusem Rückprall; Ergebnis ist die Schichtrate je Fläche.
+        </li>
+
+        <li>
+          <b>Parameterstudien</b> – Abstand, Versatz, Anstellwinkel, Strom,
+          Divergenz oder Quellendurchmesser durchfahren, mit Kurven und
+          CSV-Export.
+        </li>
+
+        <li>
+          <b>Messplanung an der Schubwaage</b> – simulierter Messtakt mit
+          Regelkreis, Rauschen, Nullpunktwanderung und Wärmedrift,
+          ausgewertet wie im Labor; Fehlerbudget durch Variation der
+          unsicheren Eingangsgrößen und Suche nach dem günstigsten Takt.
+        </li>
+
+        <li>
+          <b>Ion Beam Shepherd im Orbit</b> – freie Bewegung eines Körpers
+          im Strahl sowie die Absenkung der Umlaufbahn über Wochen,
+          wahlweise gemittelt oder Schritt für Schritt mit Abplattung der
+          Erde, Luftwiderstand und Erdschatten.
+        </li>
+
+        <li>
+          <b>Neutralgas in der Anlage</b> – Testteilchen-Monte-Carlo in
+          freier Molekularströmung mit Triebwerk, Turbopumpen und
+          Kryoflächen; wahlweise Ausgasen und Leck. Gasstöße sind in der
+          Kammersimulation zuschaltbar.
+        </li>
+
+        <li>
+          <b>Messröhren und Restgas</b> – wahrer Druck und Anzeige von
+          Kaltkathoden- und Bayard-Alpert-Röhren je Gas; Massenspektrum mit
+          Isotopen, Doppelionisation und Bruchstücken.
+        </li>
+
+        <li>
+          <b>Umladung, Streuung und Faraday-Cups</b> – Umladung längs der
+          Strahlbahn aus der berechneten Gasdichte, elastische Streuung im
+          ZBL-Potenzial und die geometrische Akzeptanz der Cup-Blenden;
+          Ergebnis ist der Strom je Cup mit und ohne diese Verluste.
+        </li>
+
+        <li>
+          <b>Eigene Anlagen</b> – Einlesen als Oberflächennetz (gmsh, STL)
+          mit Beschreibung von Pumpen, Kryoflächen, Messröhren und Quelle;
+          Prüfung der Hülle auf Lücken mit Testteilchen.
+        </li>
+      </ul>
+    </section>
+
+    <section>
+      <div class="section-heading">
+        <h2>Kraftmessung im Labor</h2>
+
+        <p>
+          Beide Darstellungen beziehen sich auf den Aufbau aus dem ersten
+          Bild: Zylinder mit Platte, 750 mm vor der Quelle, Xe⁺-Strahl mit
+          50 mA und 1500 eV.
+        </p>
+      </div>
+
+      <div class="figure-grid">
+        <figure class="shot">
+          <img src="bilder/parameterstudie.jpg"
+               width="1600"
+               height="960"
+               alt="Reiter Durchfahren: Kraft in Messrichtung, Waagenanzeige und getroffener Anteil des Strahls über dem Anstellwinkel von minus 60 bis plus 60 Grad.">
+
+          <figcaption>
+            <b>Parameterstudie</b>
+            Kraft in Messrichtung, Waagenanzeige einschließlich des
+            Drehmomentanteils und getroffener Anteil des Strahls über dem
+            Anstellwinkel von −60° bis +60°.
+          </figcaption>
+        </figure>
+
+        <figure class="shot">
+          <img src="bilder/messplanung.jpg"
+               width="1600"
+               height="960"
+               alt="Reiter Messplanung: simulierter Messtakt einer Schubwaage mit 60 Sekunden Strahl an und 60 Sekunden aus über zehn Zyklen, daneben die Auswertung mit Unsicherheit.">
+
+          <figcaption>
+            <b>Messplanung an der Schubwaage</b>
+            Simulierter Messtakt mit Rauschen und Nullpunktwanderung,
+            ausgewertet wie im Labor. Das Programm nennt die Unsicherheit der
+            Kraft und wie stark sich die Waage höchstens erwärmen darf.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-heading">
+        <h2>Strahl und Gas in der Vakuumanlage</h2>
+
+        <p>
+          Die Anlage JUMBO ist aus den Konstruktionsdaten übernommen: Kammer,
+          Strahlfänger, Cup-Turm, Kryopanels und Turbopumpen. Die Zahlen in
+          den Bildern sind gerechnet, nicht gemessen.
+        </p>
+      </div>
+
+      <div class="figure-grid">
+        <figure class="shot">
+          <img src="bilder/anlage-jumbo.jpg"
+               width="1600"
+               height="960"
+               alt="Räumliche Ansicht der Vakuumanlage JUMBO im Längsschnitt mit Ionenstrahl, Strahlfänger und Cup-Turm; farbig die Stromdichte auf den getroffenen Flächen.">
+
+          <figcaption>
+            <b>Strahl in der Anlage</b>
+            Längsschnitt durch JUMBO mit Strahl, Cup-Turm und Strahlfänger;
+            farbig die Stromdichte auf den getroffenen Flächen. Jedes Bauteil
+            lässt sich herausnehmen.
+          </figcaption>
+        </figure>
+
+        <figure class="shot">
+          <img src="bilder/gasdruck-schnitt.jpg"
+               width="1600"
+               height="960"
+               alt="Reiter Gasdichte: Druck im Längsschnitt durch die Anlage bei laufendem Triebwerk, darüber die Anzeigen der Messröhren und der Anteil der Umladung.">
+
+          <figcaption>
+            <b>Druck bei laufendem Triebwerk</b>
+            Druckverteilung im Längsschnitt bei 10 sccm Xenon, dazu wahrer
+            Druck in der Kammermitte und die Anzeigen der Messröhren.
+          </figcaption>
+        </figure>
+
+        <figure class="shot">
+          <img src="bilder/faraday-cups.jpg"
+               width="1600"
+               height="960"
+               alt="Vorhersage der Stromdichte am Cup-Turm über der Lage, jeweils ohne Umladung, mit Umladung und zusätzlich mit elastischer Streuung.">
+
+          <figcaption>
+            <b>Vorhersage für die Faraday-Cups</b>
+            Stromdichte am Cup-Turm ohne Umladung, mit Umladung und
+            zusätzlich mit elastischer Streuung. Im gezeigten Lauf werden
+            1,6 bis 3,3 % des Stroms umgeladen.
+          </figcaption>
+        </figure>
+
+        <figure class="shot">
+          <img src="bilder/kammersimulation.jpg"
+               width="1400"
+               height="860"
+               alt="Fenster Kammersimulation: Druckverteilung in einer Beispielkammer mit Dosierventil, rechts die Einstellungen der Gasquelle.">
+
+          <figcaption>
+            <b>Kammersimulation</b>
+            Eine eigene Kammer mit Pumpen, Gaseinlass und Messröhre. Ein
+            geführter Rundgang im Programm führt Schritt für Schritt durch
+            dieses Beispiel.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-heading">
+        <h2>Ion Beam Shepherd</h2>
+
+        <p>
+          Beim Ion-Beam-Shepherd-Prinzip richtet ein Hirten-Satellit sein
+          Triebwerk auf ein Objekt und schiebt es mit dem Ionenstrahl an; ein
+          zweites Triebwerk gleicht den Rückstoß aus. FORCETRACE rechnet, wie
+          sich das Objekt dabei bewegt und dreht, ob der Hirte den Abstand
+          halten kann und wie lange die Absenkung der Umlaufbahn dauert.
+        </p>
+      </div>
+
+      <figure class="shot">
+        <video controls muted loop playsinline preload="metadata"
+               width="1280" height="768"
+               poster="bilder/ibs-film-standbild.jpg"
+               style="width:100%; height:auto; display:block">
+          <source src="bilder/ibs-film.mp4" type="video/mp4">
+          <img src="bilder/ibs-film-standbild.jpg" width="1280" height="768"
+               alt="Standbild der Simulation: schräg stehende Raketenoberstufe im Ionenstrahl mit Kraft- und Drehmomentpfeil.">
+        </video>
+
+        <figcaption>
+          <b>Simulation als Film: Raketenoberstufe im Strahl des Hirten</b>
+          Ausgediente Oberstufe (Aluminiumzylinder, 1440 kg, Ø 2,4 m,
+          6,5 m lang), 35° schräg, 0,6 m neben der Strahlachse und langsam
+          taumelnd, 15 m vor dem Hirten. Xe⁺-Strahl mit 3 A und 5 keV. Links
+          die Nahansicht mit der Stromdichte auf der Oberfläche, rechts die
+          Seitenansicht mit dem Strahlumriss, unten Abstand, Kraft, Drehrate
+          und Ausgleichsschub. Der Hirte regelt den Abstand auf 15 m; der
+          Strahl drückt das Objekt zur Achse zurück. 20 Minuten Simulation in
+          20 Sekunden.
+        </figcaption>
+      </figure>
+
+      <div class="figure-grid" style="margin-top:1.5rem">
+        <figure class="shot">
+          <img src="bilder/ibs-verlaeufe.jpg"
+               width="1600"
+               height="960"
+               alt="Fenster Freie Bewegung, Reiter Verläufe: Abstand, Querversatz, Geschwindigkeit, Drehrate, Drehwinkel, Kraft, Drehmoment, getroffener Stromanteil und Schub des Hirten über der Zeit.">
+
+          <figcaption>
+            <b>Freie Bewegung im Strahl</b>
+            Derselbe Lauf im Programmfenster: Abstand und Querversatz,
+            Geschwindigkeit und Drehrate, Kraft und Drehmoment, der
+            getroffene Anteil des Strahls und der Schub des Hirten über der
+            Zeit.
+          </figcaption>
+        </figure>
+
+        <figure class="shot">
+          <img src="bilder/bahnabsenkung.jpg"
+               width="1300"
+               height="820"
+               alt="Fenster Bahnabsenkung: Bahnhöhe und Treibstoffverbrauch des Hirten über der Zeit für eine Absenkung von 800 auf 300 Kilometer.">
+
+          <figcaption>
+            <b>Absenkung der Umlaufbahn</b>
+            Ein Objekt von 1440 kg wird mit 256 mN von 800 auf 300 km
+            abgesenkt; der Hirte braucht dafür 18 Tage und 15,6 kg
+            Treibstoff. Gerechnet wird wahlweise gemittelt über viele
+            Umläufe oder Schritt für Schritt mit Abplattung der Erde,
+            mitdrehender Atmosphäre und Erdschatten.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-heading">
+        <h2>Verifikation</h2>
+
+        <p>
+          Ein eingebauter Selbsttest prüft über 300 Fälle mit vorher
+          bekanntem Ergebnis. Die Stoßphysik selbst wird dabei nicht geprüft;
+          sie stammt aus RustBCA.
+        </p>
+      </div>
+
+      <ul class="feature-list">
+        <li>
+          <b>Geschlossene Formeln</b> – Kraft auf eine Platte im vollen
+          Strahl auf sechs Stellen, Drehmoment gegen einen von Hand
+          gerechneten Hebelarm, Volumen, Schwerpunkt und Trägheit der
+          Grundkörper.
+        </li>
+
+        <li>
+          <b>Erhaltungsgrößen</b> – der Strahl verliert keinen Strom, der
+          Wärmeeintrag bleibt unter der eingestrahlten Leistung, abgetragenes
+          und abgeschiedenes Material stimmen in einer geschlossenen Kammer
+          auf 0,01 % überein.
+        </li>
+
+        <li>
+          <b>Gasrechnung</b> – in einer Beispielkammer mit bekannter
+          Saugleistung liegt der gerechnete Druck innerhalb von 3 % am
+          erwarteten Wert Q/S; der Umladeanteil im homogenen Gas folgt σ·n·L.
+        </li>
+
+        <li>
+          <b>Vergleich mit SPARTA</b> – Gegenprobe der Gasrechnung mit dem
+          DSMC-Code SPARTA an Testgeometrien, auch mit Gasstößen.
+        </li>
+      </ul>
+    </section>
+
+    <section id="zugang">
+      <div class="download">
+        <div>
+          <h2>Zugang</h2>
+
+          <p>
+            FORCETRACE wird derzeit nicht öffentlich zum Download angeboten,
+            sondern an Kooperationspartner weitergegeben. Bei Interesse am
+            Programm, an einer gemeinsamen Rechnung oder an einer
+            Zusammenarbeit freuen wir uns über eine Nachricht.
+          </p>
+
+          <dl>
+            <dt>Version</dt>
+            <dd>0.9.0</dd>
+
+            <dt>Betriebssystem</dt>
+            <dd>Windows 10/11, 64 Bit</dd>
+
+            <dt>Sprache</dt>
+            <dd>Deutsch und Englisch, umschaltbar</dd>
+
+            <dt>Lieferumfang</dt>
+            <dd>Installationsprogramm mit Stoßdaten, Beispielaufbauten,
+                Handbuch, geführten Rundgängen und Diagnose</dd>
+
+            <dt>Entwicklung</dt>
+            <dd>Dr. Kristof Holste, Justus-Liebig-Universität Gießen</dd>
+
+            <dt>Kontakt</dt>
+            <dd><a href="mailto:Kristof.Holste@physik.jlug.de?subject=FORCETRACE">Kristof.Holste@physik.jlug.de</a></dd>
+          </dl>
+        </div>
+
+        <a class="button button-solid"
+           href="mailto:Kristof.Holste@physik.jlug.de?subject=FORCETRACE%20-%20Anfrage">
+          Anfrage per E-Mail
+        </a>
+      </div>
+
+      <p class="notice" style="margin-top:1rem">
+        <b>Nutzung und Lizenz.</b>
+        FORCETRACE ist für Forschung, Lehre und Ausbildung vorgesehen; jede
+        andere Nutzung bedarf einer vorherigen Absprache. Maßgeblich sind die
+        dem Installationspaket beigefügten Lizenzbedingungen.
+      </p>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <span>&copy; Ref4EP-Konsortium</span>
+      <span>Referenzdiagnostik für elektrische Raumfahrtantriebe</span>
+      <a href="/impressum.html">Impressum</a>
+      <a href="/datenschutz.html">Datenschutzerklärung</a>
+    </div>
+  </footer>
+</body>
+</html>
