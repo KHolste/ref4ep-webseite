@@ -19,6 +19,8 @@ software/iontrace/index.html   Produktseite IONTRACE
 software/iontrace/bilder/      Abbildungen, fuer das Web aufbereitet
 software/forcetrace/index.html Produktseite FORCETRACE (ohne Download, Zugang auf Anfrage)
 software/forcetrace/bilder/    Abbildungen und ein Film (MP4, 3 MB) aus dem Programm
+tutorials/index.html           Uebersicht des Bereichs Tutorials
+tutorials/<name>/index.html    eine interaktive Visualisierung (eigenstaendige HTML-Datei)
 ```
 
 Die Gestaltung lag frueher als `<style>`-Block in `index.html`. Sie

@@ -1,0 +1,1019 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Strompfade eines Ionentriebwerks im Labor</title>
+<style>
+html{color-scheme:light}
+body{margin:0}
+[hidden]{display:none!important}
+:root{
+  --bg:#e9edf1; --panel:#fbfcfd; --ink:#14202b; --muted:#566573; --line:#d2dae1; --stage:#ffffff; --grid:#e8edf1;
+  --accent:#0b6767; --accent-soft:#d9eeec; --on-accent:#ffffff;
+  --c-ion:#c96a12; --c-el:#1f5fc2; --c-cex:#1e9a2e; --c-pl:#e8892c; --c-cur:#b4291f; --c-wall:#5d6b78; --c-ntr:#8e4b4b; --c-thr:#3f7d64; --c-gr:#3a3f47; --c-warn:#b4291f; --c-cmp:#7a8794;
+  --f-ui:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-head:"IBM Plex Sans Condensed","IBM Plex Sans",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+  --f-math:"Source Serif 4",Cambria,"Times New Roman",serif;
+  --r:7px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0b1115; --panel:#121a20; --ink:#e1e8ed; --muted:#8d9eab; --line:#25323c; --stage:#0a0f13; --grid:#18222b;
+    --accent:#47b6ae; --accent-soft:#15302e; --on-accent:#06110f;
+    --c-ion:#ffae52; --c-el:#62a1ff; --c-cex:#7be06b; --c-pl:#ff9d45; --c-cur:#ff715f; --c-wall:#9aa9b5; --c-ntr:#d08a8a; --c-thr:#6cc19c; --c-gr:#59606b; --c-warn:#ff715f; --c-cmp:#8d9eab; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0b1115; --panel:#121a20; --ink:#e1e8ed; --muted:#8d9eab; --line:#25323c; --stage:#0a0f13; --grid:#18222b;
+  --accent:#47b6ae; --accent-soft:#15302e; --on-accent:#06110f;
+  --c-ion:#ffae52; --c-el:#62a1ff; --c-cex:#7be06b; --c-pl:#ff9d45; --c-cur:#ff715f; --c-wall:#9aa9b5; --c-ntr:#d08a8a; --c-thr:#6cc19c; --c-gr:#59606b; --c-warn:#ff715f; --c-cmp:#8d9eab; color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{background:var(--bg)}
+body{color:var(--ink);font-family:var(--f-ui);font-size:14px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 28px}
+.wrap{max-width:1760px;margin:0 auto}
+.r4bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding-top:10px;font-size:12.5px;color:var(--muted)}
+.r4bar a{color:var(--accent);text-decoration:none}.r4bar a:hover{text-decoration:underline}
+header.top{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 18px;padding-block:16px 12px}
+header.top h1{font-family:var(--f-head);font-weight:600;font-size:26px;letter-spacing:.01em;margin:0}
+header.top .sub{color:var(--muted);margin:0}
+header.top .units{margin-left:auto;font-size:12px;color:var(--muted);font-family:var(--f-mono)}
+.app{display:grid;gap:14px;grid-template-columns:286px minmax(0,1fr);grid-template-areas:"params stage";align-items:start}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r)}
+.params{grid-area:params;padding:12px 14px 14px}
+.stage{grid-area:stage;min-width:0;display:flex;flex-direction:column;gap:10px}
+/* Erklärung als Seitenleiste */
+.info{position:fixed;top:0;right:0;height:100vh;height:100dvh;width:min(460px,94vw);overflow-y:auto;z-index:50;padding:16px 20px 28px;border-radius:0;border-width:0 0 0 1px;
+  transform:translateX(102%);transition:transform .22s ease;box-shadow:-10px 0 30px rgba(0,0,0,.18)}
+.info.open{transform:none}
+.backdrop{position:fixed;inset:0;background:rgba(10,16,22,.28);z-index:40;opacity:0;pointer-events:none;transition:opacity .22s}
+.backdrop.open{opacity:1;pointer-events:auto}
+.info .ihead{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:6px}
+.info .x{all:unset;cursor:pointer;font-size:20px;line-height:1;padding:4px 8px;border-radius:6px;color:var(--muted)}
+.info .x:hover{color:var(--ink);background:var(--accent-soft)}
+.info .x:focus-visible{outline:2px solid var(--accent)}
+.info details{border-top:1px solid var(--line);padding:4px 0}
+.info details>summary{cursor:pointer;list-style:none;font-family:var(--f-head);font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);padding:8px 0;display:flex;align-items:center;gap:8px}
+.info details>summary::-webkit-details-marker{display:none}
+.info details>summary::before{content:"▸";font-size:11px;transition:transform .15s}
+.info details[open]>summary::before{transform:rotate(90deg)}
+.info details>summary:hover{color:var(--ink)}
+details.foot{margin-top:14px;max-width:120ch}
+details.foot>summary{cursor:pointer;font-size:12.5px;color:var(--muted);font-weight:500}
+details.foot>summary:hover{color:var(--ink)}
+details.foot p{font-size:12px;color:var(--muted);margin:8px 0 0}
+header.top .hbtn{margin-left:12px}
+.kzbox>summary{cursor:pointer;list-style:none;font-family:var(--f-head);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);padding:10px 14px;display:flex;align-items:center;gap:8px}
+.kzbox>summary::-webkit-details-marker{display:none}
+.kzbox>summary::before{content:"▸";font-size:11px;transition:transform .15s}
+.kzbox[open]>summary::before{transform:rotate(90deg)}
+.kzbox>summary:hover{color:var(--ink)}
+.kzgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:4px 26px;padding:0 14px 12px}
+.kzgrid dl.kz .gh{margin-top:0;padding-top:0;border-top:0}
+h2.lab{font-family:var(--f-head);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);margin:0 0 8px}
+.seg{display:grid;grid-template-columns:repeat(var(--n,3),1fr);border:1px solid var(--line);border-radius:6px;overflow:hidden;margin-bottom:12px}
+.seg button{all:unset;text-align:center;padding:6px 2px;cursor:pointer;font-size:12.5px;font-weight:500;line-height:1.2}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent)}
+.seg button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.ctl{display:flex;flex-direction:column;gap:2px;margin-bottom:11px}
+.ctl .row{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.ctl label{font-weight:500}
+.ctl label i,.m i{font-family:var(--f-math);font-style:italic;font-size:1.08em}
+.ctl output{white-space:nowrap;font-family:var(--f-mono);font-size:12.5px;font-variant-numeric:tabular-nums;color:var(--accent);min-width:52px;text-align:center}
+.ctl .hint{font-size:11.5px;color:var(--muted);line-height:1.35}
+input[type=range]{width:100%;accent-color:var(--accent);margin:2px 0}
+input[type=range]:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+input[type=range]:disabled{opacity:.4}
+.ctl .val{display:flex;align-items:center;gap:4px}
+.stp{all:unset;box-sizing:border-box;width:22px;height:22px;display:grid;place-items:center;border:1px solid var(--line);border-radius:5px;cursor:pointer;font-family:var(--f-mono);font-size:14px;line-height:1;color:var(--ink);user-select:none;touch-action:manipulation}
+.stp:hover{border-color:var(--accent);color:var(--accent)}
+.stp:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.chkrow{display:flex;gap:7px;align-items:flex-start;font-size:13px;margin-bottom:8px;cursor:pointer}
+.chkrow input{accent-color:var(--accent);margin-top:3px}
+.chkrow small{display:block;color:var(--muted);font-size:11.5px;line-height:1.35}
+.ctl-tip{font-size:11.5px;color:var(--muted);margin:2px 0 10px;line-height:1.4}
+.ctl-tip kbd{font-family:var(--f-mono);font-size:11px;border:1px solid var(--line);border-bottom-width:2px;border-radius:3px;padding:0 4px;background:var(--panel)}
+.sep{border:0;border-top:1px solid var(--line);margin:14px 0 12px}
+.btn{font:inherit;font-weight:500;font-size:13px;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:6px;padding:5px 10px;cursor:pointer}
+.btn:hover{border-color:var(--accent)}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+select.sel{font:inherit;font-size:13px;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:4px 6px;width:100%;margin-bottom:10px}
+dl.kz{display:grid;grid-template-columns:1fr auto;gap:3px 10px;margin:0;font-size:13px}
+dl.kz dt{color:var(--muted)}
+dl.kz dt i{font-family:var(--f-math);font-style:italic}
+dl.kz dd{margin:0;font-family:var(--f-mono);font-size:12.5px;font-variant-numeric:tabular-nums;text-align:right}
+dl.kz dd.hi{font-weight:600;color:var(--accent)}
+dl.kz dd.wr{font-weight:600;color:var(--c-warn)}
+dl.kz .gh{grid-column:1/-1;font-family:var(--f-head);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-top:8px;padding-top:6px;border-top:1px solid var(--line)}
+dl.kz .gh:first-child{margin-top:0;padding-top:0;border-top:0}
+.plotbox{border:1px solid var(--line);border-radius:var(--r);background:var(--stage);padding:10px 10px 8px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.vhead{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;justify-content:space-between}
+.vhead .seg{margin:0;min-width:280px;flex:0 1 420px}
+.vhead .tctl{display:flex;align-items:center;gap:8px;font-family:var(--f-mono);font-size:12.5px;color:var(--muted)}
+.status{font-size:13px;color:var(--muted);min-height:2.9em}
+.status b{color:var(--ink);font-weight:600}
+.status .warn{color:var(--c-warn);font-weight:600}
+.mapwrap{position:relative;height:clamp(480px,64vh,720px)}
+canvas.full{position:absolute;inset:0;width:100%;height:100%}
+#view:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--muted)}
+.legend span{display:flex;align-items:center;gap:5px}
+.legend svg{flex:none}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (max-width:1560px){.three{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.boxp{padding:10px 12px;min-width:0}
+.cwrap{position:relative;height:260px}
+.note{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.4}
+.note b{color:var(--ink);font-weight:600}
+.info h3{font-family:var(--f-head);font-weight:600;font-size:22px;line-height:1.2;margin:0 0 10px;text-wrap:balance}
+.info p{margin:0 0 10px;max-width:65ch}
+.info b{font-weight:600}
+.formula{font-family:var(--f-math);font-size:16.5px;line-height:1.55;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:10px 2px;margin:4px 0 12px;display:flex;flex-direction:column;gap:8px;overflow-x:auto}
+.formula i{font-style:italic}
+.formula small{font-family:var(--f-ui);font-size:12px;color:var(--muted)}
+.info h4{font-family:var(--f-head);font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:16px 0 6px}
+.tasks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.tasks li{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:start;padding:8px 0;border-top:1px solid var(--line)}
+.tasks li:first-child{border-top:0}
+.tasks li p{margin:0}
+.tasks .btn{font-size:12px;padding:3px 8px;white-space:nowrap}
+.m{font-family:var(--f-math)}
+h2.lab .nm{text-transform:none;font-family:var(--f-math);font-style:italic;font-size:13px;letter-spacing:0}
+.foot{font-size:12px;color:var(--muted);margin-top:14px;max-width:120ch}
+@media (max-width:1280px){
+  .app{grid-template-columns:270px minmax(0,1fr)}
+}
+@media (max-width:860px){
+  .app{grid-template-columns:minmax(0,1fr);grid-template-areas:"stage" "params"}
+  .two,.three{grid-template-columns:minmax(0,1fr)}
+  header.top .units{margin-left:0}
+  .vhead .seg{min-width:0;flex:1 1 100%}
+  .mapwrap{height:clamp(380px,70vh,520px)}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<nav class="r4bar" aria-label="Ref4EP"><a href="/">Ref4EP</a><span aria-hidden="true">/</span><a href="/tutorials/">Tutorials</a><span aria-hidden="true">/</span><span>Strompfade eines Ionentriebwerks</span></nav>
+<header class="top">
+  <h1>Strompfade eines Ionentriebwerks im Labor</h1>
+  <span class="units">Netzwerkmodell mit Randschichten</span>
+  <button class="btn hbtn" type="button" id="infoBtn" aria-controls="info" aria-expanded="false">Erklärung ▸</button>
+</header>
+
+<div class="app">
+  <section class="panel params" aria-label="Parameter">
+    <h2 class="lab">Szenario</h2>
+    <select class="sel" id="example" aria-label="Szenario wählen"></select>
+    <h2 class="lab">SSG gegenüber Kammererde</h2>
+    <div class="seg" style="--n:2" id="segMode" role="group" aria-label="Betriebsart">
+      <button type="button" data-m="float" title="Triebwerkssystem isoliert, SSG stellt sich frei ein">frei floatend</button><button type="button" data-m="bias" title="Spannungsquelle zwischen SSG und Erde">fest vorgegeben</button>
+    </div>
+    <div id="ctl-Vt"></div>
+    <h2 class="lab">Triebwerk</h2>
+    <div id="ctl-Ib"></div>
+    <div id="ctl-PHV"></div>
+    <div id="ctl-NHV"></div>
+    <div id="ctl-Q"></div>
+    <h2 class="lab">Neutralisator</h2>
+    <div id="ctl-Prf"></div>
+    <div id="ctl-TeN"></div>
+    <h2 class="lab">Kammer</h2>
+    <div id="ctl-lp"></div>
+    <div id="ctl-TeB"></div>
+    <div id="ctl-kap"></div>
+    <h2 class="lab">Darstellung</h2>
+    <div class="seg" style="--n:2" id="segDir" role="group" aria-label="Richtung der Stromanimation">
+      <button type="button" data-d="tech" title="positive Ladung, von + nach −">technische Stromrichtung</button><button type="button" data-d="el" title="Bewegungsrichtung der Elektronen">Elektronenfluss</button>
+    </div>
+    <div class="seg" style="--n:2" id="segProbe" role="group" aria-label="Anzeige der Wandsonden">
+      <button type="button" data-p="j" title="Nettostromdichte bei Wandpotential">Sonden: Stromdichte</button><button type="button" data-p="vf" title="Floating-Potential gegenüber der Wand">Sonden: Floating-Pot.</button>
+    </div>
+    <div class="seg" style="--n:2" id="segTempo" role="group" aria-label="Tempo der Teilchen">
+      <button type="button" data-t="sqrt" title="Geschwindigkeiten mit der Wurzel gestaucht, Reihenfolge bleibt">Tempo gestaucht</button><button type="button" data-t="real" title="Geschwindigkeiten im echten Verhältnis">Tempo maßstäblich</button>
+    </div>
+    <label class="chkrow"><input type="checkbox" id="o-cp" checked><span>Strompfad im Plasma<small>Triebwerk → Strahl → Neutralisator, bei vorgegebener SSG-Spannung mit Zweig zur Wand</small></span></label>
+    <label class="chkrow"><input type="checkbox" id="o-sh" checked><span>Randschichten zeigen<small>gestrichelt vor allen Flächen, die das Plasma berühren</small></span></label>
+    <label class="chkrow"><input type="checkbox" id="o-pot" checked><span>Potentiale beschriften<small>alle Werte gegen Kammererde</small></span></label>
+    <p class="ctl-tip">Ansicht anklicken, dann <kbd>Leertaste</kbd> = Pause, <kbd>F</kbd> = floatend/fest.</p>
+    <button class="btn" type="button" id="defaults">Standardwerte (100 mA, floatend)</button>
+  </section>
+
+  <main class="stage">
+    <div class="plotbox">
+      <div class="vhead">
+        <div class="status" id="status" aria-live="polite" style="flex:1 1 380px"></div>
+        <div class="tctl"><button class="btn" type="button" id="play" aria-label="Animation anhalten">❚❚ Pause</button></div>
+      </div>
+      <div class="mapwrap"><canvas class="full" id="view" tabindex="0" aria-label="Schaltbild: Vakuumkammer mit Triebwerk und Neutralisator, außen Netzgeräte, SSG-Schiene, Volt- und Amperemeter. Leertaste hält an."></canvas></div>
+      <div class="legend" id="legend"></div>
+    </div>
+    <div class="three">
+      <div class="panel boxp"><h2 class="lab">Potentiale im Umlauf <span class="nm">Erde → Plasma → Neutralisator → SSG → Erde</span></h2><div class="cwrap"><canvas class="full" id="pPot" aria-label="Potentialstufen entlang eines geschlossenen Umlaufs"></canvas></div><div class="note" id="nPot"></div></div>
+      <div class="panel boxp"><h2 class="lab">Strom zur Kammer <span class="nm">I<sub>W</sub>(V<sub>t</sub>)</span></h2><div class="cwrap"><canvas class="full" id="pIV" aria-label="Strom zwischen SSG und Erde über der SSG-Spannung"></canvas></div><div class="note" id="nIV"></div></div>
+      <div class="panel boxp"><h2 class="lab">Wandsonden <span class="nm">Seitenwand, Downstream- und Upstream-Wand</span></h2><div class="cwrap"><canvas class="full" id="pW" aria-label="Stromdichten oder Floating-Potential der Wandsonden entlang der abgewickelten Kammerwand"></canvas></div><div class="note" id="nW"></div></div>
+    </div>
+    <details class="panel kzbox" id="kzbox"><summary>Kennzahlen</summary><div class="kzgrid" id="kz"></div></details>
+  </main>
+
+  <aside class="panel info" id="info" aria-label="Erklärung" aria-hidden="true">
+    <div class="ihead"><h3>Wo fließt der Strom, und wo liegen die Potentiale?</h3><button class="x" type="button" id="infoClose" aria-label="Erklärung schließen">✕</button></div>
+    <details open><summary>Aufbau</summary>
+    <p>Triebwerk und Neutralisator stehen isoliert in der Kammer. Alle Netzgeräte beziehen sich auf eine gemeinsame Schiene, den <b>SSG</b> (secondary star ground). Er spielt die Rolle der Satellitenmasse. Gegen die <b>Kammererde</b> kann sich der SSG frei verschieben; ein Voltmeter misst die Spannung <i class="m">V</i><sub>t</sub> = <i class="m">Φ</i><sub>SSG</sub>.</p>
+    <p>Die PHV legt das Schirmgitter auf <i class="m">Φ</i><sub>SSG</sub> + <i class="m">U</i><sub>PHV</sub>, die NHV das Beschleunigungsgitter auf <i class="m">Φ</i><sub>SSG</sub> − <i class="m">U</i><sub>NHV</sub>. Der Ionenstrahl verlässt das System; der Neutralisator gibt Elektronen ab. Kollektor, Frontblende und Gehäuse des Neutralisators liegen alle auf SSG-Potential, jeweils über ein eigenes Amperemeter (<i class="m">I</i><sub>Koll</sub>, <i class="m">I</i><sub>Blende</sub>, <i class="m">I</i><sub>Geh,NTR</sub>). Die drei Leitungen laufen auf einen Knoten; ein weiteres Amperemeter misst den Gesamtstrom <i class="m">I</i><sub>NTR</sub> = <i class="m">I</i><sub>Koll</sub> + <i class="m">I</i><sub>Blende</sub> + <i class="m">I</i><sub>Geh,NTR</sub>.</p>
+    </details>
+    <details><summary>Randschichten</summary>
+    <p>Vor jeder Fläche im Plasma bildet sich eine Randschicht. Elektronen sind schneller als Ionen; das Plasma lädt sich gegenüber der Fläche positiv auf, bis die Ströme passen. Für eine Fläche, die netto keinen Strom aufnimmt (floatend), gilt für Xenon</p>
+    <div class="formula">
+      <div><i>U</i><sub>RS</sub> = <i>T</i><sub>e</sub> ln√(<i>m</i><sub>i</sub>/2π<i>m</i><sub>e</sub>) ≈ 5,3 <i>T</i><sub>e</sub> &nbsp;&nbsp;<small><i>T</i><sub>e</sub> in eV, <i>U</i> in V</small></div>
+      <div><i>I</i><sub>e</sub> = <i>I</i><sub>e,0</sub> exp(−<i>U</i><sub>RS</sub>/<i>T</i><sub>e</sub>), &nbsp; <i>I</i><sub>i</sub> = <i>I</i><sub>i,sat</sub></div>
+    </div>
+    </details>
+    <details><summary>Der Neutralisator</summary>
+    <p>Das RF-Plasma im Neutralisator gibt Elektronen durch die Blende ab. Damit es neutral bleibt, muss es dieselbe Ladung als Ionenstrom an Kollektor und Frontblende abgeben. Die Elektronenabgabe ist deshalb durch den Ionen-Sättigungsstrom <i class="m">I</i><sub>i,sat</sub> begrenzt, und der wächst mit der RF-Leistung:</p>
+    <div class="formula">
+      <div><i>I</i><sub>A</sub> = <i>I</i><sub>i,sat</sub> − <i>I</i><sub>e,0</sub> e<sup>−<i>U</i><sub>RS,NTR</sub>/<i>T</i><sub>e,N</sub></sup> ≤ <i>I</i><sub>i,sat</sub></div>
+      <div><i>I</i><sub>em</sub> = <i>I</i><sub>0</sub> exp(<i>U</i><sub>K</sub>/<i>T</i><sub>K</sub>), &nbsp; <i>U</i><sub>K</sub> = <i>Φ</i><sub>P,Strahl</sub> − <i>Φ</i><sub>P,NTR</sub> <small>Kopplungsspannung</small></div>
+    </div>
+    </details>
+    <details><summary>Strom- und Spannungsbilanz</summary>
+    <p>Am SSG-Knoten gilt die Knotenregel. Floatet der SSG, fließt kein Strom zur Erde, <i class="m">I</i><sub>W</sub> = 0, und das System muss netto so viele Elektronen abgeben, wie Ionen hinausgehen:</p>
+    <div class="formula">
+      <div><i>I</i><sub>NTR</sub> + <i>I</i><sub>TW</sub> + <i>I</i><sub>W</sub> = 0 &nbsp;&nbsp;<small>Knotenregel an der SSG-Schiene</small></div>
+      <div>Σ<i>I</i><sub>Seg</sub> = <i>I</i><sub>Erde</sub> = <i>I</i><sub>W</sub> &nbsp;&nbsp;<small>Erdschiene und Erde</small></div>
+      <div>−<i>I</i><sub>TW</sub> = <i>I</i><sub>NTR</sub> + Σ<i>I</i><sub>Seg</sub> &nbsp;&nbsp;<small>Plasma: was das Triebwerk aussendet, geht in Neutralisator und Wand</small></div>
+      <div><i>I</i><sub>NTR</sub> = <i>I</i><sub>Koll</sub> + <i>I</i><sub>Blende</sub> + <i>I</i><sub>Geh,NTR</sub>, &nbsp; <i>I</i><sub>TW</sub> = <i>I</i><sub>NHV</sub> + <i>I</i><sub>Geh,TW</sub> − <i>I</i><sub>PHV</sub></div>
+      <div><i>I</i><sub>W</sub> = 0 &nbsp;⇒&nbsp; <i>I</i><sub>NTR</sub> = −<i>I</i><sub>TW</sub> ≈ <i>I</i><sub>Strahl</sub> &nbsp;&nbsp;<small>die PHV- und NHV-Ströme werden auf der SSG-Seite der Netzgeräte gemessen</small></div>
+    </div>
+    <p>Läuft man einmal im Kreis, Erde → Strahlplasma → Neutralisator-Plasma → Kollektor (SSG) → Voltmeter → Erde, summieren sich die Spannungen zu null (Maschenregel):</p>
+    <div class="formula">
+      <div><i>V</i><sub>t</sub> = <i>Φ</i><sub>SSG</sub> = <i>U</i><sub>RS,Wand</sub> − <i>U</i><sub>K</sub> − <i>U</i><sub>RS,NTR</sub></div>
+    </div>
+    <p>Gibt man <i class="m">V</i><sub>t</sub> negativer vor, als sich der SSG von selbst einstellen würde, muss der Neutralisator mehr Elektronen liefern, als der Strahl braucht. Der Überschuss geht zur Kammerwand und fließt über die Spannungsquelle zurück: <i class="m">I</i><sub>W</sub> &lt; 0. Das ist der Kammereffekt, den es im Orbit nicht gibt.</p>
+    </details>
+    <details><summary>Wandsonden und Wandsegmente</summary>
+    <p>Die Kammerwand ist in zehn gegeneinander isolierte Segmente geteilt: oben und unten je vier, dazu Rück- und Upstream-Wand. Jedes Segment liegt über ein eigenes Amperemeter an der Erdschiene. Die Summe aller Segmentströme ist der Strom <i class="m">I</i><sub>W</sub> zwischen Kammer und SSG; die einzelnen Werte zeigen, <b>wo</b> Ionen und Elektronen ankommen. Auch bei <i class="m">I</i><sub>W</sub> = 0 können einzelne Segmente Strom führen, der über die Erdschiene zu anderen Segmenten fließt.</p>
+    <p>Planare Langmuir-Sonden in der Wand messen die lokale Stromdichte bei Wandpotential oder ihr Floating-Potential. Die Ionen kommen im Modell aus dem Strahl (Downstream-Wand) und als CEX-Ionen (Seitenwände). Wie sich die Elektronen verteilen, ist offen: von gleichmäßig (isotherme Boltzmann-Elektronen, gleiche Stromdichte überall) bis lokal ambipolar (jede Stelle stromlos). Der Regler „Elektronen an der Wand“ mischt beide Grenzfälle.</p>
+    <div class="formula">
+      <div><i>j</i><sub>e</sub>(<i>s</i>) = <i>I</i><sub>e,Wand</sub> [ (1 − <i>κ</i>)/<i>A</i><sub>Wand</sub> + <i>κ</i> <i>j</i><sub>i</sub>(<i>s</i>)/<i>I</i><sub>i,Wand</sub> ]</div>
+      <div><i>V</i><sub>f</sub> = <i>T</i><sub>e</sub> ln(<i>j</i><sub>i</sub>/<i>j</i><sub>e</sub>) &nbsp;&nbsp;<small>gegenüber der Wand</small></div>
+    </div>
+    </details>
+    <details><summary>CEX-Ionen</summary>
+    <p>Trifft ein schnelles Strahlion ein langsames Xenon-Atom, kann es dessen Elektron übernehmen (charge exchange). Übrig bleiben ein schnelles Neutralteilchen und ein <b>langsames Ion</b>, das dem Feld des Plasmas folgt: zur Wand oder, wenn es nahe am Gitter entsteht, zurück aufs Beschleunigungsgitter. Das Neutralgas stammt aus dem Restgas der Kammer und aus dem unionisierten Gas des Triebwerks, das direkt vor dem Gitter am dichtesten ist:</p>
+    <div class="formula">
+      <div>d<i>I</i><sub>CEX</sub>/d<i>z</i> = <i>I</i><sub>Strahl</sub> <i>σ</i>(<i>E</i>) (<i>n</i><sub>Rest</sub> + <i>n</i><sub>T</sub>(<i>z</i>))</div>
+    </div>
+    </details>
+  </aside>
+</div>
+<div class="backdrop" id="backdrop"></div>
+<details class="foot"><summary>Modellannahmen und Quellen</summary><p>Modell: Netzwerkmodell aus wenigen konzentrierten Elementen, keine Plasmasimulation. Unbekannte sind das Potential des Strahlplasmas <i class="m">Φ</i><sub>P,Strahl</sub>, das des Neutralisator-Plasmas <i class="m">Φ</i><sub>P,NTR</sub> und, im floatenden Betrieb, <i class="m">Φ</i><sub>SSG</sub>. Das Strahlplasma steht für das ganze Plasma vor der Kammerwand; der Strahl endet an der geerdeten Downstream-Wand der Kammer; der Potentialberg dicht vor den Gittern (dort einige zehn Volt höher) und das Abklingen zur Wand hin werden nicht aufgelöst. Elektronenstrom zur Wand <i class="m">I</i><sub>e</sub> = <i class="m">k</i>(<i class="m">I</i><sub>Strahl</sub> + <i class="m">I</i><sub>i,NTR</sub>)·exp(−<i class="m">Φ</i><sub>P,Strahl</sub>/<i class="m">T</i><sub>e,B</sub>), d. h. die Plasmadichte vor der Wand wächst mit dem Strahlstrom. Neutralisator: Ionen-Sättigungsstrom <i class="m">I</i><sub>i,sat</sub> ∝ RF-Leistung, Elektronen-Sättigungsstrom an den Elektroden 196·<i class="m">I</i><sub>i,sat</sub> (gleiche Fläche, √(<i class="m">m</i><sub>i</sub>/2π<i class="m">m</i><sub>e</sub>) für Xenon), 1 % des Ionenstroms tritt durch die Blende aus. Die Aufteilung des Kollektorstroms auf Kollektor (80 %) und Frontblende (20 %) ist angenommen. Elektronenabgabe durch die Blende <i class="m">I</i><sub>em</sub> = <i class="m">I</i><sub>0</sub> exp(<i class="m">U</i><sub>K</sub>/<i class="m">T</i><sub>K</sub>). CEX-Ionen: Querschnitt Xe⁺ + Xe nach Miller et al. (J. Appl. Phys. 91, 984 (2002)) bei der Ionenenergie e·<i class="m">U</i><sub>PHV</sub>; Neutralgas aus Restgas (300 K, homogen) und unionisiertem Triebwerksgas (<i class="m">Q</i>·71,8 mA/sccm − <i class="m">I</i><sub>Strahl</sub>, 400 K, freie Effusion aus einer Scheibe mit <i class="m">R</i> = 4,5 cm, Dichte auf der Achse); das Gas des Neutralisators wird nicht berücksichtigt. Strahlweg bis zur Downstream-Wand 4 m, Abschwächung des Strahls berücksichtigt. Von den CEX-Ionen aus den ersten 10 cm fliegt die Hälfte zum Triebwerk zurück (70 % davon aufs Beschleunigungsgitter), alle anderen zur Wand. Potential im Strahl: Boltzmann-Elektronen mit <i class="m">T</i><sub>e,B</sub>, Strahlradius <i class="m">R</i> + <i class="m">z</i> tan 15°, ab <i class="m">z</i><sub>ref</sub> = 1,5 m gleich <i class="m">Φ</i><sub>P,Strahl</sub>; das CEX-Ion entsteht in Ruhe und trifft die Wand mit e·<i class="m">Φ</i>(<i class="m">z</i>); Stöße unterwegs und die radiale Lage im Strahl werden vernachlässigt, ebenso die Rückwirkung der CEX-Ionen auf Dichte und Potential. Parameter: <i class="m">T</i><sub>e,N</sub> = 4 eV, <i class="m">T</i><sub>e,B</sub> = 6 eV, <i class="m">I</i><sub>i,sat</sub> = 242 mA bei 18 W, <i class="m">I</i><sub>0</sub> = 33 mA, <i class="m">T</i><sub>K</sub> = 8,8 V, <i class="m">k</i> = 37. Damit stellt sich der SSG floatend bei 100 mA Strahlstrom auf etwa −11 V ein, bei 200 mA auf etwa −20 V. Alle gezeigten Potentiale und Ströme sind Modellwerte. Zwischen SSG und Erde liegen Zenerdioden (±50 V) als Überspannungsschutz. Alle Strompfade zum SSG sind mit Amperemetern versehen; PHV- und NHV-Strom werden auf der SSG-Seite der Netzgeräte gemessen. Der Strahlstrom ist als <i class="m">I</i><sub>Strahl</sub> = <i class="m">I</i><sub>PHV</sub> − <i class="m">I</i><sub>NHV</sub> geregelt; ausgesandt werden also <i class="m">I</i><sub>PHV</sub> an Ionen, von denen die zurückkehrenden CEX-Ionen <i class="m">I</i><sub>NHV</sub> + <i class="m">I</i><sub>Geh</sub> wieder ankommen. Wand: Zylinder 2,6 m × 5,5 m, Triebwerk 1,5 m vor der Upstream-Wand, im Bild nicht maßstäblich (Nahbereich gedehnt); zehn Segmente, 38 Wandsonden im gezeigten Schnitt (im ganzen Umfang entsprechend mehr). Strahlionen gaußförmig auf der Downstream-Wand (σ = halber Strahlradius bei 4 m), CEX-Ionen radial zur Seitenwand (Streuung 0,25 m in z), Ionen aus dem Neutralisator auf die obere Wand nahe dem Neutralisator; Elektronen nach dem Mischungsansatz mit <i class="m">κ</i>. die Aufteilung des Gehäusestroms auf Neutralisator (30 %) und Triebwerk (70 %) ist angenommen. Animation: Jeder Punkt steht für dieselbe Ladung, die Zahl der startenden Punkte ist also proportional zum jeweiligen Strom. Geschwindigkeiten: Strahlionen √(2e<i class="m">U</i><sub>PHV</sub>/<i class="m">m</i>), Elektronen mit ihrer Netto-Drift, gleich der Geschwindigkeit der Strahlionen (im neutralisierten Strahl bewegen sie sich im Mittel mit den Ionen; ihre thermische Geschwindigkeit bei <i class="m">T</i><sub>e,N</sub> ist etwa 35-mal größer, aber ungeordnet und nur als Zittern angedeutet), CEX-Ionen √(2e<i class="m">Φ</i><sub>P,Strahl</sub>/<i class="m">m</i>), Ionen aus dem Neutralisator √(2e<i class="m">Φ</i><sub>P,NTR</sub>/<i class="m">m</i>); „gestaucht“ zeigt sie im Verhältnis √(<i class="m">v</i>/<i class="m">v</i><sub>Strahl</sub>). Die Zeit läuft stark verlangsamt; die Wege sind schematisch (Nahbereich gedehnt), Elektronen treffen die Wand nach der Elektronenstromdichte des Wandmodells.</p></details>
+</div>
+
+<script>
+/*CORE-START*/
+const KB=1.380649e-23;
+const QE=1.602176634e-19,MXE=131.29*1.66054e-27;
+const MP={RM:196,I0:0.0333,TK:8.84,KEW:37.3,AH:0.005,FACC:0.7,IIS_W:0.242/18,IIO:0.01,TEA:2,ZEN:50,FCOLL:0.8,FNH:0.3,
+  QA:0.07175,   // 1 sccm Xenon als Strom: 4,48·10¹⁷ Atome/s · e
+  RG:0.045,     // Radius der Strahlaustrittsfläche (9 cm Lochfeld)
+  TNT:400,      // Temperatur des Gases aus dem Triebwerk
+  LB:4.0,       // Strahlweg bis zur hinteren Kammerwand
+  ZB:0.10,PBACK:0.5, // CEX-Ionen aus den ersten 10 cm: die Hälfte fliegt zum Triebwerk zurück
+  TANA:Math.tan(15*Math.PI/180),ZREF:1.5, // Strahldivergenz und Ort, ab dem das Strahlplasma als homogen gilt
+  NZ:240};
+// CEX-Querschnitt Xe⁺ + Xe nach Miller et al. (2002), E in eV
+const sigCEX=E=>Math.max(1e-20,(87.3-13.6*Math.log10(Math.max(E,10)))*1e-20);
+// Potential im Strahl: Boltzmann-Elektronen, Dichte ~ 1/Strahlradius²
+function phiZ(z,phiB,Te){return z>=MP.ZREF?phiB:phiB+2*Te*Math.log((MP.RG+MP.ZREF*MP.TANA)/(MP.RG+z*MP.TANA));}
+// p: Ib [A], PHV, NHV [V], Prf [W], pm [mbar], mode 'float'|'bias', Vt [V], TeN, TeB [eV]
+function model(p){
+  const Iis=MP.IIS_W*p.Prf,Iio=MP.IIO*Iis,Ib=Math.max(0,p.Ib);
+  // Neutralgas: Restgas der Kammer und unionisiertes Gas aus dem Triebwerk (freie Effusion aus der Gitterfläche)
+  const n0=p.pm*100/(KB*300);
+  const Ithr=Math.max(0,p.Q*MP.QA-Ib),eta=p.Q>0?Ib/(p.Q*MP.QA):0;
+  const vbar=Math.sqrt(8*KB*MP.TNT/(Math.PI*MXE)),nT0=4*(Ithr/QE)/(vbar*Math.PI*MP.RG*MP.RG);
+  const colT=(z1,z2)=>nT0/2*((z2-Math.hypot(z2,MP.RG))-(z1-Math.hypot(z1,MP.RG)));
+  const sig=sigCEX(p.PHV);
+  const cz=[],cT=[],cB=[];let Ncum=0,Icex=0,IcexT=0,Icl=0;
+  for(let k=0;k<MP.NZ;k++){const z1=MP.LB*(k/MP.NZ)**2,z2=MP.LB*((k+1)/MP.NZ)**2;
+    const dT=colT(z1,z2),dB=n0*(z2-z1),att=Math.exp(-sig*Ncum),pr=1-Math.exp(-sig*(dT+dB));
+    const dI=Ib*att*pr,fT=(dT+dB)>0?dT/(dT+dB):0;Ncum+=dT+dB;
+    cz.push(0.5*(z1+z2));cT.push(dI*fT);cB.push(dI*(1-fT));Icex+=dI;IcexT+=dI*fT;if(0.5*(z1+z2)<MP.ZB)Icl+=dI;}
+  const fcex=Ib>0?Icex/Ib:0,Ics=MP.PBACK*Icl,Iacc=MP.FACC*Ics,Ich=Ics-Iacc;
+  const Iamb=Ib+Iio,Te=(Ib*p.TeB+Iio*MP.TEA)/Iamb,Iew0=MP.KEW*Iamb,Imax=Iis+Iio;
+  const Ub=Iew=>Te*Math.log(Iew0/Iew);
+  const Urs=I=>p.TeN*Math.log(MP.RM*Iis/Math.max(1e-15,Iis-(I-Iio)));
+  const Uk=I=>MP.TK*Math.log(I/MP.I0);
+  const Ieh=dU=>MP.AH*Iew0*Math.exp(-Math.max(0,dU)/Te);
+  // Elektronen zur Wand bei gegebener Emission I und SSG-Potential phiS
+  function wall(I,phiS){let Iew=I;for(let k=0;k<6;k++){const pb=Ub(Math.max(Iew,1e-15));Iew=Math.max(I-Ieh(pb-phiS),1e-15);}return {Iew,phiB:Ub(Iew)};}
+  function bias(Vt){
+    const f=I=>{const w=wall(I,Vt);return w.phiB-Vt-Urs(I)-Uk(I);};
+    let lo=Math.log(1e-9),hi=Math.log(Imax*(1-1e-9));
+    if(f(Math.exp(lo))<0)hi=lo;else if(f(Math.exp(hi))>0)lo=hi;
+    for(let k=0;k<90&&hi-lo>1e-12;k++){const m=0.5*(lo+hi);if(f(Math.exp(m))>0)lo=m;else hi=m;}
+    return Math.exp(0.5*(lo+hi));}
+  let mode=p.mode,Vt=p.Vt,zener=0,I,phiS,phiB,Iew,ok=true;
+  if(mode==='float'){
+    Iew=Iamb-Ich;phiB=Ub(Iew);phiS=0;
+    for(let k=0;k<30;k++){I=Iew+Ieh(phiB-phiS);if(I>=Imax){ok=false;break;}phiS=phiB-Uk(I)-Urs(I);}
+    if(!ok||phiS<-MP.ZEN){zener=-1;}else if(phiS>MP.ZEN){zener=1;}
+    if(zener){Vt=zener*MP.ZEN;I=bias(Vt);const w=wall(I,Vt);Iew=w.Iew;phiB=w.phiB;phiS=Vt;}
+  }else{
+    I=bias(Vt);const w=wall(I,Vt);Iew=w.Iew;phiB=w.phiB;phiS=Vt;
+  }
+  const IehV=Math.max(0,I-Iew),URS=Urs(I),UK=Uk(I),phiN=phiS+URS;
+  const IW=Iamb-Ich-Iew; // Nettostrom ins Plasma der Kammerwand; Ionen zur Wand = I_Schirm + I_i,NTR − I_CEX,zurück = I_Strahl + I_i,NTR − I_Geh, positiv = zur Wand
+  const IA=I-Iio,IS=Ib+Iacc,Ihous=Ich-IehV;
+  // CEX-Ionen zur Wand: Energie beim Auftreffen = e·Φ(z) am Entstehungsort (Wand auf 0 V)
+  const cE=cz.map(z=>Ib>0?phiZ(z,phiB,Te):phiB),cW=cz.map((z,k)=>(cT[k]+cB[k])*(z<MP.ZB?1-MP.PBACK:1));
+  return {Ib,Iis,Iio,Imax,fcex,Icex,IcexT,Ics,Iacc,Ich,Te,Iew0,Iem:I,Iew,Ieh:IehV,IA,IS,Ihous,IW,phiS,phiB,phiN,URS,UK,
+    eta,Ithr,nT0,sig,cz,cT,cB,cE,cW,phiPk:Ib>0?phiZ(0,phiB,Te):phiB,
+    Uw:phiB,phiScr:phiS+p.PHV,phiAcc:phiS-p.NHV,sat:I/Imax,zener,mode,Vt,
+    IWsrc:(mode==='bias'&&!zener)?IW:0,IZ:zener?IW:0,n0};
+}
+// Verteilung der Ströme auf die Kammerwand (Zylinder 2,6 m × 5,5 m, Triebwerk bei z = 0, Upstream-Wand bei −1,5 m, Downstream-Wand bei 4 m)
+// kap = 0: Elektronenstromdichte überall gleich (isotherme Boltzmann-Elektronen); kap = 1: Elektronen folgen den Ionen (lokal ambipolar)
+const WG={R0:1.3,ZF:-1.5,D:2.6,NS:110,NR:52,SZ:0.25};
+function wallModel(r,kap){
+  const R0=WG.R0,ZF=WG.ZF,ZE=MP.LB,D=WG.D,NS=WG.NS,NR=WG.NR;
+  const G=(x,s)=>Math.exp(-0.5*(x/s)**2)/(s*Math.sqrt(2*Math.PI));
+  const dz=(ZE-ZF)/NS,dr=2*R0/NR,dAs=Math.PI*D/2*dz,dAd=y=>Math.PI*Math.abs(y)*dr;
+  // Ionen: CEX radial zur Seitenwand (beide Hälften), Ionen aus dem Neutralisator oben, Strahlionen gaußförmig auf die Downstream-Wand
+  const side=[];
+  for(let i=0;i<NS;i++){const z=ZF+dz*(i+0.5);let a=0;for(let k=0;k<r.cz.length;k++){if(r.cW[k]>0)a+=r.cW[k]*G(z-r.cz[k],WG.SZ);}
+    const jc=a/(Math.PI*D),jn=r.Iio*G(z-0.3,0.4)/(Math.PI*D/2);side.push({z,top:jc+jn,bot:jc});}
+  const sb=(MP.RG+MP.LB*MP.TANA)/2,Ibw=Math.max(0,r.Ib+r.Iacc-r.Icex);
+  const end=[],front=[];
+  for(let i=0;i<NR;i++){const y=R0-dr*(i+0.5);end.push({r:y,j:Ibw*Math.exp(-y*y/(2*sb*sb))});front.push({r:-y,j:0});}
+  // auf die Modellströme normieren (Ränder der Gaußverteilungen)
+  let sS=0,sE=0;side.forEach(q=>sS+=(q.top+q.bot)*dAs);end.forEach(q=>sE+=q.j*dAd(q.r));
+  const tS=r.cW.reduce((a,b)=>a+b,0)+r.Iio,fS=sS>0?tS/sS:0,fE=sE>0?Ibw/sE:0;
+  side.forEach(q=>{q.top*=fS;q.bot*=fS;});end.forEach(q=>q.j*=fE);
+  const Ii=tS+Ibw,Atot=Math.PI*D*(ZE-ZF)+2*Math.PI*R0*R0;
+  const je=ji=>r.Iew*((1-kap)/Atot+(Ii>0?kap*ji/Ii:0));
+  // Segmente: oben A–D (von vorn nach hinten), Downstream-Wand, unten D–A, Upstream-Wand
+  const zb=[0,1,2,3,4].map(k=>ZF+(ZE-ZF)*k/4),seg=[];
+  'ABCD'.split('').forEach((n,s)=>seg.push({wall:'top',name:'oben '+n,z0:zb[s],z1:zb[s+1],I:0}));
+  seg.push({wall:'end',name:'Downstream-Wand',I:0});
+  'DCBA'.split('').forEach((n,s)=>seg.push({wall:'bot',name:'unten '+n,z0:zb[3-s],z1:zb[4-s],I:0}));
+  seg.push({wall:'front',name:'Upstream-Wand',I:0});
+  const segOf=(w,z)=>seg.find(g=>g.wall===w&&z>=g.z0&&z<g.z1+1e-9);
+  side.forEach(q=>{segOf('top',q.z).I+=(q.top-je(q.top))*dAs;segOf('bot',q.z).I+=(q.bot-je(q.bot))*dAs;});
+  end.forEach(q=>{seg[4].I+=(q.j-je(q.j))*dAd(q.r);});
+  front.forEach(q=>{seg[9].I+=(q.j-je(q.j))*dAd(q.r);});
+  // Profil entlang der abgewickelten Wand: oben (upstream→downstream), Downstream-Wand (oben→unten), unten (downstream→upstream), Upstream-Wand (unten→oben)
+  const prof=[];let s0=0;
+  side.forEach(q=>prof.push({s:q.z-ZF,ji:q.top,je:je(q.top)}));s0=ZE-ZF;
+  end.forEach(q=>prof.push({s:s0+(R0-q.r),ji:q.j,je:je(q.j)}));s0+=2*R0;
+  for(let i=side.length-1;i>=0;i--){const q=side[i];prof.push({s:s0+(ZE-q.z),ji:q.bot,je:je(q.bot)});}s0+=ZE-ZF;
+  front.forEach(q=>prof.push({s:s0+(q.r+R0),ji:q.j,je:je(q.j)}));s0+=2*R0;
+  const secs=[0,ZE-ZF,ZE-ZF+2*R0,2*(ZE-ZF)+2*R0,s0];
+  // Wandsonden (planar, auf Wandpotential oder floatend)
+  const probes=[];
+  const add=(wall,pos,s)=>{let b=prof[0];for(const q of prof)if(Math.abs(q.s-s)<Math.abs(b.s-s))b=q;
+    const vf=r.Te*Math.log(Math.max(b.ji,1e-12)/Math.max(b.je,1e-12));probes.push({wall,pos,s,ji:b.ji,je:b.je,vf:Math.max(-8*r.Te,vf)});};
+  for(let i=0;i<14;i++){const z=ZF+0.2+(ZE-ZF-0.4)*i/13;add('top',z,z-ZF);}
+  for(let i=0;i<7;i++){const y=1.1-2.2*i/6;add('end',y,secs[1]+(R0-y));}
+  for(let i=0;i<14;i++){const z=ZE-0.2-(ZE-ZF-0.4)*i/13;add('bot',z,secs[2]+(ZE-z));}
+  for(let i=0;i<3;i++){const y=-0.9+0.9*i;add('front',y,secs[3]+(y+R0));}
+  return {seg,prof,probes,secs,Ii,Atot,sum:seg.reduce((a,g)=>a+g.I,0)};
+}
+/*CORE-END*/
+</script>
+<script>
+const $=s=>document.querySelector(s);
+const NF=(d)=>new Intl.NumberFormat('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d});
+const fx=(x,dg)=>NF(dg).format(x).replace('-','−');
+const fS=(x,dg=1)=>(x>0.0000001?'+':'')+fx(x,dg);
+const fmA=(I,dg=1)=>fx(I*1e3,dg)+' mA';
+const fV=(U,dg=1)=>fS(U,dg)+' V';
+const SUP={'-':'⁻','0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+const sup=k=>String(k).split('').map(c=>SUP[c]).join('');
+function sci(x,d=1){if(!isFinite(x))return '—';if(x===0)return '0';let e=Math.floor(Math.log10(Math.abs(x))+1e-9);let m=x/Math.pow(10,e);if(Math.abs(+m.toFixed(d))>=10){m/=10;e++;}return (NF(d).format(m)+'·10'+sup(e)).replace('-','−');}
+
+/* ----- Szenarien ----- */
+const EX=[
+  {id:'o1f',name:'100 mA, floatend',mode:'float',Vt:-11,Ib:100,PHV:1000,NHV:150,Prf:18,lp:Math.log10(4e-6),TeN:4,TeB:6,Q:2.4},
+  {id:'o1b',name:'100 mA, SSG auf −30 V gelegt',mode:'bias',Vt:-30,Ib:100,PHV:1000,NHV:150,Prf:18,lp:Math.log10(4e-6),TeN:4,TeB:6,Q:2.4},
+  {id:'o2f',name:'200 mA, floatend',mode:'float',Vt:-20,Ib:200,PHV:1200,NHV:150,Prf:21.4,lp:Math.log10(4e-6),TeN:4,TeB:6,Q:5.3},
+  {id:'o1p',name:'100 mA, floatend, hoher Druck (8·10⁻⁵ mbar)',mode:'float',Vt:-11,Ib:100,PHV:1000,NHV:150,Prf:18,lp:Math.log10(8e-5),TeN:4,TeB:6,Q:2.4},
+  {id:'ntr',name:'nur Neutralisator (Triebwerk aus)',mode:'float',Vt:0,Ib:0,PHV:1000,NHV:150,Prf:18,lp:Math.log10(4e-6),TeN:4,TeB:6,Q:0},
+  {id:'weak',name:'Neutralisator zu schwach (7 W)',mode:'float',Vt:-11,Ib:100,PHV:1000,NHV:150,Prf:7,lp:Math.log10(4e-6),TeN:4,TeB:6,Q:2.4}
+];
+const EXM=Object.fromEntries(EX.map(e=>[e.id,e]));
+const DEF={ex:'o1f',dir:'tech',sh:true,pot:true,cp:true,kap:0.3,pmode:'j',tempo:'sqrt'};
+let st={},R=null,WMc=null,dirty=true,playing=true;
+
+/* ----- Regler ----- */
+const PDEF={
+  Vt:{box:'#ctl-Vt',lab:'Spannung SSG gegen Erde <i>V</i><sub>t</sub>',min:-50,max:20,step:0.5,fmt:v=>fV(v,1),hint:''},
+  Ib:{box:'#ctl-Ib',lab:'Strahlstrom <i>I</i><sub>Strahl</sub>',min:0,max:250,step:1,fmt:v=>fx(v,0)+' mA',hint:''},
+  PHV:{box:'#ctl-PHV',lab:'PHV (Schirmgitter gegen SSG)',min:300,max:2000,step:10,fmt:v=>fx(v,0)+' V',hint:''},
+  NHV:{box:'#ctl-NHV',lab:'NHV (Beschl.-Gitter gegen SSG)',min:20,max:400,step:5,fmt:v=>'−'+fx(v,0)+' V',hint:''},
+  Prf:{box:'#ctl-Prf',lab:'RF-Leistung <i>P</i><sub>RF</sub>',min:2,max:40,step:0.2,fmt:v=>fx(v,1)+' W',hint:''},
+  TeN:{box:'#ctl-TeN',lab:'<i>T</i><sub>e</sub> im Neutralisator',min:1,max:10,step:0.1,fmt:v=>fx(v,1)+' eV',hint:''},
+  lp:{box:'#ctl-lp',lab:'Hintergrunddruck <i>p</i>',min:-6.5,max:-4,step:0.02,fmt:v=>sci(Math.pow(10,v),1)+' mbar',hint:''},
+  TeB:{box:'#ctl-TeB',lab:'<i>T</i><sub>e</sub> im Strahlplasma',min:1,max:12,step:0.1,fmt:v=>fx(v,1)+' eV',hint:''},
+  Q:{box:'#ctl-Q',lab:'Xenon-Fluss Triebwerk <i>Q</i>',min:0,max:10,step:0.1,fmt:v=>fx(v,1)+' sccm',hint:''},
+  kap:{box:'#ctl-kap',lab:'Elektronen an der Wand',min:0,max:1,step:0.05,fmt:v=>fx(v*100,0)+' % lokal',hint:'0 %: überall gleiche Stromdichte (isotherme Elektronen) · 100 %: dort, wo die Ionen ankommen (lokal ambipolar). Unbekannt; genau das messen die Wandsonden.'}
+};
+function buildControls(){
+  for(const k in PDEF){const d=PDEF[k];const w=document.createElement('div');w.className='ctl';
+    w.innerHTML=`<div class="row"><label for="p-${k}">${d.lab}</label><span class="val"><button type="button" class="stp" data-d="-1" aria-label="verringern">−</button><output id="o-${k}"></output><button type="button" class="stp" data-d="1" aria-label="erhöhen">+</button></span></div>
+      <input type="range" id="p-${k}" min="${d.min}" max="${d.max}" step="${d.step}"><div class="hint" id="h-${k}">${d.hint}</div>`;
+    $(d.box).appendChild(w);const inp=w.querySelector('input');
+    inp.addEventListener('input',()=>{st[k]=parseFloat(inp.value);if(k!=='kap')st.sel=null;sync();});
+    w.querySelectorAll('.stp').forEach(b=>{let t1=null,t2=null;
+      const once=()=>{if(inp.disabled)return;const v=inp.value;+b.dataset.d>0?inp.stepUp():inp.stepDown();if(inp.value!==v)inp.dispatchEvent(new Event('input'));};
+      const stop=()=>{clearTimeout(t1);clearInterval(t2);t1=t2=null;};
+      b.addEventListener('pointerdown',e=>{e.preventDefault();once();t1=setTimeout(()=>{t2=setInterval(once,70);},380);});
+      ['pointerup','pointerleave','pointercancel'].forEach(ev=>b.addEventListener(ev,stop));
+      b.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();once();}});});
+  }
+  const sel=$('#example');sel.innerHTML='<option value="">— eigene Werte —</option>'+EX.map(e=>`<option value="${e.id}">${e.name}</option>`).join('');
+  sel.addEventListener('change',()=>{if(sel.value)selectEx(sel.value);else{st.sel=null;sync();}});
+  document.querySelectorAll('#segMode button').forEach(b=>b.addEventListener('click',()=>{setMode(b.dataset.m);}));
+  document.querySelectorAll('#segDir button').forEach(b=>b.addEventListener('click',()=>{st.dir=b.dataset.d;sync();}));
+  document.querySelectorAll('#segProbe button').forEach(b=>b.addEventListener('click',()=>{st.pmode=b.dataset.p;sync();}));
+  document.querySelectorAll('#segTempo button').forEach(b=>b.addEventListener('click',()=>{st.tempo=b.dataset.t;sync();}));
+  $('#o-sh').addEventListener('change',e=>{st.sh=e.target.checked;sync();});
+  $('#o-cp').addEventListener('change',e=>{st.cp=e.target.checked;sync();});
+  $('#o-pot').addEventListener('change',e=>{st.pot=e.target.checked;sync();});
+  $('#play').addEventListener('click',()=>setPlay(!playing));
+  const info=$('#info'),bd=$('#backdrop'),ib=$('#infoBtn');
+  const setInfo=on=>{info.classList.toggle('open',on);bd.classList.toggle('open',on);info.setAttribute('aria-hidden',String(!on));ib.setAttribute('aria-expanded',String(on));if(on)$('#infoClose').focus();else ib.focus();};
+  ib.addEventListener('click',()=>setInfo(!info.classList.contains('open')));
+  $('#infoClose').addEventListener('click',()=>setInfo(false));bd.addEventListener('click',()=>setInfo(false));
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&info.classList.contains('open'))setInfo(false);});
+  $('#defaults').addEventListener('click',()=>{Object.assign(st,{dir:DEF.dir,sh:DEF.sh,pot:DEF.pot});selectEx(DEF.ex);setPlay(true);});
+  const cv=$('#view');
+  cv.addEventListener('keydown',e=>{if(e.key===' '){e.preventDefault();setPlay(!playing);}
+    else if(e.key==='f'||e.key==='F'){setMode(st.mode==='float'?'bias':'float');}});
+  cv.addEventListener('click',()=>cv.focus());
+}
+// Beim Umschalten auf "fest" mit dem aktuellen Floating-Potential starten, damit nichts springt
+function setMode(m){if(m===st.mode)return;if(m==='bias'&&R)st.Vt=Math.round(R.phiS*2)/2;st.mode=m;st.sel=null;sync();}
+function setPlay(on){playing=on;$('#play').innerHTML=on?'❚❚ Pause':'▶ Weiter';$('#play').setAttribute('aria-label',on?'Animation anhalten':'Animation fortsetzen');dirty=true;}
+function selectEx(id){const e=EXM[id];Object.assign(st,{mode:e.mode,Vt:e.Vt,Ib:e.Ib,PHV:e.PHV,NHV:e.NHV,Prf:e.Prf,lp:e.lp,TeN:e.TeN,TeB:e.TeB,Q:e.Q,sel:id});sync();}
+function params(o){o=o||st;return {Ib:o.Ib*1e-3,PHV:o.PHV,NHV:o.NHV,Prf:o.Prf,pm:Math.pow(10,o.lp),mode:o.mode,Vt:o.Vt,TeN:o.TeN,TeB:o.TeB,Q:o.Q};}
+let IVC=null;
+function sync(){
+  for(const k in PDEF){const d=PDEF[k];st[k]=Math.max(d.min,Math.min(d.max,st[k]));$('#p-'+k).value=st[k];$('#o-'+k).innerHTML=d.fmt(st[k]);}
+  $('#example').value=st.sel||'';$('#o-sh').checked=st.sh;$('#o-cp').checked=st.cp;$('#o-pot').checked=st.pot;
+  document.querySelectorAll('#segMode button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.m===st.mode)));
+  document.querySelectorAll('#segDir button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.d===st.dir)));
+  document.querySelectorAll('#segProbe button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.p===st.pmode)));
+  document.querySelectorAll('#segTempo button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.t===st.tempo)));
+  $('#p-Vt').disabled=st.mode!=='bias';
+  R=model(params());WMc=wallModel(R,st.kap);
+  if(st.mode!=='bias')$('#o-Vt').innerHTML=fV(R.phiS,1);
+  // Kennlinie I_W(V_t) für die aktuellen Parameter
+  IVC=[];for(let v=-50;v<=20.001;v+=0.5){const q=model(Object.assign(params(),{mode:'bias',Vt:v}));IVC.push([v,q.IW]);}
+  $('#h-Vt').innerHTML=st.mode==='bias'?'Spannungsquelle zwischen SSG und Erde; der Strom <i>I</i><sub>W</sub> fließt über sie':'Spannungsquelle abgetrennt; der SSG stellt sich so ein, dass <i>I</i><sub>W</sub> = 0 ist';
+  $('#h-Prf').innerHTML=`Ionen-Sättigungsstrom im Neutralisator <i>I</i><sub>i,sat</sub> = ${fmA(R.Iis,0)}: mehr Elektronen kann er nicht abgeben`;
+  $('#h-Ib').innerHTML=R.Ib>0?`Schirmgitter ${fV(R.phiScr,0)}, Beschleunigungsgitter ${fV(R.phiAcc,0)} gegen Erde`:'Triebwerk aus: nur der Neutralisator läuft';
+  $('#h-lp').innerHTML=R.Ib>0?`Restgas ${sci(R.n0,1)} m⁻³; CEX-Anteil des Strahls auf ${fx(MP.LB,0)} m: ${fx(R.fcex*100,1)} %, davon ${fx(R.Icex>0?R.IcexT/R.Icex*100:0,0)} % aus dem Triebwerksgas`:`Restgas ${sci(R.n0,1)} m⁻³`;
+  $('#h-Q').innerHTML=R.Ib>0?(R.eta>1?'<span style="color:var(--c-warn)">weniger Xenon als Strahlstrom: unmöglich, Fluss erhöhen</span>':`Ausnutzung ${fx(R.eta*100,0)} %; unionisiert ${fmA(R.Ithr,0)} (äquiv.), Dichte am Gitter ${sci(R.nT0,1)} m⁻³`):'Triebwerk aus';
+  $('#h-TeN').innerHTML=`Randschicht vor floatender Fläche ≈ 5,3 <i>T</i><sub>e</sub> = ${fx(5.28*st.TeN,0)} V`;
+  $('#h-TeB').innerHTML=`bestimmt, wie weit das Plasma über der Wand liegt`;
+  status();kz();dirty=true;}
+
+const IntrS=()=>R.IA+R.Ihous*MP.FNH,ItwS=()=>R.Iacc+R.Ihous*(1-MP.FNH)-R.IS;
+function status(){let s='';
+  if(R.zener)s=`<span class="warn">Der SSG läuft bis an die Zenerdioden (${fV(R.zener*MP.ZEN,0)}).</span> Der Neutralisator kann die nötigen Elektronen nicht liefern (${fmA(R.Iem,0)} von höchstens ${fmA(R.Imax,0)}); der fehlende Strom ${fmA(Math.abs(R.IZ),0)} fließt über die Zenerdioden zur Erde.`;
+  else if(R.Ib===0)s=`<b>Nur der Neutralisator läuft.</b> Ionen und Elektronen verlassen ihn in gleicher Zahl; über Kollektor und Blende fließen ${fmA(R.IA,2)}. Der SSG liegt bei <b>${fV(R.phiS,1)}</b> gegen Erde.`;
+  else if(R.mode==='float')s=`<b>SSG floatet bei ${fV(R.phiS,1)}.</b> Das Triebwerk gibt netto ${fmA(-ItwS(),1)} ab (Strahl ${fmA(R.Ib,0)} minus Strom aufs Triebwerksgehäuse ${fmA(R.Ihous*(1-MP.FNH),2)}: zurückkehrende CEX-Ionen abzüglich auftreffender Elektronen), der Neutralisator nimmt netto ${fmA(IntrS(),1)} auf (${fmA(R.Iem,1)} Elektronen durch die Blende, abzüglich ${fmA(R.Iio,1)} mit austretender Ionen, zuzüglich ${fmA(R.Ihous*MP.FNH,2)} Gehäusestrom). Zur Erde fließt nichts. Auslastung des Neutralisators ${fx(R.sat*100,0)} %.`;
+  else s=`<b>SSG auf ${fV(R.Vt,1)} gelegt.</b> Das Triebwerk gibt netto ${fmA(-ItwS(),1)} ab (Strahl ${fmA(R.Ib,0)} minus Strom aufs Triebwerksgehäuse ${fmA(R.Ihous*(1-MP.FNH),2)}: zurückkehrende CEX-Ionen abzüglich auftreffender Elektronen), der Neutralisator nimmt netto ${fmA(IntrS(),1)} auf (${fmA(R.Iem,1)} Elektronen durch die Blende, abzüglich ${fmA(R.Iio,1)} mit austretender Ionen, zuzüglich ${fmA(R.Ihous*MP.FNH,2)} Gehäusestrom): ${fmA(-R.IW,1)} mehr, als der Strahl braucht. Dieser Überschuss geht zur Kammerwand und fließt über die Spannungsquelle zurück: <b><i class="m">I</i><sub>W</sub> = ${fS(R.IW*1e3,1)} mA</b>.`;
+  if(R.sat>0.9&&!R.zener)s+=' <span class="warn">Neutralisator nahe an der Sättigung.</span>';
+  $('#status').innerHTML=s;}
+function kz(){const r=R;const row=(t,v,c)=>`<dt>${t}</dt><dd${c?` class="${c}"`:''}>${v}</dd>`;
+  const html=`<div class="gh">Messgeräte</div>`+
+  row('Voltmeter <i>V</i><sub>t</sub> = <i>Φ</i><sub>SSG</sub>',fV(r.phiS,1),'hi')+
+  row('Kollektor <i>I</i><sub>Koll</sub>',fmA(r.IA*MP.FCOLL,1),'hi')+
+  row('Frontblende <i>I</i><sub>Blende</sub>',fmA(r.IA*(1-MP.FCOLL),1),'hi')+
+  row('Kollektor + Blende <i>I</i><sub>A</sub>',fmA(r.IA,1))+
+  row('Neutralisator gesamt <i>I</i><sub>NTR</sub>',fmA(r.IA+r.Ihous*MP.FNH,2),'hi')+
+  row('Triebwerk gesamt <i>I</i><sub>TW</sub>',fmA(r.Iacc+r.Ihous*(1-MP.FNH)-r.IS,2),'hi')+
+  row('Quelle + Zener <i>I</i><sub>W</sub>',fS(r.IW*1e3,1)+' mA',r.zener?'wr':'hi')+
+  row('Erdleitung <i>I</i><sub>Erde</sub>',fS(r.IW*1e3,1)+' mA','hi')+
+  row('Schirmgitter <i>I</i><sub>PHV</sub>',fmA(r.IS,1))+
+  row('Beschl.-Gitter <i>I</i><sub>NHV</sub>',fmA(r.Iacc,2))+
+  row('NTR-Gehäuse <i>I</i><sub>Geh,NTR</sub>',fmA(r.Ihous*MP.FNH,2))+
+  row('TW-Gehäuse <i>I</i><sub>Geh,TW</sub>',fmA(r.Ihous*(1-MP.FNH),2))+
+  `<div class="gh">Potentiale gegen Erde</div>`+
+  row('Strahlplasma <i>Φ</i><sub>P,Strahl</sub>',fV(r.phiB,1))+
+  row('Neutralisator-Plasma <i>Φ</i><sub>P,NTR</sub>',fV(r.phiN,1))+
+  row('Schirmgitter',fV(r.phiScr,0))+
+  row('Beschleunigungsgitter',fV(r.phiAcc,0))+
+  `<div class="gh">Spannungsstufen</div>`+
+  row('Randschicht Wand <i>U</i><sub>RS,Wand</sub>',fx(r.Uw,1)+' V')+
+  row('Kopplung <i>U</i><sub>K</sub>',fS(r.UK,1)+' V')+
+  row('Randschicht NTR <i>U</i><sub>RS,NTR</sub>',fx(r.URS,1)+' V')+
+  `<div class="gh">Teilchenströme</div>`+
+  row('Elektronen aus dem NTR <i>I</i><sub>em</sub>',fmA(r.Iem,1))+
+  row('Ionen aus dem NTR <i>I</i><sub>i,NTR</sub>',fmA(r.Iio,2))+
+  row('NTR netto = <i>I</i><sub>em</sub> − <i>I</i><sub>i,NTR</sub> + <i>I</i><sub>Geh,NTR</sub>',fmA(r.IA+r.Ihous*MP.FNH,2))+
+  row('davon zur Wand',fmA(r.Iew,1))+
+  row('CEX-Ionen gesamt',fmA(r.Icex,2))+
+  row('davon aus Triebwerksgas',fmA(r.IcexT,2))+
+  row('Potentialberg vor dem Gitter',fV(r.phiPk,1))+
+  row('CEX zurück zum Triebwerk',fmA(r.Ics,2))+
+  row('davon aufs Beschl.-Gitter',fmA(r.Iacc,2))+
+  row('davon aufs TW-Gehäuse',fmA(r.Ich*(1-MP.FNH),2))+
+  row('Elektronen aufs TW-Gehäuse',fmA(r.Ieh*(1-MP.FNH),3))+
+  row('TW netto = <i>I</i><sub>Strahl</sub> − <i>I</i><sub>Geh,TW</sub>',fmA(-(r.Iacc+r.Ihous*(1-MP.FNH)-r.IS),2))+
+  row('Auslastung Neutralisator',fx(r.sat*100,0)+' %',r.sat>0.9?'wr':'')+
+  `<div class="gh">Wandsegmente (Strom zur Erde)</div>`+WMc.seg.map(g=>row(g.name,fS(g.I*1e3,2)+' mA')).join('')+
+  row('Summe = <i>I</i><sub>W</sub>',fS(WMc.sum*1e3,2)+' mA','hi')+
+  `<div class="gh">Bilanzen (Rest, soll 0 sein)</div>`+(()=>{const z=v=>fS((Math.abs(v)<5e-6?0:v)*1e3,2)+' mA';
+    const Intr=r.IA+r.Ihous*MP.FNH,Itw=r.Iacc+r.Ihous*(1-MP.FNH)-r.IS,Iq=r.IWsrc+r.IZ,Ier=r.IW,Sg=WMc.sum;
+    return row('SSG-Schiene: <i>I</i><sub>NTR</sub> + <i>I</i><sub>TW</sub> + <i>I</i><sub>W</sub>',z(Intr+Itw+Iq))+
+      row('Erdschiene: Σ<i>I</i><sub>Seg</sub> − <i>I</i><sub>Erde</sub>',z(Sg-Ier))+
+      row('Erde: <i>I</i><sub>Erde</sub> − <i>I</i><sub>W</sub>',z(Ier-Iq))+
+      row('Plasma: −<i>I</i><sub>TW</sub> − <i>I</i><sub>NTR</sub> − Σ<i>I</i><sub>Seg</sub>',z(-Itw-Intr-Sg));})();
+  // jede Gruppe als eigene Spalte
+  $('#kz').innerHTML=html.split('<div class="gh">').filter(g=>g.trim()).map(g=>'<dl class="kz"><div class="gh">'+g+'</dl>').join('');}
+
+/* ----- Zeichenhilfen ----- */
+let C={},dpr=1;
+function readColors(){const cs=getComputedStyle(document.documentElement),g=n=>cs.getPropertyValue(n).trim();
+  C={stage:g('--stage'),ink:g('--ink'),muted:g('--muted'),grid:g('--grid'),line:g('--line'),accent:g('--accent'),ion:g('--c-ion'),el:g('--c-el'),cex:g('--c-cex'),pl:g('--c-pl'),cur:g('--c-cur'),wall:g('--c-wall'),ntr:g('--c-ntr'),thr:g('--c-thr'),gr:g('--c-gr'),warn:g('--c-warn'),cmp:g('--c-cmp'),panel:g('--panel'),mono:g('--f-mono')||'monospace',ui:g('--f-ui')||'sans-serif'};}
+function ctxOf(cv){const r=cv.getBoundingClientRect();const W=Math.max(10,r.width),H=Math.max(10,r.height);
+  const pw=Math.round(W*dpr),ph=Math.round(H*dpr);if(cv.width!==pw||cv.height!==ph){cv.width=pw;cv.height=ph;}
+  const c=cv.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,W,H);return {c,W,H};}
+function rgb(col){if(col.startsWith('#')&&col.length===7){const n=parseInt(col.slice(1),16);return [n>>16,(n>>8)&255,n&255];}return [128,128,128];}
+function hexA(col,a){const [r,g,b]=rgb(col);return `rgba(${r},${g},${b},${a})`;}
+function halo(c,txt,x,y){c.save();c.strokeStyle=hexA(C.stage,0.92);c.lineWidth=4;c.lineJoin='round';c.strokeText(txt,x,y);c.restore();c.fillText(txt,x,y);}
+function rich(c,s,x,y,o){o=o||{};const sz=o.size||11.5,wt=o.weight||500,parts=[],re=/([_^])\{([^}]*)\}/g;let last=0,m;
+  while((m=re.exec(s))){if(m.index>last)parts.push([s.slice(last,m.index),0]);parts.push([m[2],m[1]==='_'?1:-1]);last=re.lastIndex;}
+  if(last<s.length)parts.push([s.slice(last),0]);
+  const fnt=k=>`${wt} ${k?sz*0.74:sz}px ${C.ui}`;let W=0;for(const q of parts){c.font=fnt(q[1]);W+=c.measureText(q[0]).width;}
+  const al=o.align||'left';let px=al==='center'?x-W/2:al==='right'?x-W:x;const ta=c.textAlign;c.textAlign='left';
+  for(const q of parts){c.font=fnt(q[1]);const dy=q[1]===1?sz*0.3:q[1]===-1?-sz*0.42:0;if(o.halo)halo(c,q[0],px,y+dy);else c.fillText(q[0],px,y+dy);px+=c.measureText(q[0]).width;}
+  c.textAlign=ta;return W;}
+function arrow(c,x,y,dx,dy,col,lw){const L=Math.hypot(dx,dy);if(L<2)return;c.strokeStyle=col;c.fillStyle=col;c.lineWidth=lw||2;
+  const ux=dx/L,uy=dy/L,h=Math.min(9,0.45*L+3);c.beginPath();c.moveTo(x,y);c.lineTo(x+dx-ux*h*0.7,y+dy-uy*h*0.7);c.stroke();
+  c.beginPath();c.moveTo(x+dx,y+dy);c.lineTo(x+dx-ux*h-uy*h*0.45,y+dy-uy*h+ux*h*0.45);c.lineTo(x+dx-ux*h+uy*h*0.45,y+dy-uy*h-ux*h*0.45);c.closePath();c.fill();}
+function niceStep(span,n){const raw=span/n,p=Math.pow(10,Math.floor(Math.log10(raw))),f=raw/p;return (f<1.5?1:f<3.5?2:f<7.5?5:10)*p;}
+const rnd=k=>{const s=Math.sin(k*127.1+311.7)*43758.5453;return s-Math.floor(s);};
+function plen(P){let L=0;for(let i=1;i<P.length;i++)L+=Math.hypot(P[i][0]-P[i-1][0],P[i][1]-P[i-1][1]);return L;}
+function pat(P,s){for(let i=1;i<P.length;i++){const l=Math.hypot(P[i][0]-P[i-1][0],P[i][1]-P[i-1][1]);if(s<=l||i===P.length-1){const f=l>0?Math.min(1,s/l):0;return [P[i-1][0]+f*(P[i][0]-P[i-1][0]),P[i-1][1]+f*(P[i][1]-P[i-1][1])];}s-=l;}return P[P.length-1];}
+function poly(c,P){c.beginPath();c.moveTo(P[0][0],P[0][1]);for(let i=1;i<P.length;i++)c.lineTo(P[i][0],P[i][1]);c.stroke();}
+function dashLine(c,P,col){c.save();c.setLineDash([4,3]);c.strokeStyle=col;c.lineWidth=1.1;poly(c,P);c.restore();}
+function bez(p0,p1,p2,t){const u=1-t;return [u*u*p0[0]+2*u*t*p1[0]+t*t*p2[0],u*u*p0[1]+2*u*t*p1[1]+t*t*p2[1]];}
+
+/* ----- Layout der Hauptansicht ----- */
+function layout(W,H){
+  const L={};L.W=W;L.H=H;
+  const rk=Math.max(240,Math.min(345,W*0.29));
+  L.bus=26;L.cx0=rk+18;L.cx1=W-46;L.cy0=50;L.cy1=H-78;L.gy=H-22;
+  const CW=L.cx1-L.cx0,CH=L.cy1-L.cy0;L.CW=CW;L.CH=CH;
+  L.ax=L.cy0+CH*0.62; // Strahlachse
+  L.t={x0:L.cx0+CW*0.06,x1:L.cx0+CW*0.06+Math.max(70,CW*0.11),y0:L.ax-CH*0.13,y1:L.ax+CH*0.13};
+  const nw=Math.max(64,CW*0.10),nh=CH*0.17;
+  L.n={x0:L.t.x0+4,x1:L.t.x0+4+nw,y0:L.cy0+CH*0.16,y1:L.cy0+CH*0.16+nh};
+  L.n.cy=(L.n.y0+L.n.y1)/2;L.n.orif=[L.n.x1,L.n.cy];
+  // der Strahl endet an der hinteren Kammerwand (L.g = Strahlende)
+  L.g={x0:L.cx1-6,x1:L.cx1,y0:L.ax-CH*0.36,y1:L.ax+CH*0.30};
+  L.scr=L.t.x1-7;L.acc=L.t.x1-1.5;
+  L.meterX=rk*0.56;
+  return L;}
+
+/* ----- Leitungen (Polylinien) mit ihrem Strom ----- */
+// Strom positiv in Zeichenrichtung (technische Stromrichtung)
+function wires(L,r){
+  const w=[];const fy=L.cx0; // Durchführung bei x = cx0
+  // Kollektor und Frontblende mit je eigenem Amperemeter
+  const Ik=r.IA*MP.FCOLL,Ifr=r.IA*(1-MP.FCOLL),fby=L.n.y0-16;
+  // Einzelmessung nahe der Kammer, Sammelknoten, Gesamtstrom des Neutralisators zur SSG-Schiene
+  const span=L.cx0-L.bus,xt=L.bus+0.30*span,xm=L.bus+0.50*span,xi=L.bus+0.71*span;L.ntrNode=[xm,L.n.cy];
+  w.push({id:'coll',P:[[L.n.x0+11,L.n.cy],[xm,L.n.cy]],I:Ik,meter:{x:xi,y:L.n.cy,lab:'A',name:'I_{Koll}',val:Ik,unit:'mA'}});
+  w.push({id:'front',P:[[L.n.x1,L.n.y0],[L.n.x1,fby],[xm,fby],[xm,L.n.cy]],I:Ifr,meter:{x:xi,y:fby,lab:'A',name:'I_{Blende}',val:Ifr,unit:'mA'}});
+  const hy=L.n.y1-8;
+  const Ihn=r.Ihous*MP.FNH,Intr=Ik+Ifr+Ihn;
+  w.push({id:'nh',P:[[L.n.x0,hy],[xm,hy],[xm,L.n.cy]],I:Ihn,meter:{x:xi,y:hy,lab:'A',name:'I_{Geh,NTR}',val:Ihn,unit:'mA'}});
+  w.push({id:'ntr',P:[[xm,L.n.cy],[L.bus,L.n.cy]],I:Intr,meter:{x:xt,y:L.n.cy,lab:'A',name:'I_{NTR}',val:Intr,unit:'mA'}});
+  // Triebwerk: Netzgeräte nahe der Kammer, Strommessung auf ihrer SSG-Seite, Sammelknoten, Gesamtstrom zur Schiene
+  const yth=(L.t.y0+L.t.y1)/2,py=L.t.y1+22,ny=L.t.y1+54,xpi=xi,xps=L.cx0-36,Iht=r.Ihous*(1-MP.FNH),Itw=r.Iacc+Iht-r.IS;L.twNode=[xm,yth];
+  w.push({id:'th',P:[[L.t.x0,yth],[xm,yth]],I:Iht,meter:{x:xpi,y:yth,lab:'A',name:'I_{Geh,TW}',val:Iht,unit:'mA'}});
+  w.push({id:'phv',P:[[xm,yth],[xm,py],[L.scr,py],[L.scr,L.t.y1-4]],I:r.IS,psu:{x:xps,y:py,lab:'PHV',sgn:['−','+']},meter:{x:xpi,y:py,lab:'A',name:'I_{PHV}',val:r.IS,unit:'mA'}});
+  w.push({id:'nhv',P:[[L.acc,L.t.y1-4],[L.acc,ny],[xm,ny],[xm,yth]],I:r.Iacc,psu:{x:xps,y:ny,lab:'NHV',sgn:['+','−']},meter:{x:xpi,y:ny,lab:'A',name:'I_{NHV}',val:r.Iacc,unit:'mA'}});
+  w.push({id:'tw',P:[[xm,yth],[L.bus,yth]],I:Itw,meter:{x:xt,y:yth,lab:'A',name:'I_{TW}',val:Itw,unit:'mA'}});
+  // Erdzweige
+  const gx1=L.bus,gy=L.gy;
+  const srcX=L.meterX-12,zX=L.meterX+56;
+  const wy0=ny+20;
+  // Quelle + Amperemeter: Strom von Erde zum SSG = I_W (positiv)
+  // gemeinsamer Abgang vom SSG; Quelle und Zenerdioden parallel zur Erde
+  w.push({id:'gnd',P:[[srcX,wy0+18],[L.bus,wy0+18]],I:r.IWsrc+r.IZ});
+  // Ströme auf der SSG-Schiene zwischen den Anschlüssen (Knotenregel)
+  w.push({id:'busA',P:[[L.bus,L.n.cy],[L.bus,yth]],I:Intr,bus:true});
+  w.push({id:'busB',P:[[L.bus,yth],[L.bus,wy0+18]],I:Intr+Itw,bus:true});
+  w.push({id:'src',P:[[srcX,gy],[srcX,wy0+18]],I:r.IWsrc,src:true,meter:{x:srcX,y:gy-15,lab:'A',name:'I_{W}',val:r.IWsrc,unit:'mA'}});
+  w.push({id:'zen',P:[[zX,gy],[zX,wy0+18],[srcX,wy0+18]],I:r.IZ,zen:true});
+  // Erde zur Kammerwand: Strom von der Wand zur Erde = I_W
+  const xe=(zX+L.cx0+30)/2;
+  w.push({id:'gw',P:[[L.cx0+30,L.cy1+24],[L.cx0+30,gy],[srcX,gy]],I:r.IW,meter:{x:xe,y:gy,lab:'A',name:'I_{Erde}',val:r.IW,unit:'mA'}});
+  // Erdschiene um die Kammer und Leitungen der Wandsegmente
+  if(WMc){
+    // Erdschiene: von der Upstream-Ecke oben über Downstream-Seite nach unten bis zum Abgang zur Erde;
+    // in jedem Abschnitt fließt die Summe der bis dahin eingespeisten Segmentströme
+    const sx=sg=>(Math.max(L.cx0,zx(L,sg.z0))+Math.min(L.cx1,zx(L,sg.z1)))/2,yT=L.cy0-24,yB=L.cy1+24,xR=L.cx1+24,G=WMc.seg;
+    const seq=[{p:[L.cx0,yT],I:G[9].I}];
+    for(let k=0;k<4;k++)seq.push({p:[sx(G[k]),yT],I:G[k].I});
+    seq.push({p:[xR,yT],I:0},{p:[xR,L.ax],I:G[4].I},{p:[xR,yB],I:0});
+    for(let k=5;k<9;k++)seq.push({p:[sx(G[k]),yB],I:G[k].I});
+    seq.push({p:[L.cx0+30,yB],I:0,exit:true},{p:[L.cx0,yB],I:0});
+    let cum=0;for(let i=0;i<seq.length-1;i++){cum=seq[i].exit?0:cum+seq[i].I;w.push({id:'rail'+i,P:[seq[i].p,seq[i+1].p],I:cum});}
+    WMc.seg.forEach((sg,k)=>{let P;
+      if(sg.wall==='top'||sg.wall==='bot'){const xm=(Math.max(L.cx0,zx(L,sg.z0))+Math.min(L.cx1,zx(L,sg.z1)))/2;P=sg.wall==='top'?[[xm,L.cy0],[xm,L.cy0-24]]:[[xm,L.cy1],[xm,L.cy1+24]];}
+      else if(sg.wall==='end')P=[[L.cx1,L.ax],[L.cx1+24,L.ax]];else P=[[L.cx0,L.cy0],[L.cx0,L.cy0-24]];
+      w.push({id:'seg'+k,P,I:sg.I,segm:{k}});});}
+  return w;}
+
+/* ----- Animation ----- */
+let animT=0,phase={};
+// Punktabstand: dicht bei großem Strom, dünn bei kleinem; Geschwindigkeit wächst schwach mit dem Strom
+function dotSp(I){const a=Math.abs(I)*1e3;return Math.max(11,Math.min(160,17*Math.sqrt(100/Math.max(a,1e-3))));}
+function curSpeed(I){const a=Math.abs(I)*1e3;if(a<0.02)return 0;return Math.min(90,22+30*Math.sqrt(a/100));}
+// Teilchengeschwindigkeiten (real) und ihre Darstellung: maßstäblich oder mit der Wurzel gestaucht
+const ME=9.1093837e-31;
+function speeds(r){const vb=Math.sqrt(2*QE*Math.max(st.PHV,10)/MXE);
+  // Elektronen: dargestellt wird die Netto-Drift (im neutralisierten Strahl etwa die Ionengeschwindigkeit), nicht die thermische Geschwindigkeit
+  const v={ion:vb,el:vb,elth:Math.sqrt(8*st.TeN*QE/(Math.PI*ME)),cex:Math.sqrt(2*QE*Math.max(r.phiB,1)/MXE),nion:Math.sqrt(2*QE*Math.max(r.phiN,1)/MXE)};
+  const g=st.tempo==='real'?1:0.5,k={};for(const s in v)k[s]=Math.pow(v[s]/vb,g);return {v,k};}
+// Ein Punkt steht für dieselbe Ladung: Startrate ∝ Strom
+const RQ=0.24; // Punkte pro Sekunde und mA
+function plen2(fn){let L=0,p=fn(0);for(let i=1;i<=12;i++){const q=fn(i/12);L+=Math.hypot(q[0]-p[0],q[1]-p[1]);p=q;}return L;}
+function streams(L,r){
+  const S=[],SP=speeds(r);
+  const b0x=L.t.x1+2,gx=L.g.x0-3;
+  const halfIn=(L.t.y1-L.t.y0)*0.40,halfOut=(L.g.y1-L.g.y0)*0.42;
+  const S0=(gx-b0x)/2.2; // Strahlionen durchqueren die Kammer in 2,2 s
+  // Plätze erzeugen, mittlere Flugzeit bestimmen, so viele Punkte zeigen wie Rate × Flugzeit
+  const fill=(type,I,cap,gen)=>{if(I<=0)return;const sp=S0*SP.k[type],c=[];
+    for(let k=0;k<cap;k++){const g=gen(k);if(!g)continue;g.T=Math.max(0.02,plen2(g.path)/sp);c.push(g);}
+    if(!c.length)return;const Tm=c.reduce((a,g)=>a+g.T,0)/c.length;const n=Math.min(c.length,Math.round(RQ*I*1e3*Tm));
+    for(let k=0;k<n;k++){const g=c[k];S.push({type,T:g.T,off:rnd(k*7+(type.length*131))*g.T,path:g.path});}};
+  // Strahlionen
+  fill('ion',r.Ib,140,k=>{const u=rnd(k+3)*2-1;return {path:t=>[b0x+(gx-b0x)*t,L.ax+u*(halfIn+(halfOut-halfIn)*t)]};});
+  // Elektronen: Blende -> Brücke -> Strahl -> Wand; Auftreffort nach der Elektronenstromdichte des Wandmodells
+  const o=L.n.orif,br=[L.t.x1+L.CW*0.12,L.n.y1+L.CH*0.02],inB=[L.t.x1+L.CW*0.2,L.ax-halfIn*0.6];
+  const ecdf=[];let etot=0;
+  if(WMc){const P=WMc.prof,S4=WMc.secs;for(let i=0;i<P.length;i++){const q=P[i],ds=i>0?Math.abs(q.s-P[i-1].s):0;let dA;
+      if(q.s<S4[1]||(q.s>=S4[2]&&q.s<S4[3]))dA=Math.PI*WG.D/2*ds;else{const rr=q.s<S4[2]?WG.R0-(q.s-S4[1]):(q.s-S4[3])-WG.R0;dA=Math.PI*Math.abs(rr)*ds;}
+      etot+=q.je*dA;ecdf.push(etot);}}
+  const wallPt=(u)=>{const P=WMc.prof,S4=WMc.secs;let i=0;while(i<ecdf.length-1&&ecdf[i]<u*etot)i++;const s=P[i].s;
+    if(s<S4[1]){return [zx(L,WG.ZF+s),L.cy0+8];}if(s<S4[2]){return [L.cx1-8,ry(L,WG.R0-(s-S4[1]))];}
+    if(s<S4[3]){return [zx(L,MP.LB-(s-S4[2])),L.cy1-8];}return [L.cx0+8,ry(L,(s-S4[3])-WG.R0)];};
+  fill('el',r.Iem,140,k=>{const end=etot>0?wallPt(rnd(k+81)):[L.cx0+L.CW*(0.3+0.6*rnd(k+81)),rnd(k+91)<0.5?L.cy0+8:L.cy1-8];
+    const mid=r.Ib>0?[inB[0]+L.CW*0.35*rnd(k+61),L.ax+(rnd(k+67)-0.5)*halfOut]:[o[0]+L.CW*0.25*rnd(k+61),o[1]+(rnd(k+67)-0.5)*L.CH*0.3];
+    const b1=r.Ib>0?br:[o[0]+30,o[1]];
+    return {path:t=>{if(t<0.4)return bez(o,b1,mid,t/0.4);const s=(t-0.4)/0.6;return [mid[0]+(end[0]-mid[0])*s+Math.sin(t*140+k)*2.6,mid[1]+(end[1]-mid[1])*s+Math.cos(t*173+k*1.7)*2.6];}};});
+  // CEX-Ionen: Entstehungsort nach der berechneten Verteilung, dann radial zur Wand oder zurück zum Triebwerk
+  const cdf=[];{let a=0;for(let k=0;k<r.cz.length;k++){a+=r.cT[k]+r.cB[k];cdf.push(a);}}
+  const tot=cdf.length?cdf[cdf.length-1]:0;
+  if(r.Ib>0&&tot>0)fill('cex',r.Icex,140,k=>{const u=rnd(k+201)*tot;let i=0;while(i<cdf.length-1&&cdf[i]<u)i++;const z=r.cz[i];
+    const x=zx(L,z),back=z<MP.ZB&&rnd(k+211)<MP.PBACK;
+    const hw=halfIn+(halfOut-halfIn)*Math.sqrt(z/MP.LB),y=L.ax+(rnd(k+221)-0.5)*hw*1.4;
+    const end=back?[L.acc+3,L.t.y0+8+(L.t.y1-L.t.y0-16)*rnd(k+231)]:[x+L.CW*0.02*(rnd(k+241)-0.5),y<L.ax?L.cy0+6:L.cy1-6];
+    return {path:t=>[x+(end[0]-x)*t,y+(end[1]-y)*t]};});
+  // Ionen aus dem Neutralisator-Plasma
+  fill('nion',r.Iio,40,k=>{const end=[zx(L,0.3+0.5*(rnd(k+301)-0.5)),L.cy0+6];return {path:t=>[o[0]+(end[0]-o[0])*t,o[1]+(end[1]-o[1])*t]};});
+  return S;}
+
+/* ----- Hauptansicht zeichnen ----- */
+function drawView(dt){const {c,W,H}=ctxOf($('#view'));const L=layout(W,H),r=R;
+  // Plasma
+  c.save();
+  const cr=2;
+  c.beginPath();c.roundRect(L.cx0,L.cy0,L.CW,L.CH,cr);c.fillStyle=hexA(C.pl,0.06+0.05*Math.min(1,(r.Ib+r.Iio)/0.1));c.fill();
+  if(r.Ib>0){const a=Math.min(1,r.Ib/0.1);
+    const gr=c.createLinearGradient(L.t.x1,0,L.g.x0,0);gr.addColorStop(0,hexA(C.pl,0.55*a+0.1));gr.addColorStop(1,hexA(C.pl,0.18*a+0.05));
+    c.fillStyle=gr;c.beginPath();const hi=(L.t.y1-L.t.y0)*0.42,ho=(L.g.y1-L.g.y0)*0.45;
+    c.moveTo(L.t.x1,L.ax-hi);c.lineTo(L.g.x0,L.ax-ho);c.lineTo(L.g.x0,L.ax+ho);c.lineTo(L.t.x1,L.ax+hi);c.closePath();c.fill();
+    // Plasmabrücke
+    const o=L.n.orif;c.fillStyle=hexA(C.pl,0.30);c.beginPath();c.moveTo(o[0],o[1]-4);
+    c.quadraticCurveTo(o[0]+L.CW*0.10,o[1]+4,L.t.x1+L.CW*0.16,L.ax-hi*0.8);c.lineTo(L.t.x1+L.CW*0.07,L.ax-hi*0.9);c.quadraticCurveTo(o[0]+L.CW*0.03,o[1]+L.CH*0.06,o[0],o[1]+4);c.closePath();c.fill();
+  }else{const o=L.n.orif;const g=c.createRadialGradient(o[0],o[1],2,o[0],o[1],L.CW*0.35);g.addColorStop(0,hexA(C.pl,0.35));g.addColorStop(1,hexA(C.pl,0));c.fillStyle=g;c.beginPath();c.arc(o[0],o[1],L.CW*0.35,-Math.PI/2,Math.PI/2);c.fill();}
+  c.restore();
+  // Kammerwand
+  drawWall(c,L,WMc);
+  if(st.sh)dashLine(c,[[L.cx0+7,L.cy0+7],[L.cx1-7,L.cy0+7],[L.cx1-7,L.cy1-7],[L.cx0+7,L.cy1-7],[L.cx0+7,L.cy0+7]],hexA(C.pl,0.9));
+  // Triebwerk
+  const T=L.t;c.fillStyle=hexA(C.thr,0.22);c.fillRect(T.x0,T.y0,T.x1-T.x0,T.y1-T.y0);c.strokeStyle=C.thr;c.lineWidth=1.6;c.strokeRect(T.x0,T.y0,T.x1-T.x0,T.y1-T.y0);
+  c.save();c.setLineDash([5,3]);c.lineWidth=2.4;c.strokeStyle=C.ink;c.beginPath();c.moveTo(L.scr,T.y0+5);c.lineTo(L.scr,T.y1-5);c.moveTo(L.acc,T.y0+5);c.lineTo(L.acc,T.y1-5);c.stroke();c.restore();
+  if(st.sh)dashLine(c,[[T.x0-5,T.y0-5],[T.x1+5,T.y0-5],[T.x1+5,T.y1+5],[T.x0-5,T.y1+5],[T.x0-5,T.y0-5]],hexA(C.pl,0.9));
+  c.fillStyle=C.thr;c.font=`600 12px ${C.ui}`;c.textAlign='center';c.textBaseline='middle';c.fillText('Triebwerk',(T.x0+L.scr)/2,(T.y0+T.y1)/2-8);
+  c.font=`11px ${C.ui}`;c.fillText(r.Ib>0?'an':'aus',(T.x0+L.scr)/2,(T.y0+T.y1)/2+8);
+  // Neutralisator
+  const N=L.n;c.fillStyle=hexA(C.ntr,0.18);c.fillRect(N.x0,N.y0,N.x1-N.x0,N.y1-N.y0);
+  c.strokeStyle=C.ntr;c.lineWidth=1.6;c.beginPath();c.moveTo(N.x1,N.y0);c.lineTo(N.x0,N.y0);c.lineTo(N.x0,N.y1);c.lineTo(N.x1,N.y1);c.stroke();
+  const ix0=N.x0+6,iy0=N.y0+7,ix1=N.x1-3,iy1=N.y1-7;
+  c.fillStyle=C.stage;c.fillRect(ix0,iy0,ix1-ix0,iy1-iy0);c.fillStyle=hexA(C.pl,0.75);c.fillRect(ix0+2,iy0+2,ix1-ix0-2,iy1-iy0-4);
+  c.fillStyle=C.pl;for(let x=N.x0+14;x<N.x1-6;x+=11){c.beginPath();c.arc(x,N.y0+3.5,1.9,0,7);c.fill();c.beginPath();c.arc(x,N.y1-3.5,1.9,0,7);c.fill();}
+  c.strokeStyle=C.ink;c.lineWidth=4;c.beginPath();c.moveTo(N.x0+11,iy0+5);c.lineTo(N.x0+11,iy1-5);c.stroke();
+  c.beginPath();c.moveTo(N.x1,N.y0);c.lineTo(N.x1,N.cy-3);c.moveTo(N.x1,N.cy+3);c.lineTo(N.x1,N.y1);c.stroke();
+  if(st.sh){dashLine(c,[[N.x0+16,iy0+5],[N.x0+16,iy1-5]],hexA(C.pl,1));
+    dashLine(c,[[N.x1+5,N.cy-5],[N.x1+5,N.y0-5],[N.x0-5,N.y0-5],[N.x0-5,N.y1+5],[N.x1+5,N.y1+5],[N.x1+5,N.cy+5]],hexA(C.pl,0.9));}
+  // Leitungen
+  const WS=wires(L,r);
+  for(const w of WS){if(w.bus)continue;c.strokeStyle=C.ink;c.lineWidth=1.3;if(w.zen&&!r.zener)c.globalAlpha=0.55;poly(c,w.P);c.globalAlpha=1;}
+  // Durchführungen
+  for(const w of WS){for(let i=1;i<w.P.length;i++){const a=w.P[i-1],b=w.P[i];if((a[0]-L.cx0)*(b[0]-L.cx0)<0&&Math.abs(a[1]-b[1])<0.5){c.fillStyle=C.stage;c.strokeStyle=C.ink;c.lineWidth=1;c.fillRect(L.cx0-3,a[1]-4,6,8);c.strokeRect(L.cx0-3,a[1]-4,6,8);}}}
+  // SSG-Schiene
+  const busTop=L.n.y0-24,busBot=WS.find(w=>w.id==='gnd').P[1][1];
+  c.strokeStyle=C.accent;c.lineWidth=4;c.beginPath();c.moveTo(L.bus,busTop);c.lineTo(L.bus,busBot);c.stroke();
+  c.save();c.translate(L.bus-12,(busTop+busBot)/2);c.rotate(-Math.PI/2);c.fillStyle=C.accent;c.font=`700 12px ${C.ui}`;c.textAlign='center';c.fillText('SSG',0,0);c.restore();
+  // Erde
+  const gy=L.gy,srcW=WS.find(w=>w.id==='src'),zW=WS.find(w=>w.id==='zen'),gW=WS.find(w=>w.id==='gw');
+  const gxR=gW.P[1][0];
+  c.strokeStyle=C.ink;c.lineWidth=1.3;c.beginPath();c.moveTo(L.bus,gy);c.lineTo(gxR,gy);c.stroke();
+  const vx=L.bus,vy=busBot+16;c.beginPath();c.moveTo(L.bus,busBot);c.lineTo(L.bus,gy);c.stroke();
+  // Stromanimation in den Leitungen (vor den Symbolen, damit sie verdeckt wird)
+  const el=st.dir==='el';
+  for(const w of WS){const v=curSpeed(w.I);if(!v)continue;const Lw=plen(w.P);const k=w.id;
+    const sp=dotSp(w.I);let s=(phase[k]||0)+(playing?dt*v*Math.sign(w.I)*(el?-1:1):0);s=((s%sp)+sp)%sp;phase[k]=s;
+    c.fillStyle=el?C.el:C.cur;for(let d=s;d<Lw;d+=sp){const q=pat(w.P,d);c.beginPath();c.arc(q[0],q[1],2.3,0,7);c.fill();}}
+  // Knotenpunkte an der Schiene
+  c.fillStyle=C.accent;for(const w of WS){for(const e of [w.P[0],w.P[w.P.length-1]]){if(e[0]===L.bus){c.beginPath();c.arc(e[0],e[1],3.2,0,7);c.fill();}}}
+  {const j=WS.find(w=>w.id==='gnd').P[0];c.fillStyle=C.ink;c.beginPath();c.arc(j[0],j[1],2.8,0,7);c.fill();c.beginPath();c.arc(j[0],gy,2.8,0,7);c.fill();c.beginPath();c.arc(zW.P[0][0],gy,2.8,0,7);c.fill();}
+  for(const nd of [L.ntrNode,L.twNode])if(nd){c.fillStyle=C.ink;c.beginPath();c.arc(nd[0],nd[1],3,0,7);c.fill();}
+  // Voltmeter SSG-Erde
+  meterSym(c,vx,vy,'V');readout(c,vx+16,vy,'V_{t}',fV(r.phiS,1),C.accent,'left');
+  // Erdsymbol
+  c.strokeStyle=C.ink;c.lineWidth=1.3;
+  const ex=L.bus+60;c.beginPath();c.moveTo(ex,gy);c.lineTo(ex,gy+6);c.moveTo(ex-9,gy+6);c.lineTo(ex+9,gy+6);c.moveTo(ex-6,gy+10);c.lineTo(ex+6,gy+10);c.moveTo(ex-3,gy+14);c.lineTo(ex+3,gy+14);c.stroke();
+  c.fillStyle=C.muted;c.font=`11px ${C.ui}`;c.textAlign='left';c.textBaseline='middle';c.fillText('Erde, 0 V',ex+12,gy+10);
+  // Quelle (Schalter offen im floatenden Betrieb)
+  {const x=srcW.P[0][0],y=srcW.P[1][1]+12,on=st.mode==='bias';c.fillStyle=C.stage;c.fillRect(x-9,y-2,18,24);c.strokeStyle=C.ink;c.lineWidth=1.3;
+    // Leitung bis an die Platten; unten durchgehend (angeschlossen) oder offener Schalter (getrennt)
+    c.beginPath();c.moveTo(x,y-2);c.lineTo(x,y+4);c.moveTo(x,y+9);c.lineTo(x,on?y+22:y+12);if(!on){c.moveTo(x,y+22);c.lineTo(x,y+20);}c.stroke();
+    c.beginPath();c.moveTo(x-9,y+4);c.lineTo(x+9,y+4);c.stroke();c.lineWidth=3;c.beginPath();c.moveTo(x-5,y+9);c.lineTo(x+5,y+9);c.stroke();c.lineWidth=1.3;
+    if(!on){c.strokeStyle=C.warn;c.lineWidth=1.6;c.beginPath();c.moveTo(x,y+12);c.lineTo(x+8,y+18);c.stroke();}
+    c.font=`600 10.5px ${C.ui}`;c.textAlign='left';c.textBaseline='middle';c.fillStyle=C.ink;c.fillText('Quelle',x+12,y+3);
+    c.font=`10.5px ${C.ui}`;c.fillStyle=on?C.ink:C.warn;c.fillText(on?fV(st.Vt,1):'getrennt',x+12,y+16);}
+  // Zenerdioden
+  {const x=zW.P[0][0],y=(zW.P[1][1]+gy)/2;c.fillStyle=C.stage;c.fillRect(x-7,y-13,14,26);c.strokeStyle=r.zener?C.warn:C.ink;c.lineWidth=1.3;
+    for(const [yy,s] of [[y-7,1],[y+7,-1]]){c.beginPath();c.moveTo(x-5,yy-4*s);c.lineTo(x+5,yy-4*s);c.lineTo(x,yy+4*s);c.closePath();c.stroke();c.beginPath();c.moveTo(x-6,yy+4*s);c.lineTo(x+6,yy+4*s);c.stroke();}
+    c.fillStyle=r.zener?C.warn:C.muted;c.font=`10.5px ${C.ui}`;c.textAlign='left';c.textBaseline='middle';if(r.zener){readout(c,x+10,y,'I_{Z}',fS(r.IZ*1e3,1)+' mA',C.warn,'left');}else{c.fillText('Zener',x+10,y-6);c.fillText('±50 V',x+10,y+7);}}
+  drawSegMeters(c,L,WMc,WS);
+  // Netzgeräte und Amperemeter
+  for(const w of WS){if(w.psu){const p=w.psu;c.fillStyle=C.stage;c.strokeStyle=C.ink;c.lineWidth=1.3;c.fillRect(p.x-20,p.y-9,40,18);c.strokeRect(p.x-20,p.y-9,40,18);
+      c.fillStyle=C.ink;c.font=`600 10.5px ${C.ui}`;c.textAlign='center';c.textBaseline='middle';c.fillText(p.lab,p.x,p.y);
+      c.font=`700 11px ${C.ui}`;c.fillText(p.sgn[0],p.x-15,p.y-14);c.fillText(p.sgn[1],p.x+15,p.y-14);}
+    if(w.meter){const m=w.meter;meterSym(c,m.x,m.y,m.lab);
+      const val=m.name==='I_{W}'?(st.mode==='bias'&&!r.zener?fS(m.val*1e3,1)+' mA':'0 mA'):m.name==='I_{Erde}'?fS((Math.abs(m.val)<5e-5?0:m.val)*1e3,1)+' mA':fmA(m.val,Math.abs(m.val)<0.01?2:1);
+      const dy=(w.id==='nhv'||w.id==='nh'||w.id==='ntr'||w.id==='tw')?17:(w.id==='src'||w.id==='gw')?0:-17,dx=w.id==='src'?-16:w.id==='gw'?14:0;readout(c,m.x+dx,m.y+dy,m.name,val,C.accent,w.id==='src'?'right':w.id==='gw'?'left':'center');}}
+  // Plasma-Teilchen
+  animT+=playing?dt:0;
+  const S=streams(L,r);
+  for(const q of S){const t=((animT+q.off)%q.T)/q.T;const p=q.path(t);
+    if(q.type==='cex'){c.fillStyle=C.cex;c.fillRect(p[0]-2.8,p[1]-2.8,5.6,5.6);continue;}
+    if(q.type==='nion'){c.strokeStyle=C.ion;c.lineWidth=1.5;c.beginPath();c.arc(p[0],p[1],3,0,7);c.stroke();continue;}
+    c.fillStyle=q.type==='ion'?C.ion:C.el;c.beginPath();c.arc(p[0],p[1],q.type==='el'?1.9:2.5,0,7);c.fill();}
+  drawCurrentPath(c,L,r,dt);
+  // Beschriftung der Potentiale
+  if(st.pot){
+    const lab=(s,x,y,al,col)=>{c.fillStyle=col||C.ink;rich(c,s,x,y,{size:11.5,weight:600,align:al||'left',halo:true});};
+    c.textBaseline='middle';
+    lab(fV(r.phiS,1),L.bus+8,busTop-10,'left',C.accent);
+    lab('Kollektor, Blende, Gehäuse: '+fV(r.phiS,1),N.x0-2,N.y0-32,'left',C.ntr);
+    lab('Φ_{P,NTR} = '+fV(r.phiN,1),N.x1+10,N.y0+4,'left');
+    if(r.Ib>0){lab('Schirmgitter '+fV(r.phiScr,0),T.x0,T.y0-24,'left');lab('Beschl.-Gitter '+fV(r.phiAcc,0),T.x0,T.y0-10,'left');}
+    lab((r.Ib>0?'Φ_{P,Strahl} = ':'Φ_{P,Kammer} = ')+fV(r.phiB,1),L.cx0+L.CW*0.56,L.ax-((L.g.y1-L.g.y0)*0.18),'center');
+    lab('Kammerwand 0 V',L.cx0+L.CW*0.80,L.cy0+20,'center',C.wall);}
+  else{c.fillStyle=C.muted;c.font=`600 11px ${C.ui}`;c.textAlign='center';c.fillText('Kammerwand (Erde)',L.cx0+L.CW*0.5,L.cy0+20);}
+  // Pfeil Strahl
+  if(r.Ib>0){c.fillStyle=C.ion;rich(c,'Xe^{+}-Strahl, '+fmA(r.Ib,0),L.cx0+L.CW*0.56,L.ax+16,{size:11.5,weight:600,align:'center',halo:true});}
+}
+function meterSym(c,x,y,lab){c.fillStyle=C.stage;c.strokeStyle=C.ink;c.lineWidth=1.4;c.beginPath();c.arc(x,y,10,0,7);c.fill();c.stroke();
+  c.fillStyle=C.ink;c.font=`700 11px ${C.ui}`;c.textAlign='center';c.textBaseline='middle';c.fillText(lab,x,y+0.5);}
+function readout(c,x,y,name,val,col,al){c.font=`600 11px ${C.mono}`;const t=val;const wv=c.measureText(t).width;
+  const label=name,nw=rich(tmpc(),label,0,0,{size:11});
+  const gap=label?6:0,W=nw+gap+wv+10,H=17;let x0=al==='center'?x-W/2:al==='right'?x-W:x;const y0=y-H/2;
+  c.fillStyle=hexA(C.stage,0.92);c.strokeStyle=col;c.lineWidth=1;c.beginPath();c.roundRect(x0,y0,W,H,4);c.fill();c.stroke();
+  c.fillStyle=C.muted;c.textBaseline='middle';rich(c,label,x0+5,y,{size:11});c.fillStyle=col;c.font=`600 11px ${C.mono}`;c.textAlign='left';c.fillText(t,x0+5+nw+gap,y+0.5);}
+let _tc=null;function tmpc(){if(!_tc){_tc=document.createElement('canvas').getContext('2d');}return _tc;}
+
+/* ----- Diagramm: Potentiale im Umlauf ----- */
+function drawPot(){const {c,W,H}=ctxOf($('#pPot'));const r=R;
+  const st5=[{n:'Kammerwand',v:0},{n:r.Ib>0?'Strahlplasma':'Kammerplasma',v:r.phiB},{n:'NTR-Plasma',v:r.phiN},{n:'Kollektor = SSG',v:r.phiS},{n:'Erde',v:0}];
+  const vs=st5.map(s=>s.v);let lo=Math.min(...vs,0),hi=Math.max(...vs,0);const pad=Math.max(4,(hi-lo)*0.12);lo-=pad;hi+=pad;
+  const l=46,rr=10,t=12,b=40,pw=W-l-rr,ph=H-t-b;const Y=v=>t+ph*(hi-v)/(hi-lo);
+  const step=niceStep(hi-lo,6);c.strokeStyle=C.grid;c.lineWidth=1;c.fillStyle=C.muted;c.font=`10.5px ${C.mono}`;c.textAlign='right';c.textBaseline='middle';
+  for(let v=Math.ceil(lo/step)*step;v<=hi;v+=step){c.beginPath();c.moveTo(l,Y(v));c.lineTo(W-rr,Y(v));c.stroke();c.fillText(fx(v,0),l-5,Y(v));}
+  c.strokeStyle=C.muted;c.beginPath();c.moveTo(l,Y(0));c.lineTo(W-rr,Y(0));c.stroke();
+  c.save();c.translate(11,t+ph/2);c.rotate(-Math.PI/2);c.textAlign='center';c.font=`11px ${C.ui}`;c.fillText('Potential gegen Erde (V)',0,0);c.restore();
+  const n=st5.length,seg=pw/n,X=i=>l+seg*(i+0.5),half=seg*0.30;
+  // Linie mit Plateaus und Rampen
+  c.strokeStyle=C.accent;c.lineWidth=2.4;c.beginPath();
+  for(let i=0;i<n;i++){const y=Y(st5[i].v);if(i===0)c.moveTo(X(i)-half,y);else c.lineTo(X(i)-half,y);c.lineTo(X(i)+half,y);}c.stroke();
+  // Rückweg über Voltmeter (gestrichelt): von Erde zurück zur Wand
+  c.fillStyle=C.ink;c.font=`600 10.5px ${C.ui}`;c.textAlign='center';c.textBaseline='top';
+  for(let i=0;i<n;i++){c.fillText(st5[i].n,X(i),H-b+8);c.fillStyle=C.muted;c.font=`10.5px ${C.mono}`;c.fillText(fV(st5[i].v,1),X(i),H-b+22);c.fillStyle=C.ink;c.font=`600 10.5px ${C.ui}`;
+    c.beginPath();c.arc(X(i),Y(st5[i].v),3,0,7);c.fill();}
+  // Stufen beschriften
+  const lbl=[['U_{RS,Wand}',r.Uw],['U_{K}',r.phiN-r.phiB],['U_{RS,NTR}',r.phiS-r.phiN],['V_{t}',-r.phiS]];
+  const names=['U_{RS,Wand}','−U_{K}','−U_{RS,NTR}','−V_{t}'];
+  for(let i=0;i<4;i++){const xm=(X(i)+X(i+1))/2,ym=(Y(st5[i].v)+Y(st5[i+1].v))/2;const d=st5[i+1].v-st5[i].v;
+    c.fillStyle=Math.abs(d)<0.05?C.muted:C.ink;rich(c,names[i]+' = '+fS(d,1)+' V',xm,ym+(i%2?12:-12),{size:10.5,weight:600,align:'center',halo:true});}
+  const sum=r.Uw-r.UK-r.URS-r.phiS;
+  $('#nPot').innerHTML=`Maschenregel: ${fx(r.Uw,1)} − ${fx(r.UK,1)} − ${fx(r.URS,1)} − (${fx(r.phiS,1)}) = <b>${fx(Math.abs(sum)<0.05?0:sum,1)} V</b>. Randschichten (Wand, NTR-Elektroden) und Kopplung stellen sich selbst ein; nur <i class="m">V</i><sub>t</sub> wird gemessen.`;}
+
+/* ----- Diagramm: I_W(V_t) ----- */
+function drawIV(){const {c,W,H}=ctxOf($('#pIV'));const r=R;
+  const l=48,rr=10,t=12,b=34,pw=W-l-rr,ph=H-t-b;const x0=-50,x1=20;
+  const ys=IVC.map(p=>p[1]*1e3);let lo=Math.min(-140,...ys),hi=Math.max(40,...ys);lo=Math.max(lo,-600);hi=Math.min(hi,400);
+  const X=v=>l+pw*(v-x0)/(x1-x0),Y=v=>t+ph*(hi-v)/(hi-lo);
+  c.strokeStyle=C.grid;c.lineWidth=1;c.fillStyle=C.muted;c.font=`10.5px ${C.mono}`;
+  const sy=niceStep(hi-lo,6);c.textAlign='right';c.textBaseline='middle';
+  for(let v=Math.ceil(lo/sy)*sy;v<=hi;v+=sy){c.beginPath();c.moveTo(l,Y(v));c.lineTo(W-rr,Y(v));c.stroke();c.fillText(fx(v,0),l-5,Y(v));}
+  c.textAlign='center';c.textBaseline='top';for(let v=-50;v<=20;v+=10){c.beginPath();c.moveTo(X(v),t);c.lineTo(X(v),t+ph);c.stroke();c.fillText(fx(v,0),X(v),t+ph+4);}
+  c.strokeStyle=C.muted;c.beginPath();c.moveTo(l,Y(0));c.lineTo(W-rr,Y(0));c.moveTo(X(0),t);c.lineTo(X(0),t+ph);c.stroke();
+  c.fillStyle=C.muted;c.textBaseline='middle';rich(c,'V_{t} = Φ_{SSG} gegen Erde (V)',l+pw/2,H-8,{size:11,weight:400,align:'center'});
+  c.save();c.translate(11,t+ph/2);c.rotate(-Math.PI/2);rich(c,'I_{W} (mA), positiv = zur Wand',0,0,{size:11,weight:400,align:'center'});c.restore();
+  // Zenerbereich
+  c.fillStyle=hexA(C.warn,0.08);c.fillRect(l,t,X(-50)-l+2,ph);
+  // Modellkurve
+  c.save();c.beginPath();c.rect(l,t,pw,ph);c.clip();
+  c.strokeStyle=C.accent;c.lineWidth=2.2;c.beginPath();IVC.forEach((p,i)=>{const x=X(p[0]),y=Y(p[1]*1e3);i?c.lineTo(x,y):c.moveTo(x,y);});c.stroke();
+  // Arbeitspunkt
+  const px=X(r.phiS),py=Y(r.IW*1e3);c.strokeStyle=C.ink;c.lineWidth=2;c.beginPath();c.arc(px,py,6,0,7);c.stroke();
+  c.restore();
+  // Legende
+  c.font=`10.5px ${C.ui}`;c.textAlign='left';c.textBaseline='middle';let lx=l+8,ly=t+10;
+  const leg=(col,txt,sym)=>{c.fillStyle=col;c.strokeStyle=col;c.lineWidth=2.2;if(sym==='l'){c.beginPath();c.moveTo(lx,ly);c.lineTo(lx+14,ly);c.stroke();}else if(sym==='o'){c.beginPath();c.arc(lx+7,ly,4,0,7);c.fill();}else{c.fillRect(lx+3.5,ly-3.5,7,7);}c.fillStyle=C.ink;c.fillText(txt,lx+19,ly);ly+=15;};
+  leg(C.accent,'Modell, aktuelle Einstellung','l');
+  $('#nIV').innerHTML=`Arbeitspunkt (Kreis): <i class="m">V</i><sub>t</sub> = ${fV(r.phiS,1)}, <i class="m">I</i><sub>W</sub> = ${fS(r.IW*1e3,1)} mA. Die Kurve schneidet null beim Floating-Potential. Rot hinterlegt: Zenerdioden leiten.`;}
+
+/* ----- Wand: Abbildung z, r → Bild ----- */
+function zx(L,z){return z>=0?L.t.x1+(L.cx1-L.t.x1)*Math.sqrt(Math.min(1,z/MP.LB)):L.t.x1+(z/-WG.ZF)*(L.t.x1-L.cx0);}
+function ry(L,y){return y>=0?L.ax-y/WG.R0*(L.ax-L.cy0):L.ax-y/WG.R0*(L.cy1-L.ax);}
+// Farbe: Elektronen (negativ) blau, Ionen (positiv) orange
+function divCol(u){u=Math.max(-1,Math.min(1,u));const a=rgb(u<0?C.el:C.ion),b=rgb(C.stage),f=Math.abs(u);
+  return `rgb(${Math.round(b[0]+(a[0]-b[0])*f)},${Math.round(b[1]+(a[1]-b[1])*f)},${Math.round(b[2]+(a[2]-b[2])*f)})`;}
+function probeVal(p){return st.pmode==='vf'?p.vf:(p.ji-p.je)*1e3;}
+// Wandsegmente, Isolatoren, Erdschiene, Wandsonden
+function drawWall(c,L,WM){
+  const g=4;c.strokeStyle=C.wall;c.lineWidth=5;c.lineCap='butt';
+  const segXY=[];
+  WM.seg.forEach((s,k)=>{let P;
+    if(s.wall==='top'||s.wall==='bot'){const y=s.wall==='top'?L.cy0:L.cy1;let x0=Math.max(L.cx0,zx(L,s.z0)),x1=Math.min(L.cx1,zx(L,s.z1));P=[[x0+g,y],[x1-g,y]];}
+    else if(s.wall==='end')P=[[L.cx1,L.cy0+g],[L.cx1,L.cy1-g]];
+    else P=[[L.cx0,L.cy0+g],[L.cx0,L.cy1-g]];
+    segXY.push(P);c.beginPath();c.moveTo(P[0][0],P[0][1]);c.lineTo(P[1][0],P[1][1]);c.stroke();});
+  // Isolatoren an den Segmentgrenzen
+  const iso=[[L.cx0,L.cy0],[L.cx1,L.cy0],[L.cx1,L.cy1],[L.cx0,L.cy1]];
+  [1,2,3].forEach(k=>{const z=WG.ZF+(MP.LB-WG.ZF)*k/4,x=zx(L,z);iso.push([x,L.cy0],[x,L.cy1]);});
+  c.lineWidth=1;for(const [x,y] of iso){c.fillStyle=C.stage;c.strokeStyle=C.muted;c.fillRect(x-3,y-3.5,6,7);c.strokeRect(x-3,y-3.5,6,7);}
+  // Wandsonden
+  // Farbskala: Stromdichte symmetrisch logarithmisch (0,1 mA/m²), Floating-Potential linear
+  const vs=WM.probes.map(probeVal),vm=Math.max(1e-9,...vs.map(Math.abs)),v0=0.1;
+  const cu=v=>st.pmode==='vf'?v/vm:Math.sign(v)*Math.log10(1+Math.abs(v)/v0)/Math.log10(1+vm/v0);
+  WM.probes.forEach((p,i)=>{const u=cu(vs[i]);c.fillStyle=divCol(u);c.strokeStyle=C.ink;c.lineWidth=0.8;let x,y,w,h;
+    if(p.wall==='top'){x=zx(L,p.pos);y=L.cy0+7;w=10;h=6;}else if(p.wall==='bot'){x=zx(L,p.pos);y=L.cy1-7;w=10;h=6;}
+    else if(p.wall==='end'){x=L.cx1-7;y=ry(L,p.pos);w=6;h=10;}else{x=L.cx0+7;y=ry(L,p.pos);w=6;h=10;}
+    c.fillRect(x-w/2,y-h/2,w,h);c.strokeRect(x-w/2,y-h/2,w,h);});
+  return {vm};}
+function drawSegMeters(c,L,WM,WS){
+  for(const w of WS){if(!w.segm)continue;const s=WM.seg[w.segm.k],P=w.P,mx=(P[0][0]+P[1][0])/2,my=(P[0][1]+P[1][1])/2;
+    c.fillStyle=C.stage;c.strokeStyle=C.ink;c.lineWidth=1.2;c.beginPath();c.arc(mx,my,7,0,7);c.fill();c.stroke();
+    c.fillStyle=C.ink;c.font=`700 9px ${C.ui}`;c.textAlign='center';c.textBaseline='middle';c.fillText('A',mx,my+0.5);
+    const txt=fS((Math.abs(s.I)<5e-6?0:s.I)*1e3,1)+' mA',col=Math.abs(s.I)<2e-5?C.muted:(s.I>0?C.ion:C.el);
+    if(s.wall==='top')readout(c,mx,L.cy0-37,'',txt,col,'center');
+    else if(s.wall==='bot')readout(c,mx,L.cy1+37,'',txt,col,'center');
+    else if(s.wall==='front')readout(c,L.cx0-8,L.cy0-37,'Upstream',txt,col,'right');
+    else{c.save();c.translate(L.cx1+36,my);c.rotate(-Math.PI/2);readout(c,0,0,'Downstream',txt,col,'center');c.restore();}}}
+
+/* ----- Diagramm: Wandsonden, zwei Felder mit eigener Ortsachse ----- */
+function drawW(){const {c,W,H}=ctxOf($('#pW'));const r=R,WM=WMc,vf=st.pmode==='vf';
+  const ZE=MP.LB,ZF=WG.ZF,R0=WG.R0,S=WM.secs;
+  // Profil in die vier Wände zerlegen, mit echter Koordinate
+  const top=[],bot=[],dn=[],up=[];
+  for(const q of WM.prof){if(q.s<S[1])top.push({x:ZF+q.s,ji:q.ji,je:q.je});else if(q.s<S[2])dn.push({x:R0-(q.s-S[1]),ji:q.ji,je:q.je});
+    else if(q.s<S[3])bot.push({x:ZE-(q.s-S[2]),ji:q.ji,je:q.je});else up.push({x:q.s-S[3]-R0,ji:q.ji,je:q.je});}
+  bot.reverse();dn.reverse();
+  const VF=q=>Math.max(-8*r.Te,r.Te*Math.log(Math.max(q.ji,1e-12)/Math.max(q.je,1e-12)));
+  const NET=q=>(q.ji-q.je)*1e3;
+  // y-Achse: Stromdichte symmetrisch logarithmisch, Floating-Potential linear
+  const l=52,rr=10,t=26,b=40,gap=22,wtot=W-l-rr-2*gap,wa=wtot*0.52,wb=wtot*0.26,wc=wtot-wa-wb,ph=H-t-b;
+  const XA=z=>l+wa*(z-ZF)/(ZE-ZF),xb0=l+wa+gap,XB=y=>xb0+wb*(y+R0)/(2*R0),xc0=xb0+wb+gap,XC=y=>xc0+wc*(y+R0)/(2*R0);
+  let Y,ticks,ylab;
+  if(vf){const all=[...top,...bot,...dn,...up].map(VF);let lo=Math.min(...all,0),hi=Math.max(...all,0);const pad=Math.max(2,(hi-lo)*0.1);lo-=pad;hi+=pad;
+    Y=v=>t+ph*(hi-v)/(hi-lo);const sy=niceStep(hi-lo,6);ticks=[];for(let v=Math.ceil(lo/sy)*sy;v<=hi;v+=sy)ticks.push([v,fx(v,0)]);ylab='Floating-Potential gegen Wand (V)';}
+  else{const v0=0.1,f=v=>Math.sign(v)*Math.log10(1+Math.abs(v)/v0);let mx=1;[...top,...dn].forEach(q=>{mx=Math.max(mx,q.ji*1e3,q.je*1e3);});const tp=f(mx)*1.1;
+    Y=v=>t+ph*(tp-f(v))/(2*tp);ticks=[[0,'0']];[0.1,1,10,100,1000].forEach(v=>{if(f(v)<=tp){const s=fx(v,v<1?1:0);ticks.push([v,s],[-v,'−'+s]);}});ylab='Stromdichte (mA/m²), + = Ionen';}
+  // Rahmen und Gitter beider Felder
+  const frame=(x0,w)=>{c.strokeStyle=C.grid;c.lineWidth=1;for(const [v] of ticks){c.beginPath();c.moveTo(x0,Y(v));c.lineTo(x0+w,Y(v));c.stroke();}
+    c.strokeStyle=C.muted;c.beginPath();c.moveTo(x0,Y(0));c.lineTo(x0+w,Y(0));c.stroke();c.strokeStyle=C.line;c.strokeRect(x0,t,w,ph);};
+  frame(l,wa);frame(xb0,wb);frame(xc0,wc);
+  c.fillStyle=C.muted;c.font=`10.5px ${C.mono}`;c.textAlign='right';c.textBaseline='middle';for(const [v,s] of ticks)c.fillText(s,l-5,Y(v));
+  c.save();c.translate(11,t+ph/2);c.rotate(-Math.PI/2);rich(c,ylab,0,0,{size:11,weight:400,align:'center'});c.restore();
+  // x-Achsen
+  c.textAlign='center';c.textBaseline='top';c.font=`10.5px ${C.mono}`;c.fillStyle=C.muted;c.strokeStyle=C.muted;
+  for(let z=-1;z<=4;z++){const x=XA(z);c.beginPath();c.moveTo(x,t+ph);c.lineTo(x,t+ph+4);c.stroke();c.fillText(fx(z,0),x,t+ph+6);}
+  for(const y of [-1,0,1]){for(const X of [XB,XC]){const x=X(y);c.beginPath();c.moveTo(x,t+ph);c.lineTo(x,t+ph+4);c.stroke();c.fillText(fx(y,0),x,t+ph+6);}}
+  c.fillStyle=C.ink;rich(c,'z (m), Abstand vom Triebwerk entlang der Achse',l+wa/2,t+ph+26,{size:11,weight:400,align:'center'});
+  rich(c,'r (m)',xb0+wb/2,t+ph+26,{size:11,weight:400,align:'center'});rich(c,'r (m)',xc0+wc/2,t+ph+26,{size:11,weight:400,align:'center'});
+  c.font=`600 10.5px ${C.ui}`;c.textBaseline='bottom';c.fillText('Seitenwand (Zylindermantel)',l+wa/2,t-6);c.fillText('Downstream-Wand',xb0+wb/2,t-6);c.fillText('Upstream-Wand',xc0+wc/2,t-6);
+  // Segmentgrenzen und Triebwerk im Mantelfeld
+  c.save();c.setLineDash([3,3]);c.strokeStyle=C.muted;c.lineWidth=1;for(let k=1;k<4;k++){const x=XA(ZF+(ZE-ZF)*k/4);c.beginPath();c.moveTo(x,t);c.lineTo(x,t+ph);c.stroke();}
+  c.strokeStyle=C.thr;c.setLineDash([2,3]);c.beginPath();c.moveTo(XA(0),t);c.lineTo(XA(0),t+ph);c.stroke();c.restore();
+  c.fillStyle=C.thr;c.font=`600 10px ${C.ui}`;c.textAlign='left';c.textBaseline='top';c.fillText('Triebwerk',XA(0)+3,t+3);
+  // Kurven
+  const line=(arr,X,fn,col,lw,dash)=>{if(!arr.length)return;c.save();c.strokeStyle=col;c.lineWidth=lw;if(dash)c.setLineDash(dash);c.beginPath();arr.forEach((q,i)=>{const x=X(q.x),y=Y(fn(q));i?c.lineTo(x,y):c.moveTo(x,y);});c.stroke();c.restore();};
+  c.save();c.beginPath();c.rect(l,t,wa,ph);c.rect(xb0,t,wb,ph);c.rect(xc0,t,wc,ph);c.clip();
+  if(vf){line(top,XA,VF,C.accent,2.2);line(bot,XA,VF,C.accent,2,[6,4]);line(dn,XB,VF,C.accent,2.2);line(up,XC,VF,C.accent,2.2);}
+  else{line(top,XA,q=>q.ji*1e3,C.ion,1.6);line(top,XA,q=>-q.je*1e3,C.el,1.6);line(top,XA,NET,C.ink,2.2);line(bot,XA,NET,C.ink,2,[6,4]);
+    line(dn,XB,q=>q.ji*1e3,C.ion,1.6);line(dn,XB,q=>-q.je*1e3,C.el,1.6);line(dn,XB,NET,C.ink,2.2);
+    line(up,XC,q=>q.ji*1e3,C.ion,1.6);line(up,XC,q=>-q.je*1e3,C.el,1.6);line(up,XC,NET,C.ink,2.2);}
+  // Wandsonden an ihren Orten
+  for(const p of WM.probes){const v=probeVal(p),x=(p.wall==='top'||p.wall==='bot')?XA(p.pos):p.wall==='end'?XB(p.pos):XC(p.pos),y=Y(v);
+    c.fillStyle=p.wall==='bot'?C.line:C.stage;c.strokeStyle=C.ink;c.lineWidth=1.2;c.beginPath();c.rect(x-3,y-3,6,6);c.fill();c.stroke();}
+  c.restore();
+  // Legende als Textzeile unter dem Diagramm
+  const sv=(col,dash)=>`<svg width="20" height="8" aria-hidden="true"><line x1="0" y1="4" x2="20" y2="4" stroke="${col}" stroke-width="2"${dash?` stroke-dasharray="${dash}"`:''}/></svg>`;
+  const sq=`<svg width="10" height="10" aria-hidden="true"><rect x="2" y="2" width="6" height="6" fill="var(--stage)" stroke="var(--ink)"/></svg>`;
+  const sqg=`<svg width="10" height="10" aria-hidden="true"><rect x="2" y="2" width="6" height="6" fill="var(--line)" stroke="var(--ink)"/></svg>`;
+  const lg=(vf?[[sv('var(--accent)'),'Floating-Potential'],[sv('var(--accent)','6 4'),'Seitenwand unten']]
+    :[[sv('var(--c-ion)'),'Ionen'],[sv('var(--c-el)'),'Elektronen (negativ)'],[sv('var(--ink)'),'netto'],[sv('var(--ink)','6 4'),'netto, Seitenwand unten']]).concat([[sq,'Wandsonden'],[sqg,'Wandsonden unten']]);
+  const lgHtml='<span class="legend" style="margin-bottom:4px">'+lg.map(([a,b])=>`<span>${a}${b}</span>`).join('')+'</span>';
+  const z0=v=>Math.abs(v)<5e-5?0:v;
+  $('#nW').innerHTML=lgHtml+`Links die Seitenwand über dem Abstand <i class="m">z</i> vom Triebwerk (oben und unten im gezeigten Schnitt; Segmentgrenzen gestrichelt). Mitte die Downstream-Wand, auf die der Strahl trifft, rechts die Upstream-Wand hinter dem Triebwerk, beide über dem Radius <i class="m">r</i> (Strahlachse bei <i class="m">r</i> = 0). Summe der Segmentströme ${fS(z0(WM.sum)*1e3,1)} mA = <i class="m">I</i><sub>W</sub>. Elektronen ${fx(st.kap*100,0)} % lokal ambipolar, ${fx(100-st.kap*100,0)} % gleichmäßig verteilt; die Verteilung ist Modellannahme. ${vf?'Floating-Potential einer kleinen Sonde gegenüber der Wand: <i class="m">T</i><sub>e</sub> ln(<i class="m">j</i><sub>i</sub>/<i class="m">j</i><sub>e</sub>).':'Stromdichte bei Wandpotential, symmetrisch logarithmische Achse.'}`;}
+
+/* ----- Strompfad im Plasma: Triebwerk → Strahl → Neutralisator, bei I_W ≠ 0 mit Zweig zur Wand ----- */
+function drawCurrentPath(c,L,r,dt){
+  if(!st.cp||r.Ib<=0)return;
+  const el=st.dir==='el',col=el?C.el:C.cur;
+  const Intr=r.IA+r.Ihous*MP.FNH,Itw=-(r.Iacc+r.Ihous*(1-MP.FNH)-r.IS),IW=r.IW;
+  const hIn=(L.t.y1-L.t.y0);
+  const G=[L.t.x1+6,L.ax],J=[L.t.x1+L.CW*0.24,L.ax-hIn*0.18],O=[L.n.orif[0]+5,L.n.orif[1]+3];
+  const Wt=[J[0]+L.CW*0.18,L.cy0+14];
+  // Pfade in technischer Richtung; Kontrollpunkt für quadratische Kurven
+  const paths=[
+    {k:'pA',I:Itw,P:[G,[(G[0]+J[0])/2,L.ax+hIn*0.05],J],lab:'I_{TW}',sub:'Strahl '+fmA(r.Ib,1)+(r.Ihous*(1-MP.FNH)>=0?' − ':' + ')+'Gehäuse '+fmA(Math.abs(r.Ihous*(1-MP.FNH)),2)},
+    {k:'pB',I:Intr,P:[J,[L.t.x1+L.CW*0.16,L.n.y1+L.CH*0.08],O],lab:'I_{NTR}',sub:'Elektronen '+fmA(r.Iem,1)+' − Ionen '+fmA(r.Iio,1)+(Math.abs(r.Ihous*MP.FNH)>5e-6?(r.Ihous*MP.FNH>0?' + ':' − ')+'Gehäuse '+fmA(Math.abs(r.Ihous*MP.FNH),2):'')}];
+  if(Math.abs(IW)>5e-4)paths.push(IW>0?{k:'pC',I:IW,P:[J,[J[0]+L.CW*0.14,(J[1]+Wt[1])/2+20],Wt],lab:'I_{W}'}:{k:'pC',I:-IW,P:[Wt,[J[0]+L.CW*0.14,(J[1]+Wt[1])/2+20],J],lab:'I_{W}'});
+  const maxI=Math.max(...paths.map(p=>Math.abs(p.I)),1e-6);
+  c.save();c.lineCap='round';
+  for(const p of paths){const a=Math.abs(p.I);if(a<1e-5)continue;
+    let [P0,P1,P2]=p.P;if(el){[P0,P2]=[P2,P0];}
+    const w=3+16*Math.sqrt(a/0.25);
+    c.strokeStyle=hexA(col,0.16);c.lineWidth=w;c.beginPath();c.moveTo(P0[0],P0[1]);c.quadraticCurveTo(P1[0],P1[1],P2[0],P2[1]);c.stroke();
+    const v=curSpeed(p.I)*1.2;phase[p.k]=((phase[p.k]||0)+(playing?dt*v:0))%36;
+    c.setLineDash([12,10]);c.lineDashOffset=-phase[p.k];c.strokeStyle=hexA(col,0.85);c.lineWidth=2.4;
+    c.beginPath();c.moveTo(P0[0],P0[1]);c.quadraticCurveTo(P1[0],P1[1],P2[0],P2[1]);c.stroke();c.setLineDash([]);
+    // Pfeilspitze am Ende, entlang der Tangente
+    const tx=P2[0]-P1[0],ty=P2[1]-P1[1],tl=Math.hypot(tx,ty)||1,ux=tx/tl,uy=ty/tl,h=Math.min(16,7+w*0.5);
+    c.fillStyle=hexA(col,0.9);c.beginPath();c.moveTo(P2[0]+ux*2,P2[1]+uy*2);c.lineTo(P2[0]-ux*h-uy*h*0.55,P2[1]-uy*h+ux*h*0.55);c.lineTo(P2[0]-ux*h+uy*h*0.55,P2[1]-uy*h-ux*h*0.55);c.closePath();c.fill();
+    // Beschriftung an der Kurvenmitte
+    const m=bez(P0,P1,P2,0.5);c.fillStyle=col;c.textBaseline='middle';
+    const yl=m[1]-(p.k==='pA'?22:0);rich(c,p.lab+' '+fmA(a,1)+' netto',m[0]+10,yl,{size:11,weight:700,halo:true});
+    if(p.sub){c.fillStyle=col;rich(c,p.sub,m[0]+10,yl+14,{size:10,weight:500,halo:true});c.fillStyle=col;}}
+  c.restore();}
+
+/* ----- Legende ----- */
+function legend(){const dot=(col,r=3.5)=>`<svg width="12" height="12" aria-hidden="true"><circle cx="6" cy="6" r="${r}" fill="${col}"/></svg>`;
+  const dsh=`<svg width="20" height="10" aria-hidden="true"><line x1="0" y1="5" x2="20" y2="5" stroke="var(--c-pl)" stroke-width="1.5" stroke-dasharray="4 3"/></svg>`;
+  const el=st.dir==='el';
+  $('#legend').innerHTML=[
+    [dot(el?'var(--c-el)':'var(--c-cur)',2.6),el?'Elektronen in den Leitungen':'Strom in den Leitungen (technische Richtung)'],
+    [dot('var(--c-ion)'),'Strahlionen Xe⁺'],[dot('var(--c-el)',2.6),'Elektronen aus dem Neutralisator'],['<svg width="12" height="12" aria-hidden="true"><rect x="3" y="3" width="6" height="6" fill="var(--c-cex)"/></svg>','CEX-Ionen'],['<svg width="12" height="12" aria-hidden="true"><circle cx="6" cy="6" r="3.3" fill="none" stroke="var(--c-ion)" stroke-width="1.5"/></svg>','Ionen aus dem Neutralisator-Plasma'],[dsh,'Randschicht']
+  ].map(([s,t])=>`<span>${s}${t}</span>`).join('')+(R?(()=>{const q=speeds(R),f=x=>x>=10?fx(x,0):x>=1?fx(x,1):fx(x,2);
+    return `<span style="flex-basis:100%">Jeder Punkt steht für dieselbe Ladung. Geschwindigkeit relativ zu den Strahlionen (${f(q.v.ion/1e3)} km/s): CEX-Ionen ${f(q.v.cex/q.v.ion)}×, Neutralisator-Ionen ${f(q.v.nion/q.v.ion)}×${st.tempo==='real'?' (maßstäblich)':`; dargestellt gestaucht: ${f(q.k.cex)}×, ${f(q.k.nion)}×`}. Elektronen: thermisch ${f(q.v.elth/q.v.ion)}× schneller, aber ungeordnet; gezeigt ist ihre Netto-Drift, etwa so schnell wie die Strahlionen, das Zittern deutet die thermische Bewegung an.</span>`;})():'');}
+
+/* ----- Schleife ----- */
+let lastT=0;
+function frameLoop(ts){const dt=lastT?Math.min(0.05,(ts-lastT)/1000):0;lastT=ts;
+  if(dirty){dirty=false;legend();drawPot();drawIV();drawW();}
+  drawView(dt);
+  requestAnimationFrame(frameLoop);}
+function redrawAll(){readColors();dpr=Math.min(2,window.devicePixelRatio||1);if(!R)return;legend();drawPot();drawIV();drawW();drawView(0);}
+for(const id of ['#view','#pPot','#pIV','#pW'])new ResizeObserver(redrawAll).observe($(id).parentElement);
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',redrawAll);
+new MutationObserver(redrawAll).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+
+dpr=Math.min(2,window.devicePixelRatio||1);
+st=Object.assign({},DEF);
+buildControls();
+readColors();
+{const h=location.hash.slice(1).split('&');if(h.includes('dark'))document.documentElement.dataset.theme='dark';if(h.includes('light'))document.documentElement.dataset.theme='light';
+  const id=h.find(k=>EXM[k]);selectEx(id||DEF.ex);
+  for(const k of h){const n=k.match(/^(Vt|Ib|PHV|NHV|Prf|TeN|TeB|lp|Q|kap)=(-?[\d.]+)$/);if(n){st[n[1]]=+n[2];st.sel=null;}if(k==='bias')st.mode='bias';if(k==='real')st.tempo='real';if(k==='el')st.dir='el';}
+  if(h.includes('pause'))setPlay(false);sync();
+  if(h.includes('kz'))$('#kzbox').open=true;
+  if(h.includes('info')){$('#info').style.transition='none';$('#info').classList.add('open');$('#backdrop').classList.add('open');$('#info').setAttribute('aria-hidden','false');$('#infoBtn').setAttribute('aria-expanded','true');}}
+requestAnimationFrame(frameLoop);
+</script>
+</body>
+</html>
