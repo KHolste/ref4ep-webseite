@@ -1,0 +1,1057 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Plasmadrifts – Tutorials – Ref4EP</title>
+<style>
+:root{
+  /* Layout: Werkbank – links Versuchswahl und Regler, Mitte die Bühne (3D-Bahn + Messkurve + Messwerte), rechts Physik und Aufgaben */
+  --bg:#e9edf1; --panel:#fbfcfd; --ink:#14202b; --muted:#566573; --line:#d2dae1; --stage:#ffffff; --grid:#e4e9ee;
+  --accent:#0b6767; --accent-soft:#d9eeec; --on-accent:#ffffff;
+  --c-e:#1f5fc2; --c-i:#c23a2b; --c-b:#0a8ea3; --c-E:#b06f0c; --c-g:#8a5a2b; --c-d:#8a3db2;
+  --planet:#a9bccb; --cone:#d6dee5;
+  --f-ui:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-head:"IBM Plex Sans Condensed","IBM Plex Sans",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+  --f-math:"Source Serif 4",Cambria,"Times New Roman",serif;
+  --r:7px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0b1115; --panel:#121a20; --ink:#e1e8ed; --muted:#8d9eab; --line:#25323c; --stage:#0a0f13; --grid:#17212a;
+    --accent:#47b6ae; --accent-soft:#15302e; --on-accent:#06110f;
+    --c-e:#62a1ff; --c-i:#ff715f; --c-b:#3cc3d8; --c-E:#e5b552; --c-g:#cf9c63; --c-d:#cb8df2;
+    --planet:#2c4050; --cone:#22303b; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0b1115; --panel:#121a20; --ink:#e1e8ed; --muted:#8d9eab; --line:#25323c; --stage:#0a0f13; --grid:#17212a;
+  --accent:#47b6ae; --accent-soft:#15302e; --on-accent:#06110f;
+  --c-e:#62a1ff; --c-i:#ff715f; --c-b:#3cc3d8; --c-E:#e5b552; --c-g:#cf9c63; --c-d:#cb8df2;
+  --planet:#2c4050; --cone:#22303b; color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{color-scheme:light}
+body{margin:0}
+html,body{background:var(--bg)}
+body{color:var(--ink);font-family:var(--f-ui);font-size:14px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 28px}
+.wrap{max-width:1720px;margin:0 auto}
+.r4bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding-top:10px;font-size:12.5px;color:var(--muted)}
+.r4bar a{color:var(--accent);text-decoration:none}.r4bar a:hover{text-decoration:underline}
+header.top{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 18px;padding-block:16px 12px}
+header.top h1{font-family:var(--f-head);font-weight:600;font-size:26px;letter-spacing:.01em;margin:0}
+header.top .sub{color:var(--muted);margin:0}
+header.top .units{margin-left:auto;font-size:12px;color:var(--muted);font-family:var(--f-mono)}
+.app{display:grid;gap:14px;grid-template-columns:272px minmax(0,1fr) 340px;
+  grid-template-areas:"scen stage info" "params stage info";grid-template-rows:auto 1fr;align-items:start}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r)}
+.scen{grid-area:scen;padding:12px}
+.params{grid-area:params;padding:12px 14px 14px}
+.stage{grid-area:stage;min-width:0;display:flex;flex-direction:column;gap:10px}
+.info{grid-area:info;padding:16px 18px;min-width:0}
+h2.lab{font-family:var(--f-head);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);margin:0 0 8px}
+/* Szenarienliste */
+.sclist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.sclist button{all:unset;box-sizing:border-box;width:100%;display:grid;grid-template-columns:26px 1fr auto;align-items:center;gap:8px;
+  padding:6px 8px;border-radius:5px;cursor:pointer}
+.sclist button:hover{background:var(--accent-soft)}
+.sclist button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.sclist .no{font-family:var(--f-mono);font-size:12px;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--line);color:var(--muted)}
+.sclist .nm{font-weight:500;line-height:1.25}
+.sclist .lv{display:block;font-size:11.5px;color:var(--muted);font-weight:400}
+.sclist .tag{font-size:10.5px;letter-spacing:.04em;color:var(--muted);border:1px dashed var(--line);border-radius:4px;padding:0 5px}
+.sclist button[aria-current="true"]{background:var(--accent-soft)}
+.sclist button[aria-current="true"] .no{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.diffbar{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted);margin:10px 4px 0}
+.diffbar i{flex:1;height:4px;border-radius:2px;background:linear-gradient(90deg,var(--accent-soft),var(--accent))}
+/* Regler */
+.seg{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);border-radius:6px;overflow:hidden;margin-bottom:12px}
+.seg button{all:unset;text-align:center;padding:6px 4px;cursor:pointer;font-size:13px;font-weight:500}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent)}
+.seg button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.ctl{display:flex;flex-direction:column;gap:2px;margin-bottom:11px}
+.ctl .row{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.ctl label{font-weight:500}
+.ctl label i,.m i{font-family:var(--f-math);font-style:italic;font-size:1.08em}
+.ctl output{font-family:var(--f-mono);font-size:12.5px;font-variant-numeric:tabular-nums;color:var(--accent)}
+.ctl .hint{font-size:11.5px;color:var(--muted);line-height:1.35}
+input[type=range]{width:100%;accent-color:var(--accent);margin:2px 0}
+input[type=range]:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+.ctl .val{display:flex;align-items:center;gap:4px}
+.stp{all:unset;box-sizing:border-box;width:22px;height:22px;display:grid;place-items:center;border:1px solid var(--line);border-radius:5px;cursor:pointer;font-family:var(--f-mono);font-size:14px;line-height:1;color:var(--ink);user-select:none;touch-action:manipulation}
+.stp:hover{border-color:var(--accent);color:var(--accent)}
+.stp:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.ctl output{min-width:44px;text-align:center}
+.ctl-tip{font-size:11.5px;color:var(--muted);margin:2px 0 10px;line-height:1.4}
+.ctl-tip kbd{font-family:var(--f-mono);font-size:11px;border:1px solid var(--line);border-bottom-width:2px;border-radius:3px;padding:0 4px;background:var(--panel)}
+.btn{font:inherit;font-weight:500;font-size:13px;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:6px;padding:5px 10px;cursor:pointer}
+.btn:hover{border-color:var(--accent)}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.btn[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent)}
+/* Bühne */
+.toolbar{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
+.toolbar .grp{display:flex;gap:4px;flex-wrap:wrap}
+.toolbar label.chk{display:flex;gap:5px;align-items:center;font-size:13px;cursor:pointer;user-select:none}
+.toolbar label.chk input{accent-color:var(--accent)}
+.toolbar select{font:inherit;font-size:13px;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:4px 6px}
+.viewport{position:relative;height:clamp(340px,62vh,780px);border:1px solid var(--line);border-radius:var(--r);background:var(--stage);overflow:hidden}
+.viewport canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:grab}
+.viewport canvas:active{cursor:grabbing}
+.hud{position:absolute;left:12px;top:10px;font-family:var(--f-mono);font-size:12px;color:var(--muted);pointer-events:none;line-height:1.5}
+.hud .st{color:var(--ink);font-family:var(--f-ui);font-weight:500}
+.legend{position:absolute;left:12px;bottom:10px;display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px;color:var(--muted);pointer-events:none;max-width:calc(100% - 120px)}
+.legend span{display:flex;align-items:center;gap:5px}
+.legend svg{flex:none}
+.hud,.hint3d,.legend{background:color-mix(in srgb,var(--stage) 82%,transparent);border-radius:5px;padding:3px 7px}
+.hint3d{position:absolute;right:12px;top:10px;font-size:11.5px;color:var(--muted);pointer-events:none;text-align:right}
+.transport{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+.transport .tempo{display:flex;align-items:center;gap:8px;flex:1;min-width:220px}
+.transport .tempo input{flex:1}
+.transport output{font-family:var(--f-mono);font-size:12.5px;min-width:92px;color:var(--muted)}
+.below{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:10px}
+.chartbox,.numbox{padding:10px 12px;min-width:0}
+.chartbox .hd{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap}
+.chartbox select{font:inherit;font-size:13px;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:3px 6px;max-width:100%}
+.chartwrap{position:relative;height:210px}
+.chartwrap canvas{position:absolute;inset:0;width:100%;height:100%}
+.chartnote{font-size:11.5px;color:var(--muted);margin-top:4px;min-height:1.2em}
+.numbox .tw{overflow-x:auto}
+table.num{border-collapse:collapse;width:100%;font-size:12.5px}
+table.num th,table.num td{padding:4px 6px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+table.num th:first-child,table.num td:first-child{text-align:left;white-space:normal}
+table.num thead th{font-weight:600;font-size:11.5px;color:var(--muted);vertical-align:bottom}
+table.num td{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+table.num td:first-child{font-family:var(--f-ui)}
+table.num .pe{color:var(--c-e)} table.num .pi{color:var(--c-i)}
+table.num td.sim{color:var(--ink);font-weight:500}
+table.num td.th{color:var(--muted)}
+/* Info */
+.info .lvl{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:0}
+.info h3{font-family:var(--f-head);font-weight:600;font-size:22px;line-height:1.2;margin:2px 0 10px;text-wrap:balance}
+.info p{margin:0 0 10px;max-width:65ch}
+.info b{font-weight:600}
+.formula{font-family:var(--f-math);font-size:17px;line-height:1.55;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:10px 2px;margin:4px 0 12px;display:flex;flex-direction:column;gap:4px;overflow-x:auto}
+.formula i{font-style:italic}
+.formula b{font-weight:600;font-style:normal}
+.formula small{font-family:var(--f-ui);font-size:12px;color:var(--muted)}
+.frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;font-size:.92em;line-height:1.15;margin:0 2px}
+.frac>span:first-child{border-bottom:1px solid currentColor;padding:0 3px}
+.frac>span:last-child{padding:0 3px}
+.info h4{font-family:var(--f-head);font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:16px 0 6px}
+.tasks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.tasks li{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:start;padding:8px 0;border-top:1px solid var(--line)}
+.tasks li:first-child{border-top:0}
+.tasks .btn{font-size:12px;padding:3px 8px;white-space:nowrap}
+.m{font-family:var(--f-math)}
+.m b{font-weight:600}
+.foot{font-size:12px;color:var(--muted);margin-top:14px}
+@media (max-width:1280px){
+  .app{grid-template-columns:272px minmax(0,1fr);grid-template-areas:"scen stage" "params stage" "params info";grid-template-rows:auto auto 1fr}
+}
+@media (max-width:860px){
+  .app{grid-template-columns:minmax(0,1fr);grid-template-areas:"scen" "stage" "params" "info";grid-template-rows:none}
+  .sclist{display:grid;grid-template-columns:1fr 1fr}
+  .sclist .tag{display:none}
+  .below{grid-template-columns:minmax(0,1fr)}
+  .viewport{height:clamp(320px,78vw,560px)}
+  header.top .units{margin-left:0}
+  .hint3d{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<nav class="r4bar" aria-label="Ref4EP"><a href="/">Ref4EP</a><span aria-hidden="true">/</span><a href="/tutorials/">Tutorials</a><span aria-hidden="true">/</span><span>Plasmadrifts</span></nav>
+<header class="top">
+  <h1>Plasmadrifts</h1>
+  <p class="sub">Einteilchenbewegung geladener Teilchen in elektrischen und magnetischen Feldern</p>
+  <span class="units">Einheiten: m<sub>e</sub> = e = B<sub>ref</sub> = 1 · Zeit in 1/ω<sub>ce</sub> · Länge in v/ω<sub>ce</sub></span>
+</header>
+
+<div class="app">
+  <nav class="panel scen" aria-label="Szenarien">
+    <h2 class="lab">Szenario</h2>
+    <ol class="sclist" id="sclist"></ol>
+    <div class="diffbar"><span>leicht</span><i></i><span>anspruchsvoll</span></div>
+  </nav>
+
+  <section class="panel params" aria-label="Parameter">
+    <h2 class="lab">Teilchen</h2>
+    <div class="seg" id="species" role="group" aria-label="Teilchenart">
+      <button type="button" data-sp="e" id="sp-e">Elektron</button>
+      <button type="button" data-sp="i" id="sp-i">Ion</button>
+      <button type="button" data-sp="both" id="sp-both">Beide</button>
+    </div>
+    <div id="ctls"></div>
+    <button class="btn" type="button" id="defaults">Standardwerte</button>
+  </section>
+
+  <main class="stage">
+    <div class="toolbar">
+      <div class="grp" role="group" aria-label="Ansicht">
+        <button class="btn" type="button" data-view="3d" id="v-3d">3D</button>
+        <button class="btn" type="button" data-view="top" id="v-top">Draufsicht x–y</button>
+        <button class="btn" type="button" data-view="xz" id="v-xz">Seite x–z</button>
+        <button class="btn" type="button" data-view="yz" id="v-yz">Seite y–z</button>
+        <button class="btn" type="button" id="fit">Einpassen</button>
+      </div>
+      <div class="grp">
+        <label class="chk"><input type="checkbox" id="o-lines" checked> Feldlinien</label>
+        <label class="chk"><input type="checkbox" id="o-gc" checked> Führungszentrum</label>
+        <label class="chk"><input type="checkbox" id="o-drift" checked> Drift (Theorie)</label>
+        <label class="chk"><input type="checkbox" id="o-follow" checked> Kamera folgt</label>
+        <label class="chk" id="ghostWrap" hidden><input type="checkbox" id="o-ghost" checked> Vorheriger Lauf</label>
+        <label class="chk">Spur <select id="o-trail">
+          <option value="2000">kurz</option><option value="8000">mittel</option><option value="25000" selected>lang</option><option value="60000">sehr lang</option>
+        </select></label>
+      </div>
+    </div>
+    <div class="viewport" id="viewport">
+      <canvas id="view" aria-label="Dreidimensionale Darstellung der Teilchenbahn"></canvas>
+      <div class="hud" id="hud"></div>
+      <div class="hint3d">Ziehen: drehen · Mausrad/Pinch: zoomen<br>Leertaste: Start/Pause · R: Neustart</div>
+      <div class="legend" id="legend"></div>
+    </div>
+    <div class="transport">
+      <button class="btn primary" type="button" id="play">Pause</button>
+      <button class="btn" type="button" id="restart">Neustart</button>
+      <div class="tempo"><label for="tempo">Tempo</label><input type="range" id="tempo" min="0" max="100" step="1"><output id="tempoOut"></output></div>
+    </div>
+    <div class="below">
+      <div class="panel chartbox">
+        <div class="hd"><h2 class="lab" style="margin:0">Messkurve</h2><select id="chartSel" aria-label="Größe im Diagramm"></select></div>
+        <div class="chartwrap"><canvas id="chart" aria-label="Zeitverlauf der gewählten Größe"></canvas></div>
+        <div class="chartnote" id="chartNote"></div>
+      </div>
+      <div class="panel numbox">
+        <h2 class="lab">Theorie und Simulation</h2>
+        <div class="tw"><table class="num" id="numtab"></table></div>
+      </div>
+    </div>
+  </main>
+
+  <aside class="panel info" id="info" aria-live="polite"></aside>
+</div>
+</div>
+
+<script>
+/*CORE-START*/
+const TAU=2*Math.PI, DEG=Math.PI/180;
+const NSTEP=64, TRAIL_EVERY=2, CAP=60000, HMAX=8000;
+const RP=5; // Planetenradius im Dipolszenario
+const _B=new Float64Array(3), _E=new Float64Array(3), _gc=[0,0,0];
+const NF=new Intl.NumberFormat('de-DE',{maximumSignificantDigits:3});
+function fmt(x){ if(x===null||x===undefined||!isFinite(x)) return x===Infinity?'∞':'—'; if(x!==0&&Math.abs(x)<1e-3) return x.toExponential(1).replace('.',',').replace('-','−'); return NF.format(x).replace('-','−'); }
+function fmtS(x){ if(x===null||x===undefined||!isFinite(x)) return fmt(x); if(Math.abs(x)<5e-12) return '0'; return (x>0?'+':'')+fmt(x); }
+
+function mHeavy(P){return P.species==='e'?1:P.M;}
+function mLight(P){return P.species==='i'?P.M:1;}
+function Tref(P){return TAU*mHeavy(P)/P.B0;}
+function speciesList(P){return P.species==='both'?['e','i']:[P.species];}
+function rlMax(P){const vp=Math.max(P.v*Math.sin(P.alpha*DEG),0.3);return (P.species==='e'?1:Math.sqrt(P.M))*vp/P.B0;}
+function omegaAbs(P){return P.omega*P.B0/mHeavy(P);}
+function Tc(p){return TAU*p.m/(Math.abs(p.q)*p.B0loc);}
+function last(a){return a[a.length-1];}
+function slope(h,key,t0){
+  const T=h.t,Y=h[key]; let i=T.length-1; if(i<6) return null; const tr=T[i];
+  let n=0,st=0,sy=0,stt=0,sty=0;
+  for(;i>=0&&T[i]>=t0;i--){const t=T[i]-tr,y=Y[i];n++;st+=t;sy+=y;stt+=t*t;sty+=t*y;}
+  if(n<8) return null; const d=n*stt-st*st; if(d<=0) return null; return (n*sty-st*sy)/d;
+}
+function measSlope(p,key,win){ if(p.t<2*Tc(p)) return null; return slope(p.h,key,win===0?0:p.t-(win||8)*Tc(p)); }
+function rangeOf(a,from){let lo=Infinity,hi=-Infinity;for(let i=from||0;i<a.length;i++){const y=a[i];if(y<lo)lo=y;if(y>hi)hi=y;}return [lo,hi];}
+function circle(cx,cy,cz,R,n,plane){ // horizontal circle (plane z=cz)
+  const a=new Float32Array((n+1)*3); for(let k=0;k<=n;k++){const t=TAU*k/n;a[3*k]=cx+R*Math.cos(t);a[3*k+1]=cy+R*Math.sin(t);a[3*k+2]=cz;} return a; }
+
+/* ---------- Szenarien ---------- */
+const SCEN=[
+{ id:'gyr', hash:'gyration', title:'Gyration', full:'Gyration im homogenen Magnetfeld', level:'Grundlagen', extra:false,
+  params:['B0','v','alpha','nu'], def:{species:'e',M:9,B0:1,v:1,alpha:60,nu:0}, tempo:0.5,
+  charts:[['vx','Geschwindigkeit vₓ(t)'],['px','Ort x(t)'],['pz','Ort z(t)'],['W','Energie W(t)']], chart:'vx',
+  lineMode:'uniform',
+  B(x,t,P,o){o[0]=0;o[1]=0;o[2]=P.B0;},
+  start(){return [0,0,0];},
+  view(P){return {yaw:-35,pitch:22,span:Math.max(5*rlMax(P),4),follow:true};},
+  prerun(P){return 1.2*Tref(P);},
+  rows(p,P){
+    const wc=Math.abs(p.q)*P.B0/p.m, h=p.h, n=h.t.length-1;
+    const rl=Math.hypot(h.px[n]-h.gx[n],h.py[n]-h.gy[n]);
+    const vz=measSlope(p,'gz');
+    return [
+      ['Zyklotronfrequenz ω<sub>c</sub>',fmt(wc),'—'],
+      ['Umlaufzeit T<sub>c</sub> = 2π/ω<sub>c</sub>',fmt(TAU/wc),'—'],
+      ['Larmorradius r<sub>L</sub>',fmt(p.vperp0/wc),fmt(rl)],
+      ['Ganghöhe h',fmt(TAU*p.vpar0/wc),P.nu>0?'—':(vz===null?'…':fmt(vz*TAU/wc))],
+      ['Energie W',fmt(0.5*p.m*p.v0*p.v0),fmt(last(h.W))]];
+  },
+  info:`<p>Die Lorentzkraft steht senkrecht auf der Geschwindigkeit: Das Teilchen kreist um die Feldlinie und läuft an ihr entlang.</p>
+  <div class="formula"><span><i>ω</i><sub>c</sub> = <span class="frac"><span>|<i>q</i>|<i>B</i></span><span><i>m</i></span></span> &emsp; <i>r</i><sub>L</sub> = <span class="frac"><span><i>m v</i><sub>⊥</sub></span><span>|<i>q</i>|<i>B</i></span></span> = <span class="frac"><span><i>v</i><sub>⊥</sub></span><span><i>ω</i><sub>c</sub></span></span></span><span><i>h</i> = 2π <i>v</i><sub>∥</sub> / <i>ω</i><sub>c</sub> &emsp;<small>(Ganghöhe der Schraube)</small></span></div>`,
+  tasks:[
+    ['Verdopple <span class="m"><i>B</i></span>. Wie ändern sich Radius und Umlaufzeit?',{B0:2}],
+    ['Setze α = 90°: Das Teilchen bleibt in einer Ebene und läuft auf einem Kreis.',{alpha:90,view:'top'}],
+    ['Elektron und Ion mit gleicher Energie: Wer kreist schneller, wer auf dem größeren Kreis, und in welche Richtung?',{species:'both',alpha:90,view:'top'}],
+    ['Schalte Stöße ein (ν = 0,1). Bei jedem Stoß springt das Führungszentrum. So diffundieren Teilchen quer zum Magnetfeld.',{nu:0.1,alpha:90,view:'top',follow:false}]]
+},
+{ id:'exb', hash:'exb', title:'E×B-Drift', full:'E×B-Drift', level:'Homogene Felder', extra:false,
+  params:['B0','E0','v','alpha','nu'], def:{species:'e',M:9,B0:1,E0:0.3,v:1,alpha:90,nu:0}, tempo:0.8,
+  charts:[['gy','Führungszentrum y(t)'],['gx','Führungszentrum x(t)'],['vx','Geschwindigkeit vₓ(t)'],['W','Energie W(t)']], chart:'gy',
+  lineMode:'uniform', arrows:'E',
+  B(x,t,P,o){o[0]=0;o[1]=0;o[2]=P.B0;},
+  E(x,t,P,o){o[0]=P.E0;o[1]=0;o[2]=0;},
+  arrowVal(P){return 1;},
+  start(){return [0,0,0];},
+  view(P){return {yaw:-30,pitch:58,span:Math.max(7*rlMax(P),8*P.E0/P.B0*(P.species==='e'?1:P.M)/P.B0,8),follow:true};},
+  prerun(P){return 2*Tref(P);},
+  theo(p,P){const wc=Math.abs(p.q)*P.B0/p.m,vE=P.E0/P.B0;const k=P.nu>0?wc/P.nu:Infinity;
+    const fpar=isFinite(k)?k/(1+k*k):0,fperp=isFinite(k)?k*k/(1+k*k):1;return [Math.sign(p.q)*vE*fpar,-vE*fperp,0];},
+  vd(p,P){return this.theo(p,P);},
+  rows(p,P){
+    const th=this.theo(p,P), w=P.nu>0?0:8;
+    const sx=measSlope(p,'gx',w), sy=measSlope(p,'gy',w);
+    const vE=P.E0/P.B0, u=Math.abs(p.vperp0-vE);
+    return [
+      ['Drift v<sub>y</sub> (Richtung <b>E</b>×<b>B</b>)',fmtS(th[1]),sy===null?'…':fmtS(sy)],
+      ['Drift v<sub>x</sub> (entlang <b>E</b>)',fmtS(th[0]),sx===null?'…':fmtS(sx)],
+      ['Gyrationsgeschw. im Driftsystem |v<sub>⊥</sub> − v<sub>E</sub>|',fmt(u),'—'],
+      ['Schleifen in der Bahn?',P.nu>0?'—':(u>vE+1e-9?'ja':(Math.abs(u-vE)<1e-9?'Spitzen (Zykloide)':'nein')),'—']];
+  },
+  info:`<p>Ein elektrisches Feld quer zu <b>B</b> verschiebt die Kreisbahn senkrecht zu <b>E</b> und <b>B</b>, für alle Teilchen gleich.</p>
+  <div class="formula"><span><b>v</b><sub>E</sub> = <span class="frac"><span><b>E</b> × <b>B</b></span><span><i>B</i>²</span></span> &emsp; |<b>v</b><sub>E</sub>| = <i>E</i>/<i>B</i></span>
+  <span><small>mit Stößen, κ = ω<sub>c</sub>/ν:</small> &nbsp;<i>v</i><sub>∥<b>E</b></sub> = ± <span class="frac"><span><i>E</i></span><span><i>B</i></span></span><span class="frac"><span>κ</span><span>1+κ²</span></span>, &nbsp;<i>v</i><sub><b>E</b>×<b>B</b></sub> = <span class="frac"><span><i>E</i></span><span><i>B</i></span></span><span class="frac"><span>κ²</span><span>1+κ²</span></span></span></div>`,
+  tasks:[
+    ['Starte das Teilchen aus der Ruhe (v = 0). Die Bahn ist eine Zykloide.',{v:0,view:'top'}],
+    ['Ist v<sub>E</sub> größer als die Gyrationsgeschwindigkeit im Driftsystem, verschwinden die Schleifen.',{E0:1.5,v:0.5,view:'top'}],
+    ['Elektron und Ion driften gleich schnell in dieselbe Richtung.',{species:'both',view:'top'}],
+    ['Stöße (ν = 0,3): Die Ionen (κ &lt; 1) bewegen sich vor allem entlang <span class="m"><b>E</b></span>, die Elektronen (κ &gt; 1) bleiben bei der E×B-Drift. Das ist der Ursprung von Pedersen- und Hall-Strom.',{species:'both',nu:0.3,view:'top',follow:false,trail:'60000'}]]
+},
+{ id:'grav', hash:'gravitation', title:'Gravitationsdrift', full:'Kraftdrift am Beispiel der Gravitation', level:'Homogene Felder', extra:true,
+  params:['B0','g','v','alpha'], def:{species:'both',M:9,B0:1,g:0.04,v:1,alpha:90}, tempo:0.8,
+  charts:[['gy','Führungszentrum y(t)'],['gx','Führungszentrum x(t)'],['W','Energie W(t)']], chart:'gy',
+  lineMode:'uniform', arrows:'g',
+  B(x,t,P,o){o[0]=0;o[1]=0;o[2]=P.B0;},
+  g(P){return [-P.g,0,0];},
+  arrowVal(P){return -1;},
+  start(){return [0,0,0];},
+  view(P){return {yaw:-30,pitch:58,span:Math.max(7*rlMax(P),10),follow:true};},
+  prerun(P){return 2*Tref(P);},
+  vd(p,P){return [0,p.m*P.g/(p.q*P.B0),0];},
+  rows(p,P){const sy=measSlope(p,'gy'),sx=measSlope(p,'gx');
+    return [
+      ['Drift v<sub>y</sub>',fmtS(p.m*P.g/(p.q*P.B0)),sy===null?'…':fmtS(sy)],
+      ['Drift v<sub>x</sub> (entlang <b>g</b>)','0',sx===null?'…':fmtS(sx)],
+      ['Larmorradius r<sub>L</sub>',fmt(p.m*p.vperp0/(Math.abs(p.q)*P.B0)),'—']];},
+  info:`<p>Jede konstante Kraft quer zu <b>B</b> erzeugt eine Drift senkrecht zu Kraft und Feld; Elektronen und Ionen driften gegeneinander.</p>
+  <div class="formula"><span><b>v</b><sub>F</sub> = <span class="frac"><span><b>F</b> × <b>B</b></span><span><i>q B</i>²</span></span> &emsp; <b>F</b> = <i>m</i><b>g</b> ⇒ <b>v</b><sub>g</sub> = <span class="frac"><span><i>m</i></span><span><i>q</i></span></span><span class="frac"><span><b>g</b> × <b>B</b></span><span><i>B</i>²</span></span></span></div>`,
+  tasks:[
+    ['In welche Richtung driften Elektron und Ion? Wie verhalten sich die Beträge?',{view:'top'}],
+    ['Massenverhältnis 25: Die Drift der Ionen wächst proportional zur Masse.',{M:25,view:'top'}],
+    ['Verdopple v. Die Drift hängt nicht von der Energie ab.',{v:2,view:'top'}],
+    ['Doppeltes B halbiert die Drift.',{B0:2,view:'top'}]]
+},
+{ id:'grad', hash:'gradient', title:'∇B-Drift', full:'Gradientendrift (∇B-Drift)', level:'Inhomogene Felder', extra:false,
+  params:['B0','L','v','alpha'], def:{species:'both',M:4,B0:1,L:15,v:1,alpha:90}, tempo:0.8,
+  charts:[['gy','Führungszentrum y(t)'],['gx','Führungszentrum x(t)'],['mu','Magnetisches Moment μ(t)'],['vx','Geschwindigkeit vₓ(t)']], chart:'gy',
+  lineMode:'grad',
+  B(x,t,P,o){o[0]=0;o[1]=0;o[2]=P.B0*Math.max(0.05,1+x[0]/P.L);},
+  start(){return [0,0,0];},
+  view(P){return {yaw:-30,pitch:58,span:Math.max(7*rlMax(P),10),follow:true};},
+  prerun(P){return 2*Tref(P);},
+  lost(p,P){return p.x[0]<-0.9*P.L?'hat den Feldbereich verlassen':'';},
+  theo(p,P,gx){const Bg=P.B0*Math.max(0.05,1+gx/P.L);return p.m*p.vperp0*p.vperp0/(2*p.q*P.L*Bg);},
+  vd(p,P){return [0,this.theo(p,P,last(p.h.gx)),0];},
+  rows(p,P){const sy=measSlope(p,'gy'),sx=measSlope(p,'gx');const rl=p.m*p.vperp0/(Math.abs(p.q)*P.B0);
+    return [
+      ['Drift v<sub>y</sub> (Richtung <b>B</b>×∇B)',fmtS(this.theo(p,P,0)),sy===null?'…':fmtS(sy)],
+      ['Drift v<sub>x</sub> (entlang ∇B)','0',sx===null?'…':fmtS(sx)],
+      ['Larmorradius r<sub>L</sub>',fmt(rl),'—'],
+      ['Kleinheitsparameter r<sub>L</sub>/L',fmt(rl/P.L),'—']];},
+  info:`<p>Wo das Feld stärker ist, ist der Kreis enger: Das Teilchen driftet senkrecht zu <b>B</b> und ∇<i>B</i>.</p>
+  <div class="formula"><span><b>v</b><sub>∇B</sub> = <span class="frac"><span><i>m v</i><sub>⊥</sub>²</span><span>2<i>qB</i></span></span> <span class="frac"><span><b>B</b> × ∇<i>B</i></span><span><i>B</i>²</span></span> = <span class="frac"><span><i>W</i><sub>⊥</sub></span><span><i>q</i></span></span> <span class="frac"><span><b>B</b> × ∇<i>B</i></span><span><i>B</i>³</span></span></span></div>`,
+  tasks:[
+    ['Elektron und Ion gleicher Energie: gleich schnell, aber in entgegengesetzte Richtungen.',{view:'top'}],
+    ['In der Draufsicht zeigt die Dichte der Feldlinien die Feldstärke.',{view:'top',species:'e'}],
+    ['Verkleinere α auf 45°. Die Drift wird langsamer, obwohl v gleich bleibt.',{alpha:45}],
+    ['Starker Gradient (L = 4): r<sub>L</sub> ist nicht mehr klein gegen L, Theorie und Simulation weichen voneinander ab.',{L:4,species:'e',view:'top'}],
+    ['Doppelte Geschwindigkeit: v<sub>∇B</sub> wird viermal so groß.',{v:2,species:'e',view:'top'}]]
+},
+{ id:'curv', hash:'kruemmung', title:'Krümmungsdrift', full:'Krümmungs- und ∇B-Drift im Torus', level:'Inhomogene Felder', extra:true,
+  params:['B0','R0','Bp','v','alpha'], def:{species:'e',M:4,B0:1,R0:25,Bp:0,v:1,alpha:30}, tempo:4,
+  charts:[['gz','Führungszentrum z(t)'],['rm','Abstand von der Achse r(t)'],['vpar','Parallelgeschwindigkeit v∥(t)'],['mu','Magnetisches Moment μ(t)']], chart:'gz',
+  lineMode:'static',
+  B(x,t,P,o){
+    const R=Math.hypot(x[0],x[1]),c=x[0]/R,s=x[1]/R,Bt=P.B0*P.R0/R;
+    let bx=-s*Bt,by=c*Bt,bz=0;
+    if(P.Bp>0){const a=P.R0/3,dR=R-P.R0,z=x[2],r=Math.hypot(dR,z);
+      if(r>1e-9){const f=P.Bp*(r/a)*(P.R0/R),uR=-z/r,uz=dR/r;bx+=f*uR*c;by+=f*uR*s;bz+=f*uz;}}
+    o[0]=bx;o[1]=by;o[2]=bz;},
+  start(P){return [P.R0+0.4*P.R0/3,0,0];},
+  view(P){return {yaw:-25,pitch:28,span:2.9*P.R0,follow:false};},
+  prerun(P){return 0.25*TAU*P.R0/Math.max(0.2,P.v);},
+  lost(p,P){const R=Math.hypot(p.x[0],p.x[1]);return Math.hypot(R-P.R0,p.x[2])>1.6*P.R0/3?'hat das Plasmagefäß verlassen':'';},
+  theo(p,P){const R=P.R0+0.4*P.R0/3,Bg=P.B0*P.R0/R;return [p.m*p.vpar0*p.vpar0/(p.q*R*Bg),p.m*p.vperp0*p.vperp0/(2*p.q*R*Bg)];},
+  vd(p,P){const t=this.theo(p,P);return [0,0,t[0]+t[1]];},
+  rows(p,P){const t=this.theo(p,P),sz=measSlope(p,'gz',30);
+    const r=[
+      ['Krümmungsdrift v<sub>R</sub>',fmtS(t[0]),'—'],
+      ['∇B-Drift v<sub>∇B</sub>',fmtS(t[1]),'—'],
+      ['Summe v<sub>z</sub>'+(P.Bp>0?' (gilt nur lokal)':''),fmtS(t[0]+t[1]),sz===null?'…':fmtS(sz)]];
+    if(P.Bp>0){r.push(['Sicherheitsfaktor q = aB<sub>t</sub>/(R<sub>0</sub>B<sub>p</sub>)',fmt(1/(3*P.Bp)),'—']);
+      const rr=rangeOf(p.h.rm);r.push(['Abstand von der Achse min…max','—',fmt(rr[0])+' … '+fmt(rr[1])]);}
+    return r;},
+  lines(P){
+    const a=P.R0/3,rs=0.4*a,out=[];
+    out.push(circle(0,0,0,P.R0,160));
+    if(!(P.Bp>0)){out.push(circle(0,0,0,P.R0+rs,160),circle(0,0,0,P.R0-rs,160),circle(0,0,rs,P.R0,160),circle(0,0,-rs,P.R0,160));}
+    else{for(let k=0;k<4;k++){const th=k*Math.PI/2;out.push(traceLine(this,P,[P.R0+rs*Math.cos(th),0,rs*Math.sin(th)],0.6,Math.round(3*TAU*P.R0/0.6)));}}
+    return out;},
+  deco(P){const a=1.6*P.R0/3;return [circle(0,0,0,P.R0+a,160),circle(0,0,0,P.R0-a,160),circle(0,0,a,P.R0,160),circle(0,0,-a,P.R0,160)];},
+  info:`<p>Entlang gekrümmter Feldlinien wirkt die Zentrifugalkraft und treibt eine Drift senkrecht zur Krümmungsebene.</p>
+  <div class="formula"><span><b>v</b><sub>R</sub> + <b>v</b><sub>∇B</sub> = <span class="frac"><span><i>m</i></span><span><i>q</i></span></span>(<i>v</i><sub>∥</sub>² + ½<i>v</i><sub>⊥</sub>²) <span class="frac"><span><b>R</b><sub>c</sub> × <b>B</b></span><span><i>R</i><sub>c</sub>² <i>B</i>²</span></span></span></div>`,
+  tasks:[
+    ['Ohne Poloidalfeld driftet das Teilchen vertikal aus dem Gefäß.',{}],
+    ['Schalte das Poloidalfeld ein (B<sub>p</sub> = 0,2). Die Feldlinien sind verdrillt, und das Teilchen bleibt eingeschlossen.',{Bp:0.2}],
+    ['Großer Pitchwinkel mit Poloidalfeld: Innen ist B stärker, das Teilchen wird dort gespiegelt und läuft auf einer Bananenbahn. Gut sichtbar im Diagramm „Abstand von der Achse“.',{Bp:0.3,alpha:80,chart:'rm'}],
+    ['Vergleiche α = 0° (nur Krümmungsdrift) mit α = 90° (nur ∇B-Drift). Achte auf die Tabelle.',{alpha:0}]]
+},
+{ id:'pol', hash:'polarisation', title:'Polarisationsdrift', full:'Polarisationsdrift im zeitabhängigen E-Feld', level:'Zeitabhängige Felder', extra:true,
+  params:['B0','E0','omega','v','alpha'], def:{species:'both',M:9,B0:1,E0:0.3,omega:0.15,v:0.4,alpha:90}, tempo:2,
+  charts:[['gx','Führungszentrum x(t), Polarisationsdrift'],['gy','Führungszentrum y(t), E×B'],['W','Energie W(t)']], chart:'gx',
+  lineMode:'uniform', arrows:'E',
+  B(x,t,P,o){o[0]=0;o[1]=0;o[2]=P.B0;},
+  E(x,t,P,o){o[0]=P.E0*Math.sin(omegaAbs(P)*t);o[1]=0;o[2]=0;},
+  arrowVal(P,t){return Math.sin(omegaAbs(P)*t);},
+  dtCap(P){return TAU/omegaAbs(P)/200;},
+  start(){return [0,0,0];},
+  target(P){return [0,-P.E0/(P.B0*omegaAbs(P)),0];},
+  view(P){const yA=P.E0/(P.B0*omegaAbs(P));return {yaw:0,pitch:90,span:2.3*yA+6*rlMax(P),follow:false};},
+  prerun(P){return 0.12*TAU/omegaAbs(P);},
+  vd(p,P){const w=omegaAbs(P);return [p.m*P.E0*w*Math.cos(w*p.t)/(p.q*P.B0*P.B0),0,0];},
+  chartTheory(key,p,P,t){const w=omegaAbs(P);
+    if(key==='gx') return p.m*P.E0*Math.sin(w*t)/(p.q*P.B0*P.B0);
+    if(key==='gy') return P.E0/(P.B0*w)*(Math.cos(w*t)-1);
+    return null;},
+  rows(p,P){const w=omegaAbs(P),wc=Math.abs(p.q)*P.B0/p.m,ok=p.t>Math.PI/w;
+    const rx=rangeOf(p.h.gx),ry=rangeOf(p.h.gy);
+    return [
+      ['ω/ω<sub>c</sub> für dieses Teilchen',fmt(w/wc),'—'],
+      ['Amplitude x<sub>P</sub> = mE<sub>0</sub>/(|q|B²)',fmt(p.m*P.E0/(Math.abs(p.q)*P.B0*P.B0)),ok?fmt((rx[1]-rx[0])/2):'…'],
+      ['Amplitude y (E×B) = E<sub>0</sub>/(Bω)',fmt(P.E0/(P.B0*w)),ok?fmt((ry[1]-ry[0])/2):'…'],
+      ['v<sub>P</sub> relativ zu d<b>E</b>/dt',p.q>0?'parallel':'antiparallel','—']];},
+  info:`<p>Ändert sich das elektrische Feld, hinkt das träge Teilchen der E×B-Drift hinterher und driftet entlang <b>E</b>.</p>
+  <div class="formula"><span><b>v</b><sub>P</sub> = <span class="frac"><span><i>m</i></span><span><i>qB</i>²</span></span> <span class="frac"><span>d<b>E</b><sub>⊥</sub></span><span>d<i>t</i></span></span> &emsp;⇒&emsp; <i>x</i><sub>P</sub>(<i>t</i>) = <span class="frac"><span><i>m E</i>(<i>t</i>)</span><span><i>qB</i>²</span></span></span></div>`,
+  tasks:[
+    ['Diagramm „Führungszentrum x“: Simulation (durchgezogen) und Theorie x<sub>P</sub> = mE/(qB²) (gestrichelt) im Vergleich.',{chart:'gx'}],
+    ['Massenverhältnis 25: Die Auslenkung der Ionen wächst proportional zu m.',{M:25}],
+    ['ω/ω<sub>c</sub> = 0,5: Die Näherung ω ≪ ω<sub>c</sub> gilt nicht mehr.',{omega:0.5}],
+    ['Nur Elektronen: x<sub>P</sub> ist winzig, die Bewegung ist fast reine E×B-Drift.',{species:'e'}]]
+},
+{ id:'mir', hash:'spiegel', title:'Magnetische Flasche', full:'Magnetischer Spiegel (Flasche)', level:'Adiabatische Invarianten', extra:false,
+  params:['B0','Rm','Lm','v','alpha'], def:{species:'e',M:4,B0:1,Rm:4,Lm:10,v:1,alpha:50}, tempo:3,
+  charts:[['loss','Geschwindigkeitsraum (Verlustkegel)'],['vpar','Parallelgeschwindigkeit v∥(t)'],['gx','Führungszentrum x(t)'],['mu','Magnetisches Moment μ(t)']], chart:'loss',
+  ax:0, fitW:true, // Flaschenachse entlang x: in der Seitenansicht pendelt das Teilchen links/rechts
+  lineMode:'static',
+  B(x,t,P,o){const k=Math.PI/(2*P.Lm),u=x[0],s=Math.sin(k*u);
+    const dB=P.B0*(P.Rm-1)*k*Math.sin(2*k*u);o[0]=P.B0*(1+(P.Rm-1)*s*s);o[1]=-0.5*x[1]*dB;o[2]=-0.5*x[2]*dB;},
+  Bmax(P){return P.B0*P.Rm;},
+  alphaC(P){return Math.asin(1/Math.sqrt(P.Rm));},
+  start(){return [0,0,0];},
+  view(P){return {yaw:-14,pitch:16,span:4.4*P.Lm,follow:false};},
+  prerun(){return 0;}, // Start sichtbar in der Mitte der Flasche (Feldminimum)
+  lost(p,P){return Math.abs(p.x[0])>1.9*P.Lm?'hat die Flasche verlassen':'';},
+  zTurn(P,al){const s2=(1/Math.pow(Math.sin(al),2)-1)/(P.Rm-1);return s2>1?null:2*P.Lm/Math.PI*Math.asin(Math.sqrt(s2));},
+  Tb(p,P){const al=P.alpha*DEG,zt=this.zTurn(P,al);if(zt===null||p.v0<=0)return null;
+    if(zt<1e-9) return null; let I=0;const N=600,k=Math.PI/(2*P.Lm),s0=Math.sin(al)**2;
+    for(let i=0;i<N;i++){const th=(i+0.5)/N*Math.PI/2,z=zt*Math.sin(th),s=Math.sin(k*z),Bz=1+(P.Rm-1)*s*s;
+      const f=1-s0*Bz;if(f<=0)continue;I+=zt*Math.cos(th)/(p.v0*Math.sqrt(f))*(Math.PI/2/N);}
+    return 4*I;},
+  rows(p,P){const ac=this.alphaC(P),al=P.alpha*DEG,trap=al>ac,zt=this.zTurn(P,al);
+    const zc=p.zc,mu=rangeOf(p.h.mu),mm=(mu[0]+mu[1])/2;
+    let tb=null;if(zc.length>=3) tb=2*(last(zc)-zc[0])/(zc.length-1);
+    const zmax=rangeOf(p.h.gx.map(Math.abs))[1];
+    return [
+      ['Verlustkegel α<sub>c</sub> = arcsin(1/√R<sub>m</sub>)',fmt(ac/DEG)+'°','—'],
+      ['Eingeschlossen?',trap?'ja':'nein',!p.alive?'nein':(zc.length>=2?'ja':'…')],
+      ['Umkehrpunkt x<sub>U</sub>',trap&&zt!==null?fmt(zt):'—',(zc.length>=2&&p.alive)?fmt(zmax):'…'],
+      ['Pendelperiode T<sub>b</sub>',trap?fmt(this.Tb(p,P)):'—',tb===null?'…':fmt(tb)],
+      ['Schwankung von μ',p.vperp0>0?'0 %':'—',mm>0?fmt((mu[1]-mu[0])/mm*100)+' %':'—']];},
+  lines(P){const out=[],N=160;
+    const axis=new Float32Array([-2*P.Lm,0,0,2*P.Lm,0,0]);out.push(axis);
+    for(const r0 of [0.22*P.Lm,0.44*P.Lm]) for(let j=0;j<8;j++){const ph=j*TAU/8,a=new Float32Array((N+1)*3);
+      for(let i=0;i<=N;i++){const z=-2*P.Lm+4*P.Lm*i/N,s=Math.sin(Math.PI*z/(2*P.Lm)),r=r0/Math.sqrt(1+(P.Rm-1)*s*s);
+        a[3*i]=z;a[3*i+1]=r*Math.cos(ph);a[3*i+2]=r*Math.sin(ph);} out.push(a);}
+    return out;},
+  deco(P){const rc=0.55*P.Lm,ring=x0=>{const a=new Float32Array(97*3);for(let k=0;k<=96;k++){const t=TAU*k/96;a[3*k]=x0;a[3*k+1]=rc*Math.cos(t);a[3*k+2]=rc*Math.sin(t);}return a;};
+    return [ring(P.Lm),ring(-P.Lm),ring(P.Lm*1.04),ring(-P.Lm*1.04)];},
+  info:`<p>Das magnetische Moment bleibt erhalten: Im stärkeren Feld kehrt das Teilchen um, außer es liegt im Verlustkegel.</p>
+  <div class="formula"><span><i>μ</i> = <span class="frac"><span><i>m v</i><sub>⊥</sub>²</span><span>2<i>B</i></span></span> = const &emsp; <i>F</i><sub>∥</sub> = −<i>μ</i> <span class="frac"><span>∂<i>B</i></span><span>∂<i>s</i></span></span></span><span>sin² <i>α</i><sub>c</sub> = <span class="frac"><span><i>B</i><sub>min</sub></span><span><i>B</i><sub>max</sub></span></span> = <span class="frac"><span>1</span><span><i>R</i><sub>m</sub></span></span></span></div>`,
+  tasks:[
+    ['α = 20°: Das Teilchen liegt im Verlustkegel und entkommt.',{alpha:20}],
+    ['Geschwindigkeitsraum: Der Punkt läuft bis α = 90°. Dort kehrt das Teilchen um.',{chart:'loss'}],
+    ['R<sub>m</sub> = 9: Der Verlustkegel wird kleiner, auch α = 25° bleibt gefangen.',{Rm:9,alpha:25}],
+    ['Hängt der Umkehrpunkt von v ab? Probiere v = 0,5 und v = 2,5.',{v:2.5}],
+    ['Kurze Flasche (L = 3): B ändert sich über einen Gyrationsradius stark, und μ ist nicht mehr erhalten.',{Lm:3,v:1.5,chart:'mu'}]]
+},
+{ id:'dip', hash:'dipol', title:'Dipolfeld', full:'Strahlungsgürtel im Dipolfeld', level:'Adiabatische Invarianten', extra:true,
+  params:['B0','L0','v','alpha'], def:{species:'e',M:3,B0:1,L0:20,v:0.35,alpha:60}, tempo:120,
+  charts:[['gz','Führungszentrum z(t), Pendeln'],['phi','Azimut φ(t), Drift'],['loss','Geschwindigkeitsraum (Verlustkegel)'],['mu','Magnetisches Moment μ(t)']], chart:'gz',
+  lineMode:'static', planet:true,
+  B(x,t,P,o){const r2=x[0]*x[0]+x[1]*x[1]+x[2]*x[2],r=Math.sqrt(r2),K=P.B0*P.L0*P.L0*P.L0/(r2*r);
+    const mr=-x[2]/r;o[0]=K*3*mr*x[0]/r;o[1]=K*3*mr*x[1]/r;o[2]=K*(3*mr*x[2]/r+1);},
+  footLat(P){return Math.acos(Math.sqrt(RP/P.L0));},
+  Bmax(P){const l=this.footLat(P),s=Math.sin(l),c=Math.cos(l);return P.B0*Math.sqrt(1+3*s*s)/Math.pow(c,6);},
+  alphaC(P){return Math.asin(Math.sqrt(P.B0/this.Bmax(P)));},
+  start(P){return [P.L0,0,0];},
+  // Krümmungsdrift am Start (Kraftdrift, R_c = L/3): die Gyration startet im mitdriftenden System
+  v0drift(P,m,q,vpar){const v=m*vpar*vpar/(Math.abs(q)*P.B0*P.L0/3);return [0,-Math.sign(q)*v,0];},
+  view(P){return {yaw:-30,pitch:22,span:2.5*P.L0,follow:false};},
+  prerun(P){return 40*Tref(P);},
+  lost(p,P){const r=Math.hypot(p.x[0],p.x[1],p.x[2]);return r<RP?'ist auf den Planeten getroffen (Polarlicht)':(r>4*P.L0?'ist entkommen':'');},
+  Tbt(p,P){return 4*P.L0/p.v0*(1.30-0.56*Math.sin(P.alpha*DEG));},
+  Tdt(p,P){const W=0.5*p.m*p.v0*p.v0;return Math.PI*Math.abs(p.q)*P.B0*P.L0*P.L0/(3*W)/(0.35+0.15*Math.sin(P.alpha*DEG));},
+  vd(p,P){const h=p.h,gx=last(h.gx),gy=last(h.gy),R=Math.hypot(gx,gy),Td=this.Tdt(p,P),v=TAU*R/Td,s=-Math.sign(p.q);
+    return [-s*v*gy/R,s*v*gx/R,0];},
+  rows(p,P){const ac=this.alphaC(P),trap=P.alpha*DEG>ac,zc=p.zc;
+    let tb=null;if(zc.length>=3) tb=2*(last(zc)-zc[0])/(zc.length-1);
+    const sp=p.t>0.03*this.Tdt(p,P)?slope(p.h,'phi',0):null;
+    return [
+      ['Verlustkegel α<sub>c</sub> (Fußpunkt auf dem Planeten)',fmt(ac/DEG)+'°','—'],
+      ['Eingeschlossen?',trap?'ja':'nein',p.alive?(zc.length>=2?'ja':'…'):'nein'],
+      ['Gyrationsperiode am Äquator T<sub>c</sub>',fmt(TAU*p.m/(Math.abs(p.q)*P.B0)),'—'],
+      ['Pendelperiode T<sub>b</sub>',trap?fmt(this.Tbt(p,P)):'—',tb===null?'…':fmt(tb)],
+      ['Driftperiode T<sub>d</sub>',trap?fmt(this.Tdt(p,P)):'—',sp?fmt(360/Math.abs(sp)):'…'],
+      ['Driftrichtung',p.q<0?'Osten':'Westen',sp?(sp>0?'Osten':'Westen'):'…']];},
+  lines(P){const out=[],N=120;
+    for(const re of [0.7*P.L0,P.L0,1.35*P.L0]){const lf=Math.acos(Math.sqrt(RP/re));
+      for(let j=0;j<8;j++){const ph=j*TAU/8,a=new Float32Array((N+1)*3);
+        for(let i=0;i<=N;i++){const l=-lf+2*lf*i/N,r=re*Math.cos(l)**2,R=r*Math.cos(l);
+          a[3*i]=R*Math.cos(ph);a[3*i+1]=R*Math.sin(ph);a[3*i+2]=r*Math.sin(l);} out.push(a);}}
+    return out;},
+  deco(P){return [circle(0,0,0,P.L0,160)];},
+  info:`<p>Gyration, Pendeln zwischen den Polen und Drift um den Planeten laufen gleichzeitig ab, auf sehr verschiedenen Zeitskalen.</p>
+  <div class="formula"><span><i>T</i><sub>c</sub> ≪ <i>T</i><sub>b</sub> ≈ <span class="frac"><span>4<i>L</i></span><span><i>v</i></span></span>(1,30 − 0,56 sin <i>α</i><sub>eq</sub>) ≪ <i>T</i><sub>d</sub> ≈ <span class="frac"><span>π|<i>q</i>|<i>B</i><sub>eq</sub><i>L</i>²</span><span>3<i>W</i></span></span> <span class="frac"><span>1</span><span>0,35 + 0,15 sin <i>α</i><sub>eq</sub></span></span></span></div>`,
+  tasks:[
+    ['Verfolge die Drift um den Planeten. Ein Umlauf dauert rund 2000 Gyrationen.',{tempo:200}],
+    ['α = 4°: Die Spiegelpunkte lägen im Planeten, das Teilchen trifft die Atmosphäre.',{alpha:4,tempo:15}],
+    ['Elektron und Ion driften in entgegengesetzte Richtungen. Daraus entsteht der Ringstrom.',{species:'both',tempo:200}],
+    ['Diagramm „Azimut φ“: Lies die Driftperiode ab und vergleiche sie mit der Tabelle.',{chart:'phi',tempo:200}],
+    ['α = 90°: Das Teilchen bleibt in der Äquatorebene und driftet nur.',{alpha:90,tempo:200}],
+    ['v = 1: Der Gyrationsradius ist nicht mehr klein gegen den Krümmungsradius der Feldlinie am Äquator (L/3). μ bleibt nicht erhalten, und der Pitchwinkel streut von Umlauf zu Umlauf. So gehen Teilchen aus den Strahlungsgürteln verloren.',{v:1,alpha:30,chart:'mu',tempo:20}]]
+}];
+
+const PDEF={
+  B0:{lab:'Magnetfeld <i>B</i><sub>0</sub>',min:0.2,max:3,step:0.05},
+  v:{lab:'Geschwindigkeit <i>v</i>',min:0,max:3,step:0.05,hint:'Gilt für das Elektron. Ionen starten mit gleicher Energie, also mit v/√M.'},
+  alpha:{lab:'Pitchwinkel <i>α</i>',min:0,max:90,step:1,unit:'°',hint:'Winkel zwischen v und B. Bei 90° gibt es keine Bewegung entlang B.'},
+  M:{lab:'Massenverhältnis <i>m</i><sub>i</sub>/<i>m</i><sub>e</sub>',min:1,max:50,step:1,hint:'Bewusst klein, real wären es 1836 (Wasserstoff).'},
+  nu:{lab:'Stoßfrequenz <i>ν</i>',min:0,max:1,step:0.01,hint:'In Einheiten von ω<sub>ce</sub>. Bei jedem Stoß mit dem Neutralgas bekommt v eine zufällige Richtung und wieder den Startbetrag.'},
+  E0:{lab:'Elektrisches Feld <i>E</i><sub>0</sub>',min:0,max:2,step:0.02,hint:'zeigt in x-Richtung'},
+  g:{lab:'Beschleunigung <i>g</i>',min:0,max:0.2,step:0.005,hint:'Zeigt in −x-Richtung und wirkt auf alle Teilchen gleich.'},
+  L:{lab:'Gradientenlänge <i>L</i>',min:2,max:50,step:0.5,hint:'B = B₀(1 + x/L). Kleines L heißt starker Gradient.'},
+  R0:{lab:'Großer Radius <i>R</i><sub>0</sub>',min:10,max:50,step:1,hint:'Kleiner Radius des Gefäßes: R₀/3 · 1,6'},
+  Bp:{lab:'Poloidalfeld <i>B</i><sub>p</sub>',min:0,max:0.4,step:0.01,hint:'0 heißt rein toroidales Feld. Werte über 0 verdrillen die Feldlinien (Tokamak).'},
+  omega:{lab:'Frequenz <i>ω</i>/<i>ω</i><sub>c</sub>',min:0.02,max:0.6,step:0.01,hint:'Bezogen auf das schwerste gezeigte Teilchen'},
+  Rm:{lab:'Spiegelverhältnis <i>R</i><sub>m</sub>',min:1.2,max:12,step:0.1,hint:'B<sub>max</sub>/B<sub>min</sub>'},
+  Lm:{lab:'Spiegelabstand <i>L</i>',min:3,max:30,step:0.5,hint:'Abstand von der Mitte bis zum Feldmaximum'},
+  L0:{lab:'Startabstand <i>L</i>',min:10,max:40,step:1,hint:'Abstand in der Äquatorebene. Dort hat das Feld den Wert B₀.'}
+};
+
+/* ---------- Teilchen und Integration ---------- */
+function gcOf(p,sc,P){
+  const x=p.x,v=p.v;sc.B(x,p.t,P,_B);const Bx=_B[0],By=_B[1],Bz=_B[2],B2=Bx*Bx+By*By+Bz*Bz;
+  let fx=0,fy=0,fz=0;
+  if(sc.E){sc.E(x,p.t,P,_E);fx=_E[0];fy=_E[1];fz=_E[2];}
+  if(sc.g){const g=sc.g(P),r=p.m/p.q;fx+=r*g[0];fy+=r*g[1];fz+=r*g[2];}
+  const fb=(fx*Bx+fy*By+fz*Bz)/B2;fx-=fb*Bx;fy-=fb*By;fz-=fb*Bz;
+  const k=p.m/(p.q*B2);
+  _gc[0]=x[0]+k*((v[1]*Bz-v[2]*By)+fx);
+  _gc[1]=x[1]+k*((v[2]*Bx-v[0]*Bz)+fy);
+  _gc[2]=x[2]+k*((v[0]*By-v[1]*Bx)+fz);
+  return _gc;
+}
+function pushTrail(p){const i=(p.tn%CAP)*3;p.tr[i]=p.x[0];p.tr[i+1]=p.x[1];p.tr[i+2]=p.x[2];p.tn++;}
+function sample(p,sc,P){
+  // Boris: v liegt einen halben Schritt hinter x. Für die Auswertung x und t auf denselben Zeitpunkt zurücksetzen.
+  const hd=0.5*p.dt,x=p.x,v0=p.v;x[0]-=v0[0]*hd;x[1]-=v0[1]*hd;x[2]-=v0[2]*hd;p.t-=hd;
+  const gc=gcOf(p,sc,P);
+  x[0]+=v0[0]*hd;x[1]+=v0[1]*hd;x[2]+=v0[2]*hd;p.t+=hd;const Bx=_B[0],By=_B[1],Bz=_B[2],Bm=Math.hypot(Bx,By,Bz);
+  const v=p.v,v2=v[0]*v[0]+v[1]*v[1]+v[2]*v[2],vpar=(v[0]*Bx+v[1]*By+v[2]*Bz)/Bm,vp2=Math.max(0,v2-vpar*vpar);
+  const h=p.h;let phi=Math.atan2(gc[1],gc[0]);
+  if(p.phiPrev!==null){let d=phi-p.phiPrev;if(d>Math.PI)d-=TAU;if(d<-Math.PI)d+=TAU;p.phiAcc+=d;}else p.phiAcc=phi;
+  p.phiPrev=phi;
+  h.t.push(p.t);h.px.push(p.x[0]);h.py.push(p.x[1]);h.pz.push(p.x[2]);h.vx.push(v[0]);
+  h.gx.push(gc[0]);h.gy.push(gc[1]);h.gz.push(gc[2]);h.vpar.push(vpar);h.mu.push(p.m*vp2/(2*Bm));
+  h.W.push(0.5*p.m*v2);h.phi.push(p.phiAcc/DEG);h.pa.push(Math.atan2(Math.sqrt(vp2),vpar));
+  h.rm.push(P.R0?Math.hypot(Math.hypot(gc[0],gc[1])-P.R0,gc[2]):0);
+  const ez=p.zEps,gq=gc[sc.ax===undefined?2:sc.ax];if(gq>ez&&p.zs!==1){if(p.zs===-1)p.zc.push(p.t);p.zs=1;}else if(gq<-ez&&p.zs!==-1){if(p.zs===1)p.zc.push(p.t);p.zs=-1;}
+  if(h.t.length>HMAX) for(const k in h) h[k].splice(0,2000);
+}
+function makeParticle(kind,sc,P){
+  const m=kind==='e'?1:P.M,q=kind==='e'?-1:1,v=kind==='e'?P.v:P.v/Math.sqrt(P.M);
+  const g0=sc.start(P);sc.B(g0,0,P,_B);const Bm=Math.hypot(_B[0],_B[1],_B[2]);
+  const b=[_B[0]/Bm,_B[1]/Bm,_B[2]/Bm],a=Math.abs(b[2])<0.9?[0,0,1]:[1,0,0];
+  let e1=[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];const n=Math.hypot(e1[0],e1[1],e1[2]);e1=e1.map(c=>c/n);
+  const al=P.alpha*DEG,vpar=v*Math.cos(al),vperp=v*Math.sin(al);
+  const p={kind,m,q,v0:v,vpar0:vpar,vperp0:vperp,B0loc:Bm,
+    x:new Float64Array(g0),v:new Float64Array([vpar*b[0]+vperp*e1[0],vpar*b[1]+vperp*e1[1],vpar*b[2]+vperp*e1[2]]),
+    t:0,alive:true,status:'',tr:new Float32Array(CAP*3),tn:0,sc:0,
+    h:{t:[],px:[],py:[],pz:[],vx:[],gx:[],gy:[],gz:[],vpar:[],mu:[],W:[],phi:[],pa:[],rm:[]},
+    dt:0,nextS:0,dtS:1,zc:[],zs:0,zEps:0.5*m*v/(Math.abs(q)*Bm)+1e-6,phiPrev:null,phiAcc:0};
+  if(sc.v0drift){const d=sc.v0drift(P,m,q,vpar,vperp);p.v[0]+=d[0];p.v[1]+=d[1];p.v[2]+=d[2];}
+  for(let it=0;it<5;it++){const gc=gcOf(p,sc,P);const d0=g0[0]-gc[0],d1=g0[1]-gc[1],d2=g0[2]-gc[2];p.x[0]+=d0;p.x[1]+=d1;p.x[2]+=d2;}
+  // Boris braucht v einen halben Schritt vor x: Startgeschwindigkeit um dt/2 zurückdrehen
+  sc.B(p.x,0,P,_B);let dw=TAU*m/(Math.abs(q)*Math.max(Math.hypot(_B[0],_B[1],_B[2]),1e-3)*NSTEP);
+  if(sc.dtCap) dw=Math.min(dw,sc.dtCap(P));if(P.nu>0) dw=Math.min(dw,0.03/P.nu);
+  p.dt=dw;kickV(p,sc,P,-0.5*dw);
+  pushTrail(p);sample(p,sc,P);
+  return p;
+}
+function kickV(p,sc,P,dt){
+  const x=p.x,v=p.v;sc.B(x,p.t,P,_B);const qm=p.q/p.m;let ax=0,ay=0,az=0;
+  if(sc.E){sc.E(x,p.t,P,_E);ax=qm*_E[0];ay=qm*_E[1];az=qm*_E[2];}
+  if(sc.g){const g=sc.g(P);ax+=g[0];ay+=g[1];az+=g[2];}
+  const hd=0.5*dt;let vx=v[0]+ax*hd,vy=v[1]+ay*hd,vz=v[2]+az*hd;
+  const tx=qm*_B[0]*hd,ty=qm*_B[1]*hd,tz=qm*_B[2]*hd,s=2/(1+tx*tx+ty*ty+tz*tz);
+  const px=vx+(vy*tz-vz*ty),py=vy+(vz*tx-vx*tz),pz=vz+(vx*ty-vy*tx);
+  vx+=(py*tz-pz*ty)*s;vy+=(pz*tx-px*tz)*s;vz+=(px*ty-py*tx)*s;
+  v[0]=vx+ax*hd;v[1]=vy+ay*hd;v[2]=vz+az*hd;
+}
+function step(p,sc,P){
+  const x=p.x,v=p.v;sc.B(x,p.t,P,_B);const Bx=_B[0],By=_B[1],Bz=_B[2],Bm=Math.hypot(Bx,By,Bz);
+  let dw=TAU*p.m/(Math.abs(p.q)*Math.max(Bm,1e-3)*NSTEP);
+  if(sc.dtCap) dw=Math.min(dw,sc.dtCap(P));
+  if(P.nu>0) dw=Math.min(dw,0.03/P.nu);
+  // Zeitschritt nur in Zweierpotenz-Stufen ändern (mit Hysterese), damit das Boris-Verfahren stabil bleibt
+  if(!p.dt) p.dt=dw;
+  while(p.dt>1.25*dw) p.dt*=0.5;
+  while(2*p.dt<=dw) p.dt*=2;
+  const dt=p.dt;
+  const qm=p.q/p.m;let ax=0,ay=0,az=0;
+  if(sc.E){sc.E(x,p.t+0.5*dt,P,_E);ax=qm*_E[0];ay=qm*_E[1];az=qm*_E[2];}
+  if(sc.g){const g=sc.g(P);ax+=g[0];ay+=g[1];az+=g[2];}
+  const hd=0.5*dt;let vx=v[0]+ax*hd,vy=v[1]+ay*hd,vz=v[2]+az*hd;
+  const tx=qm*Bx*hd,ty=qm*By*hd,tz=qm*Bz*hd,s=2/(1+tx*tx+ty*ty+tz*tz);
+  const px=vx+(vy*tz-vz*ty),py=vy+(vz*tx-vx*tz),pz=vz+(vx*ty-vy*tx);
+  vx+=(py*tz-pz*ty)*s;vy+=(pz*tx-px*tz)*s;vz+=(px*ty-py*tx)*s;
+  vx+=ax*hd;vy+=ay*hd;vz+=az*hd;
+  if(P.nu>0&&Math.random()<1-Math.exp(-P.nu*dt)){const sp=p.v0,u=2*Math.random()-1,ph=TAU*Math.random(),sq=Math.sqrt(1-u*u);
+    vx=sp*sq*Math.cos(ph);vy=sp*sq*Math.sin(ph);vz=sp*u;}
+  v[0]=vx;v[1]=vy;v[2]=vz;x[0]+=vx*dt;x[1]+=vy*dt;x[2]+=vz*dt;p.t+=dt;
+}
+function advance(p,sc,P,tT,maxSteps){
+  let n=0;
+  while(p.alive&&p.t<tT-1e-12&&n<maxSteps){
+    step(p,sc,P);n++;
+    if((++p.sc)%TRAIL_EVERY===0) pushTrail(p);
+    if(p.t>=p.nextS){sample(p,sc,P);p.nextS=Math.max(p.nextS+p.dtS,p.t);}
+    if(sc.lost){const s=sc.lost(p,P);if(s){p.alive=false;p.status=s;pushTrail(p);sample(p,sc,P);}}
+  }
+  return n;
+}
+function createSim(sc,P){
+  const parts=speciesList(P).map(k=>makeParticle(k,sc,P));
+  const dtS=TAU*mLight(P)/P.B0/16;
+  parts.forEach(p=>{p.dtS=dtS;p.nextS=dtS;});
+  return {sc,P,parts,t:0};
+}
+function advanceSim(sim,dtSim,maxSteps){
+  const tT=sim.t+dtSim;let capped=false;
+  for(const p of sim.parts){if(!p.alive)continue;advance(p,sim.sc,sim.P,tT,maxSteps);if(p.alive&&p.t<tT-1e-9)capped=true;}
+  if(capped){const al=sim.parts.filter(p=>p.alive);sim.t=Math.min(...al.map(p=>p.t));}else sim.t=tT;
+}
+function traceLine(sc,P,seed,h,nmax){
+  const pts=[seed[0],seed[1],seed[2]],x=seed.slice(),k1=[0,0,0],k2=[0,0,0],k3=[0,0,0],k4=[0,0,0],y=[0,0,0];
+  const f=(q,o)=>{sc.B(q,0,P,_B);const m=Math.hypot(_B[0],_B[1],_B[2]);o[0]=_B[0]/m;o[1]=_B[1]/m;o[2]=_B[2]/m;};
+  for(let i=0;i<nmax;i++){
+    f(x,k1);for(let j=0;j<3;j++)y[j]=x[j]+0.5*h*k1[j];f(y,k2);for(let j=0;j<3;j++)y[j]=x[j]+0.5*h*k2[j];f(y,k3);
+    for(let j=0;j<3;j++)y[j]=x[j]+h*k3[j];f(y,k4);for(let j=0;j<3;j++)x[j]+=h/6*(k1[j]+2*k2[j]+2*k3[j]+k4[j]);
+    pts.push(x[0],x[1],x[2]);}
+  return new Float32Array(pts);
+}
+/*CORE-END*/
+</script>
+
+<script>
+(function(){
+const $=s=>document.querySelector(s);
+const view=$('#view'),vctx=view.getContext('2d'),chartCv=$('#chart'),cctx=chartCv.getContext('2d');
+const vp=$('#viewport');
+let sc=SCEN[0],P={},sim=null,running=true,chartKey='vx',staticLines=[],decoLines=[];
+let ghost=null; // vorheriger Lauf zum Vergleich (wird beim Klick auf „Einstellen“ gemerkt)
+function makeGhost(){if(!sim)return null;
+  return {parts:sim.parts.map(p=>{const n=Math.min(p.tn,CAP),a=new Float32Array(n*3);
+    for(let i=0;i<n;i++){const j=((p.tn-n+i)%CAP)*3;a[3*i]=p.tr[j];a[3*i+1]=p.tr[j+1];a[3*i+2]=p.tr[j+2];}
+    const h={};for(const k in p.h)h[k]=p.h[k].slice();return {kind:p.kind,tr:a,h,x:Array.from(p.x)};})};}
+let cam={yaw:-35,pitch:22,span:10,target:[0,0,0],follow:true,eff:10};
+let tempo=1,trailLen=25000,frameNo=0,lastTs=0,lastNum=0,dpr=1,resetTimer=null;
+const show={lines:true,gc:true,drift:true,ghost:true};
+const reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ----- Szenarienliste ----- */
+const list=$('#sclist');
+SCEN.forEach((s,i)=>{const li=document.createElement('li');
+  li.innerHTML=`<button type="button" id="sc-${s.id}"><span class="no">${i+1}</span><span class="nm">${s.title}<span class="lv">${s.level}</span></span>${s.extra?'<span class="tag">Ergänzung</span>':''}</button>`;
+  li.firstChild.addEventListener('click',()=>{ghost=null;selectScenario(s.id,true);});list.appendChild(li);});
+
+/* ----- Regler ----- */
+function tempoFromSlider(s){return 0.05*Math.pow(5000,s/100);}
+function sliderFromTempo(t){return Math.round(100*Math.log(t/0.05)/Math.log(5000));}
+function fmtVal(k,v){const d=PDEF[k];const st=d.step;const dec=st>=1?0:(st>=0.1?1:(st>=0.01?2:3));
+  return v.toLocaleString('de-DE',{minimumFractionDigits:dec,maximumFractionDigits:dec})+(d.unit||'');}
+function buildControls(){
+  const box=$('#ctls');box.innerHTML='';
+  const keys=['M',...sc.params];
+  keys.forEach(k=>{const d=PDEF[k];const w=document.createElement('div');w.className='ctl';w.dataset.key=k;
+    w.innerHTML=`<div class="row"><label for="p-${k}">${d.lab}</label><span class="val"><button type="button" class="stp" data-d="-1" aria-label="verringern">−</button><output id="o-${k}"></output><button type="button" class="stp" data-d="1" aria-label="erhöhen">+</button></span></div>
+      <input type="range" id="p-${k}" min="${d.min}" max="${d.max}" step="${d.step}">${d.hint?`<div class="hint">${d.hint}</div>`:''}`;
+    box.appendChild(w);
+    const inp=w.querySelector('input');inp.value=P[k];w.querySelector('output').textContent=fmtVal(k,P[k]);
+    inp.addEventListener('input',()=>{P[k]=parseFloat(inp.value);w.querySelector('output').textContent=fmtVal(k,P[k]);scheduleReset();});
+    // −/+ Knöpfe: ein Schritt pro Klick, gedrückt halten wiederholt
+    w.querySelectorAll('.stp').forEach(b=>{let t1=null,t2=null;
+      const once=()=>{const v=inp.value;+b.dataset.d>0?inp.stepUp():inp.stepDown();if(inp.value!==v)inp.dispatchEvent(new Event('input'));};
+      const stop=()=>{clearTimeout(t1);clearInterval(t2);t1=t2=null;};
+      b.addEventListener('pointerdown',e=>{e.preventDefault();once();t1=setTimeout(()=>{t2=setInterval(once,70);},380);});
+      ['pointerup','pointerleave','pointercancel'].forEach(ev=>b.addEventListener(ev,stop));
+      b.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();once();}});});
+  });
+  syncSpecies();
+}
+function syncControls(){for(const k of ['M',...sc.params]){const i=$('#p-'+k);if(i){i.value=P[k];$('#o-'+k).textContent=fmtVal(k,P[k]);}}syncSpecies();}
+function syncSpecies(){document.querySelectorAll('#species button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.sp===P.species)));
+  const m=document.querySelector('.ctl[data-key="M"]');if(m)m.hidden=P.species==='e';}
+document.querySelectorAll('#species button').forEach(b=>b.addEventListener('click',()=>{P.species=b.dataset.sp;syncSpecies();reset(false);}));
+function scheduleReset(){clearTimeout(resetTimer);resetTimer=setTimeout(()=>reset(false),90);}
+$('#defaults').addEventListener('click',()=>{ghost=null;P=Object.assign({},sc.def);syncControls();setTempo(sc.tempo);reset(true);});
+
+/* ----- Tempo ----- */
+const tempoIn=$('#tempo');
+function setTempo(t){tempo=t;tempoIn.value=sliderFromTempo(t);showTempo();}
+function showTempo(){$('#tempoOut').textContent=tempo.toLocaleString('de-DE',{maximumSignificantDigits:2})+' Gyr./s';}
+tempoIn.addEventListener('input',()=>{tempo=tempoFromSlider(+tempoIn.value);showTempo();});
+
+/* ----- Transport & Optionen ----- */
+const playBtn=$('#play');
+function setRunning(r){running=r;playBtn.textContent=r?'Pause':'Start';}
+playBtn.addEventListener('click',()=>{if(sim&&sim.parts.every(p=>!p.alive)){reset(false);setRunning(true);return;}setRunning(!running);});
+$('#restart').addEventListener('click',()=>{reset(false);setRunning(true);});
+$('#o-lines').addEventListener('change',e=>show.lines=e.target.checked);
+$('#o-gc').addEventListener('change',e=>show.gc=e.target.checked);
+$('#o-drift').addEventListener('change',e=>show.drift=e.target.checked);
+$('#o-follow').addEventListener('change',e=>{cam.follow=e.target.checked;if(!cam.follow){cam.target=(sc.target?sc.target(P):[0,0,0]).slice();}});
+$('#o-trail').addEventListener('change',e=>trailLen=+e.target.value);
+$('#o-ghost').addEventListener('change',e=>{show.ghost=e.target.checked;drawChart();});
+const VIEWS={'3d':null,top:{yaw:0,pitch:90},xz:{yaw:0,pitch:0},yz:{yaw:90,pitch:0}};
+document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.view)));
+function setView(k){const v=VIEWS[k];if(v){cam.yaw=v.yaw;cam.pitch=v.pitch;}else{const d=sc.view(P);cam.yaw=d.yaw===0&&d.pitch===90?-30:d.yaw;cam.pitch=d.pitch===90?35:d.pitch;}}
+$('#fit').addEventListener('click',fit);
+function fit(){const d=sc.view(P);cam.span=d.span;if(!cam.follow)cam.target=(sc.target?sc.target(P):[0,0,0]).slice();}
+const chartSel=$('#chartSel');chartSel.addEventListener('change',()=>{chartKey=chartSel.value;drawChart();});
+document.addEventListener('keydown',e=>{if(e.target.closest('input,select,textarea,button'))return;
+  if(e.code==='Space'){e.preventDefault();playBtn.click();}else if(e.key==='r'||e.key==='R'){reset(false);setRunning(true);}});
+
+/* ----- Szenario wählen ----- */
+function selectScenario(id,user,overrides){
+  sc=SCEN.find(s=>s.id===id)||SCEN[0];
+  P=Object.assign({},sc.def);
+  const o=overrides||{};for(const k in o) if(k in P||k==='species'||k==='M') P[k]=o[k];
+  document.querySelectorAll('.sclist button').forEach(b=>b.setAttribute('aria-current',String(b.id==='sc-'+sc.id)));
+  buildControls();
+  chartSel.innerHTML=sc.charts.map(c=>`<option value="${c[0]}">${c[1]}</option>`).join('');
+  chartKey=o.chart||sc.chart;chartSel.value=chartKey;
+  setTempo(o.tempo||sc.tempo);
+  if(o.trail){trailLen=+o.trail;$('#o-trail').value=o.trail;}
+  renderInfo();
+  const d=sc.view(P);cam.yaw=d.yaw;cam.pitch=d.pitch;cam.span=d.span;
+  cam.follow=o.follow!==undefined?o.follow:d.follow;$('#o-follow').checked=cam.follow;
+  if(o.view) setView(o.view);
+  reset(true);setRunning(true);
+  if(user){try{history.replaceState(null,'','#'+sc.hash);}catch(e){}}
+}
+function renderInfo(){
+  const box=$('#info');const idx=SCEN.indexOf(sc)+1;
+  box.innerHTML=`<h3>${sc.full}</h3>${sc.info}`;
+}
+function buildLegend(){
+  const it=[];const ln=(c,d)=>`<svg width="22" height="8" aria-hidden="true"><line x1="1" y1="4" x2="21" y2="4" stroke="var(${c})" stroke-width="2" ${d?'stroke-dasharray="4 3"':''}/></svg>`;
+  const ar=c=>`<svg width="22" height="10" aria-hidden="true"><line x1="1" y1="5" x2="16" y2="5" stroke="var(${c})" stroke-width="2"/><path d="M15 1 L21 5 L15 9 Z" fill="var(${c})"/></svg>`;
+  it.push(ln('--c-b')+'B-Feldlinien');
+  if(sc.arrows==='E') it.push(ar('--c-E')+'E-Feld');
+  if(sc.arrows==='g') it.push(ar('--c-g')+'Schwerkraft g');
+  speciesList(P).forEach(k=>it.push(ln(k==='e'?'--c-e':'--c-i')+(k==='e'?'Elektron':'Ion')));
+  it.push(ln('--muted',true)+'Führungszentrum');
+  if(ghost) it.push(`<svg width="22" height="8" aria-hidden="true"><line x1="1" y1="4" x2="21" y2="4" stroke="var(--muted)" stroke-width="3" opacity=".5"/></svg>vorheriger Lauf`);
+  $('#ghostWrap').hidden=!ghost;
+  if(sc.vd) it.push(ar('--c-d')+'Drift (Theorie)');
+  $('#legend').innerHTML=it.map(s=>`<span>${s}</span>`).join('');
+}
+
+/* ----- Reset ----- */
+function reset(keepCam){
+  sim=createSim(sc,P);
+  staticLines=sc.lines?sc.lines(P):[];decoLines=sc.deco?sc.deco(P):[];
+  if(!keepCam){const d=sc.view(P);cam.span=d.span;}
+  if(!cam.follow||keepCam) cam.target=(sc.target?sc.target(P):[0,0,0]).slice();
+  if(cam.follow) cam.target=meanGc();
+  cam.eff=cam.span;
+  const pre=sc.prerun?sc.prerun(P):0;
+  if(pre>0) advanceSim(sim,pre,400000);
+  if(cam.follow) cam.target=meanGc();
+  buildLegend();updateNumbers();drawChart();
+}
+function meanGc(){const a=sim.parts;let x=0,y=0,z=0;for(const p of a){x+=last(p.h.gx);y+=last(p.h.gy);z+=last(p.h.gz);}return [x/a.length,y/a.length,z/a.length];}
+
+/* ----- Zeichnen 3D ----- */
+let C={};
+function readColors(){const cs=getComputedStyle(document.documentElement),g=n=>cs.getPropertyValue(n).trim();
+  C={stage:g('--stage'),ink:g('--ink'),muted:g('--muted'),grid:g('--grid'),line:g('--line'),b:g('--c-b'),E:g('--c-E'),g:g('--c-g'),d:g('--c-d'),e:g('--c-e'),i:g('--c-i'),planet:g('--planet'),cone:g('--cone'),panel:g('--panel')};}
+let PR={};
+function setupProj(W,H){const ya=cam.yaw*DEG,pe=cam.pitch*DEG;
+  // Draufsicht und Seitenansichten orthografisch (maßstabsgetreu), freie 3D-Ansicht perspektivisch
+  const yr=((cam.yaw%90)+90)%90,ortho=cam.pitch>=89.5||(Math.abs(cam.pitch)<0.5&&(yr<0.5||yr>89.5));
+  PR={ca:Math.cos(ya),sa:Math.sin(ya),ce:Math.cos(pe),se:Math.sin(pe),S:(sc.fitW?Math.min(W,1.6*H):Math.min(W,H))/cam.eff,ox:W/2,oy:H/2,tx:cam.target[0],ty:cam.target[1],tz:cam.target[2],
+    D:ortho?0:3.6*cam.eff,top:cam.pitch>=89.5};}
+const _p={x:0,y:0,d:0,f:1};
+function proj(X,Y,Z){const dx=X-PR.tx,dy=Y-PR.ty,dz=Z-PR.tz;const x1=dx*PR.ca+dy*PR.sa,y1=-dx*PR.sa+dy*PR.ca;
+  const d=y1*PR.ce-dz*PR.se,f=PR.D?PR.D/Math.max(0.2*PR.D,PR.D+d):1;
+  _p.x=PR.ox+PR.S*f*x1;_p.y=PR.oy-PR.S*f*(dz*PR.ce+y1*PR.se);_p.d=d;_p.f=f;return _p;}
+let occ=null; // Verdeckung durch den Planeten
+function hidden(){if(!occ)return false;const dx=_p.x-occ.x,dy=_p.y-occ.y;return dx*dx+dy*dy<occ.r2&&_p.d>occ.d;}
+function strokeArr(a,color,alpha,width){
+  const ctx=vctx;ctx.strokeStyle=color;ctx.globalAlpha=alpha;ctx.lineWidth=width;ctx.beginPath();let pen=false;
+  for(let i=0;i<a.length;i+=3){proj(a[i],a[i+1],a[i+2]);if(hidden()){pen=false;continue;}if(pen)ctx.lineTo(_p.x,_p.y);else{ctx.moveTo(_p.x,_p.y);pen=true;}}
+  ctx.stroke();ctx.globalAlpha=1;}
+function niceStep(range,n){const raw=range/n,p=Math.pow(10,Math.floor(Math.log10(raw))),f=raw/p;return (f<1.5?1:f<3.5?2:f<7.5?5:10)*p;}
+function drawArrow(x0,y0,x1,y1,color,w,head){const ctx=vctx;const dx=x1-x0,dy=y1-y0,L=Math.hypot(dx,dy);if(L<2)return;
+  const ux=dx/L,uy=dy/L,hl=Math.min(head,L*0.6);ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=w;
+  ctx.beginPath();ctx.moveTo(x0,y0);ctx.lineTo(x1-ux*hl*0.8,y1-uy*hl*0.8);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x1-ux*hl-uy*hl*0.45,y1-uy*hl+ux*hl*0.45);ctx.lineTo(x1-ux*hl+uy*hl*0.45,y1-uy*hl-ux*hl*0.45);ctx.closePath();ctx.fill();}
+function drawUniformLines(W,H){
+  // Begrenzter Feldbereich: Bodenplatte + Feldlinien darüber, hintere Linien blasser
+  const ctx=vctx,span=cam.eff,s=niceStep(span,4),R=0.52*span,hz=0.38*span;
+  const tx=cam.target[0],ty=cam.target[1],tz=cam.target[2],z0=tz-hz,z1=tz+hz;
+  let xs=[];
+  if(sc.lineMode==='grad'){const L=P.L;
+    for(let k=-400;k<=400;k++){const arg=1+2*k*s/L;if(arg<=0.0025)continue;const x=L*(-1+Math.sqrt(arg));if(x<tx-R||x>tx+R)continue;xs.push(x);}
+  } else {for(let x=Math.ceil((tx-R)/s)*s;x<=tx+R;x+=s) xs.push(x);}
+  const ys=[];for(let y=Math.ceil((ty-R)/s)*s;y<=ty+R;y+=s) ys.push(y);
+  ctx.strokeStyle=C.b;ctx.fillStyle=C.b;
+  if(PR.top){const toward=PR.se>0;ctx.globalAlpha=0.9;ctx.lineWidth=1.3*dpr;
+    for(const x of xs)for(const y of ys){proj(x,y,tz);const r=3.2*dpr;ctx.beginPath();ctx.arc(_p.x,_p.y,r,0,TAU);ctx.stroke();
+      if(toward){ctx.beginPath();ctx.arc(_p.x,_p.y,1*dpr,0,TAU);ctx.fill();}else{ctx.beginPath();ctx.moveTo(_p.x-r*.7,_p.y-r*.7);ctx.lineTo(_p.x+r*.7,_p.y+r*.7);ctx.moveTo(_p.x+r*.7,_p.y-r*.7);ctx.lineTo(_p.x-r*.7,_p.y+r*.7);ctx.stroke();}}
+    ctx.globalAlpha=1;return {s,z0:null};}
+  // Bodenplatte
+  const fx0=tx-R,fx1=tx+R,fy0=ty-R,fy1=ty+R;
+  ctx.globalAlpha=0.55;ctx.fillStyle=C.grid;ctx.beginPath();
+  proj(fx0,fy0,z0);ctx.moveTo(_p.x,_p.y);proj(fx1,fy0,z0);ctx.lineTo(_p.x,_p.y);proj(fx1,fy1,z0);ctx.lineTo(_p.x,_p.y);proj(fx0,fy1,z0);ctx.lineTo(_p.x,_p.y);ctx.closePath();ctx.fill();
+  ctx.globalAlpha=0.9;ctx.strokeStyle=C.line;ctx.lineWidth=1*dpr;ctx.stroke();
+  ctx.beginPath();for(let x=Math.ceil(fx0/s)*s;x<=fx1;x+=s){proj(x,fy0,z0);ctx.moveTo(_p.x,_p.y);proj(x,fy1,z0);ctx.lineTo(_p.x,_p.y);}
+  for(let y=Math.ceil(fy0/s)*s;y<=fy1;y+=s){proj(fx0,y,z0);ctx.moveTo(_p.x,_p.y);proj(fx1,y,z0);ctx.lineTo(_p.x,_p.y);}ctx.globalAlpha=0.5;ctx.stroke();
+  // Feldlinien, von hinten nach vorne
+  const L=[];for(const x of xs)for(const y of ys){proj(x,y,tz);L.push([x,y,_p.d]);}
+  L.sort((a,b)=>b[2]-a[2]);
+  for(const [x,y,d] of L){const a=Math.max(0.22,Math.min(1,0.62-0.5*d/R));ctx.globalAlpha=a;
+    proj(x,y,z0);const ax=_p.x,ay=_p.y,f=_p.f;proj(x,y,z1);
+    ctx.strokeStyle=C.b;ctx.lineWidth=1.5*dpr*f;ctx.beginPath();ctx.moveTo(ax,ay);ctx.lineTo(_p.x,_p.y);ctx.stroke();
+    ctx.beginPath();ctx.arc(ax,ay,2*dpr*f,0,TAU);ctx.fillStyle=C.b;ctx.fill();
+    // Pfeilspitzen an festen Orten im Raum: sie laufen sichtbar vorbei, wenn die Kamera nachzieht
+    for(let zz=Math.ceil((z0+0.15*s)/s)*s;zz<z1-0.4*s;zz+=s){proj(x,y,zz);const bx=_p.x,by=_p.y;proj(x,y,zz+0.35*s);drawArrow(bx,by,_p.x,_p.y,C.b,1.5*dpr*f,7*dpr*f);}}
+  ctx.globalAlpha=1;
+  return {s,z0};
+}
+function drawShadow(p,z0){ // Schatten der Bahn auf der Bodenplatte
+  const ctx=vctx,n=Math.min(p.tn,trailLen);if(n<2)return;const start=p.tn-n;
+  ctx.strokeStyle=C.muted;ctx.globalAlpha=0.35;ctx.lineWidth=1.2*dpr;ctx.beginPath();
+  for(let i=start;i<p.tn;i++){const j=(i%CAP)*3;proj(p.tr[j],p.tr[j+1],z0);i>start?ctx.lineTo(_p.x,_p.y):ctx.moveTo(_p.x,_p.y);}
+  ctx.stroke();
+  proj(p.x[0],p.x[1],z0);const sx=_p.x,sy=_p.y;ctx.setLineDash([2*dpr,3*dpr]);ctx.beginPath();ctx.moveTo(sx,sy);proj(p.x[0],p.x[1],p.x[2]);ctx.lineTo(_p.x,_p.y);ctx.stroke();ctx.setLineDash([]);
+  ctx.globalAlpha=1;
+}
+function drawForceArrows(s){
+  const ctx=vctx,val=sc.arrowVal(P,sim.t),col=sc.arrows==='E'?C.E:C.g,step=s,R=cam.eff*0.52;
+  const tx=cam.target[0],ty=cam.target[1],tz=cam.target[2];
+  ctx.globalAlpha=0.75;
+  for(let x=Math.floor((tx-R)/step)*step+step/2;x<=tx+R;x+=step)for(let y=Math.floor((ty-R)/step)*step+step/2;y<=ty+R;y+=step){
+    const l=0.35*step*val;proj(x-l,y,tz);const ax=_p.x,ay=_p.y;proj(x+l,y,tz);drawArrow(ax,ay,_p.x,_p.y,col,1.4*dpr,6*dpr);}
+  ctx.globalAlpha=1;
+}
+function drawTrail(p,color){
+  const ctx=vctx,n=Math.min(p.tn,trailLen);if(n<2)return;const start=p.tn-n,chunks=12,cs=Math.ceil(n/chunks);
+  ctx.strokeStyle=color;ctx.lineWidth=1.6*dpr;ctx.lineJoin='round';
+  for(let c=0;c<chunks;c++){const a=start+c*cs,b=Math.min(p.tn-1,a+cs);if(a>=b)break;
+    ctx.globalAlpha=0.12+0.88*Math.pow((c+1)/chunks,1.3);ctx.beginPath();let pen=false;
+    for(let i=a;i<=b;i++){const j=(i%CAP)*3;proj(p.tr[j],p.tr[j+1],p.tr[j+2]);if(hidden()){pen=false;continue;}
+      if(pen)ctx.lineTo(_p.x,_p.y);else{ctx.moveTo(_p.x,_p.y);pen=true;}}
+    ctx.stroke();}
+  ctx.globalAlpha=1;
+}
+function drawGc(p){
+  const ctx=vctx,h=p.h,n=h.t.length;if(n<2)return;ctx.save();ctx.setLineDash([5*dpr,4*dpr]);ctx.strokeStyle=C.muted;ctx.lineWidth=1.3*dpr;ctx.globalAlpha=0.9;
+  ctx.beginPath();let pen=false;const st=Math.max(1,Math.floor(n/3000));
+  for(let i=0;i<n;i+=st){proj(h.gx[i],h.gy[i],h.gz[i]);if(hidden()){pen=false;continue;}if(pen)ctx.lineTo(_p.x,_p.y);else{ctx.moveTo(_p.x,_p.y);pen=true;}}
+  proj(h.gx[n-1],h.gy[n-1],h.gz[n-1]);if(pen)ctx.lineTo(_p.x,_p.y);ctx.stroke();ctx.restore();
+}
+function draw3D(){
+  readColors();
+  const W=view.width,H=view.height,ctx=vctx;ctx.setTransform(1,0,0,1,0,0);
+  ctx.fillStyle=C.stage;ctx.fillRect(0,0,W,H);if(!sim)return;
+  // Kamera
+  if(cam.follow){const m=meanGc(),dz=0.2*cam.eff;
+    // Totzone: das Teilchen bewegt sich sichtbar durch den Feldbereich, erst am Rand zieht die Kamera nach
+    for(let k=0;k<3;k++){const d=m[k]-cam.target[k];if(Math.abs(d)>dz)cam.target[k]+=(d-Math.sign(d)*dz)*0.15;}
+    let need=cam.span;for(const p of sim.parts){const d=Math.hypot(last(p.h.gx)-cam.target[0],last(p.h.gy)-cam.target[1],last(p.h.gz)-cam.target[2]);need=Math.max(need,2.3*d+4*rlMax(P));}
+    cam.eff+=(need-cam.eff)*0.08;} else cam.eff+=(cam.span-cam.eff)*0.25;
+  setupProj(W,H);
+  occ=null;
+  if(sc.planet){proj(0,0,0);occ={x:_p.x,y:_p.y,d:_p.d,r2:Math.pow(RP*PR.S*_p.f,2)};}
+  let s=niceStep(cam.eff,7);
+  if(show.lines){
+    if(sc.lineMode==='uniform'||sc.lineMode==='grad'){const r=drawUniformLines(W,H);s=r.s;if(r.z0!==null) for(const p of sim.parts) drawShadow(p,r.z0);}
+    else{for(const a of decoLines) strokeArr(a,C.muted,0.35,2*dpr);for(const a of staticLines) strokeArr(a,C.b,0.85,1.4*dpr);}
+  }
+  if(sc.planet){ // Planet als Kugel
+    const rp=Math.sqrt(occ.r2),g=ctx.createRadialGradient(occ.x-0.35*rp,occ.y-0.35*rp,rp*0.1,occ.x,occ.y,rp);
+    g.addColorStop(0,C.panel);g.addColorStop(1,C.planet);ctx.fillStyle=g;ctx.beginPath();ctx.arc(occ.x,occ.y,Math.sqrt(occ.r2),0,TAU);ctx.fill();
+    ctx.strokeStyle=C.muted;ctx.globalAlpha=0.5;ctx.lineWidth=1*dpr;ctx.stroke();ctx.globalAlpha=1;}
+  if(sc.arrows) drawForceArrows(s);
+  if(ghost&&show.ghost) for(const g of ghost.parts){strokeArr(g.tr,C.muted,0.5,1.6*dpr);
+    proj(g.x[0],g.x[1],g.x[2]);if(!hidden()){ctx.globalAlpha=0.7;ctx.fillStyle=C.muted;ctx.beginPath();ctx.arc(_p.x,_p.y,3.5*dpr,0,TAU);ctx.fill();ctx.globalAlpha=1;}}
+  if(show.gc) for(const p of sim.parts) drawGc(p);
+  for(const p of sim.parts) drawTrail(p,p.kind==='e'?C.e:C.i);
+  // Driftpfeile
+  if(show.drift&&sc.vd){const vds=sim.parts.map(p=>p.alive?sc.vd(p,P):null);let vmax=0;for(const v of vds)if(v)vmax=Math.max(vmax,Math.hypot(v[0],v[1],v[2]));
+    if(vmax>1e-9) sim.parts.forEach((p,i)=>{const v=vds[i];if(!v)return;const L=0.16*cam.eff/vmax;const g=[last(p.h.gx),last(p.h.gy),last(p.h.gz)];
+      proj(g[0],g[1],g[2]);const ax=_p.x,ay=_p.y;proj(g[0]+v[0]*L,g[1]+v[1]*L,g[2]+v[2]*L);drawArrow(ax,ay,_p.x,_p.y,C.d,2.4*dpr,9*dpr);});}
+  // Teilchen
+  ctx.font=`500 ${12*dpr}px "IBM Plex Mono",monospace`;
+  for(const p of sim.parts){proj(p.x[0],p.x[1],p.x[2]);const col=p.kind==='e'?C.e:C.i;
+    ctx.fillStyle=C.stage;ctx.beginPath();ctx.arc(_p.x,_p.y,6.5*dpr,0,TAU);ctx.fill();
+    ctx.fillStyle=col;ctx.beginPath();ctx.arc(_p.x,_p.y,4.5*dpr,0,TAU);ctx.fill();
+    ctx.fillText(p.kind==='e'?'e⁻':'Ion',_p.x+8*dpr,_p.y-7*dpr);}
+  drawGizmo(W,H);drawScale(W,H);
+}
+function drawGizmo(W,H){const ctx=vctx,cx=W-44*dpr,cy=H-44*dpr,L=26*dpr;ctx.font=`${11*dpr}px "IBM Plex Mono",monospace`;ctx.lineWidth=1.4*dpr;
+  [['x',1,0,0],['y',0,1,0],['z',0,0,1]].forEach(([n,ux,uy,uz])=>{const x1=ux*PR.ca+uy*PR.sa,y1=-ux*PR.sa+uy*PR.ca,sx=x1,sy=uz*PR.ce+y1*PR.se;
+    ctx.strokeStyle=C.muted;ctx.fillStyle=C.muted;ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+sx*L,cy-sy*L);ctx.stroke();
+    if(Math.hypot(sx,sy)>0.15) ctx.fillText(n,cx+sx*(L+7*dpr)-3*dpr,cy-sy*(L+7*dpr)+4*dpr);});}
+function drawScale(W,H){const ctx=vctx,u=niceStep(cam.eff,5),px=u*PR.S,x0=W-90*dpr-px,y0=H-16*dpr;
+  ctx.strokeStyle=C.muted;ctx.fillStyle=C.muted;ctx.lineWidth=1.4*dpr;ctx.beginPath();ctx.moveTo(x0,y0-4*dpr);ctx.lineTo(x0,y0);ctx.lineTo(x0+px,y0);ctx.lineTo(x0+px,y0-4*dpr);ctx.stroke();
+  ctx.font=`${11*dpr}px "IBM Plex Mono",monospace`;ctx.textAlign='center';ctx.fillText(u.toLocaleString('de-DE'),x0+px/2,y0-6*dpr);ctx.textAlign='left';}
+
+/* ----- HUD ----- */
+function updateHud(){if(!sim)return;let s=`t = ${sim.t.toLocaleString('de-DE',{maximumFractionDigits:1,minimumFractionDigits:1})} / ω<sub>ce</sub>`;
+  for(const p of sim.parts) if(!p.alive) s+=`<br><span class="st" style="color:var(${p.kind==='e'?'--c-e':'--c-i'})">${p.kind==='e'?'Elektron':'Ion'} ${p.status}</span>`;
+  if(!running&&sim.parts.some(p=>p.alive)) s+='<br><span class="st">pausiert</span>';
+  $('#hud').innerHTML=s;}
+
+/* ----- Tabelle ----- */
+function updateNumbers(){
+  if(!sim)return;const parts=sim.parts;const rows=parts.map(p=>sc.rows(p,P));
+  let h='<thead><tr><th>Größe</th>';
+  parts.forEach(p=>{const c=p.kind==='e'?'pe':'pi',n=p.kind==='e'?'Elektron':'Ion';h+=`<th class="${c}">${n}<br>Theorie</th><th class="${c}">${n}<br>Simulation</th>`;});
+  h+='</tr></thead><tbody>';
+  rows[0].forEach((r,i)=>{h+=`<tr><td>${r[0]}</td>`;rows.forEach(rr=>{h+=`<td class="th">${rr[i][1]}</td><td class="sim">${rr[i][2]}</td>`;});h+='</tr>';});
+  $('#numtab').innerHTML=h+'</tbody>';
+}
+
+/* ----- Diagramm ----- */
+const NFt=new Intl.NumberFormat('de-DE',{maximumFractionDigits:3});
+function drawChart(){
+  const W=chartCv.width,H=chartCv.height,ctx=cctx;if(!W||!sim)return;readColors();
+  ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,W,H);
+  const note=$('#chartNote');
+  if(chartKey==='loss'){drawLoss(W,H);note.textContent='Grau: Verlustkegel (Feldminimum). Gestrichelt: lokale Grenze am Ort des Teilchens. Ein Teilchen bleibt gefangen, solange sein Punkt außerhalb der gestrichelten Linie liegt.';return;}
+  note.innerHTML=sc.chartTheory&&sc.chartTheory(chartKey,sim.parts[0],P,0)!==null?'Durchgezogen: Simulation · gestrichelt: Theorie':'Zeit in 1/ω<sub>ce</sub>';
+  const L=54*dpr,R=10*dpr,T=10*dpr,B=24*dpr;
+  let t0=Infinity,t1=-Infinity,y0=Infinity,y1=-Infinity;
+  for(const p of sim.parts){const h=p.h,n=h.t.length;if(n<2)continue;t0=Math.min(t0,h.t[0]);t1=Math.max(t1,h.t[n-1]);const r=rangeOf(h[chartKey]);y0=Math.min(y0,r[0]);y1=Math.max(y1,r[1]);
+    if(sc.chartTheory){for(let i=0;i<n;i+=Math.max(1,Math.floor(n/300))){const v=sc.chartTheory(chartKey,p,P,h.t[i]);if(v!==null){y0=Math.min(y0,v);y1=Math.max(y1,v);}}}}
+  if(!isFinite(t0)||t1<=t0)return;
+  const G=ghost&&show.ghost?ghost.parts.filter(g=>g.h[chartKey]):[];
+  for(const g of G){const h=g.h;for(let i=0;i<h.t.length&&h.t[i]<=t1;i++){const v=h[chartKey][i];if(v<y0)y0=v;if(v>y1)y1=v;}}
+  if(y1-y0<1e-9*Math.max(1,Math.abs(y1))){const c=(y0+y1)/2,d=Math.max(Math.abs(c)*0.05,1e-3);y0=c-d;y1=c+d;}
+  const pad=(y1-y0)*0.08;y0-=pad;y1+=pad;
+  const X=t=>L+(t-t0)/(t1-t0)*(W-L-R),Y=y=>T+(y1-y)/(y1-y0)*(H-T-B);
+  ctx.font=`${10.5*dpr}px "IBM Plex Mono",monospace`;ctx.lineWidth=1;
+  const ys=niceStep(y1-y0,4);ctx.textAlign='right';ctx.textBaseline='middle';
+  for(let v=Math.ceil(y0/ys)*ys;v<=y1;v+=ys){const yy=Y(v);ctx.strokeStyle=C.grid;ctx.beginPath();ctx.moveTo(L,yy);ctx.lineTo(W-R,yy);ctx.stroke();ctx.fillStyle=C.muted;ctx.fillText(NFt.format(Math.abs(v)<ys*1e-6?0:v).replace('-','−'),L-6*dpr,yy);}
+  const xs=niceStep(t1-t0,5);ctx.textAlign='center';ctx.textBaseline='top';
+  for(let v=Math.ceil(t0/xs)*xs;v<=t1;v+=xs){const xx=X(v);ctx.strokeStyle=C.grid;ctx.beginPath();ctx.moveTo(xx,T);ctx.lineTo(xx,H-B);ctx.stroke();ctx.fillStyle=C.muted;ctx.fillText(NFt.format(v),xx,H-B+5*dpr);}
+  ctx.strokeStyle=C.line;ctx.beginPath();ctx.moveTo(L,T);ctx.lineTo(L,H-B);ctx.lineTo(W-R,H-B);ctx.stroke();
+  for(const g of G){const h=g.h;let n=0;while(n<h.t.length&&h.t[n]<=t1)n++;if(n<2)continue;const st=Math.max(1,Math.floor(n/1600));
+    ctx.save();ctx.setLineDash([4*dpr,3*dpr]);ctx.strokeStyle=C.muted;ctx.globalAlpha=0.8;ctx.lineWidth=1.5*dpr;ctx.beginPath();
+    for(let i=0;i<n;i+=st){const xx=X(h.t[i]),yy=Y(h[chartKey][i]);i?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy);}ctx.stroke();ctx.restore();}
+  if(G.length) note.innerHTML+=' · grau gestrichelt: vorheriger Lauf';
+  for(const p of sim.parts){const h=p.h,n=h.t.length;if(n<2)continue;const col=p.kind==='e'?C.e:C.i,st=Math.max(1,Math.floor(n/1600));
+    if(sc.chartTheory&&sc.chartTheory(chartKey,p,P,0)!==null){ctx.save();ctx.setLineDash([6*dpr,4*dpr]);ctx.strokeStyle=col;ctx.globalAlpha=0.55;ctx.lineWidth=2*dpr;ctx.beginPath();
+      for(let i=0;i<n;i+=st){const xx=X(h.t[i]),yy=Y(sc.chartTheory(chartKey,p,P,h.t[i]));i?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy);}ctx.stroke();ctx.restore();}
+    ctx.strokeStyle=col;ctx.lineWidth=1.5*dpr;ctx.beginPath();for(let i=0;i<n;i+=st){const xx=X(h.t[i]),yy=Y(h[chartKey][i]);i?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy);}
+    ctx.lineTo(X(h.t[n-1]),Y(h[chartKey][n-1]));ctx.stroke();
+    ctx.fillStyle=col;ctx.beginPath();ctx.arc(X(h.t[n-1]),Y(h[chartKey][n-1]),3*dpr,0,TAU);ctx.fill();}
+  ctx.textAlign='left';ctx.textBaseline='alphabetic';
+}
+function drawLoss(W,H){
+  const ctx=cctx,cx=W/2,cy=H-26*dpr,Rr=Math.max(20,Math.min(W/2-40*dpr,H-44*dpr));
+  const ac=sc.alphaC(P),Bmax=sc.Bmax(P);
+  ctx.fillStyle=C.cone;ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,Rr,-ac,0);ctx.closePath();ctx.fill();
+  ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,Rr,Math.PI,Math.PI+ac);ctx.closePath();ctx.fill();
+  ctx.strokeStyle=C.muted;ctx.lineWidth=1.2*dpr;ctx.beginPath();ctx.arc(cx,cy,Rr,Math.PI,TAU);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(cx-Rr-10*dpr,cy);ctx.lineTo(cx+Rr+10*dpr,cy);ctx.moveTo(cx,cy);ctx.lineTo(cx,cy-Rr-8*dpr);ctx.stroke();
+  ctx.font=`${11*dpr}px "IBM Plex Mono",monospace`;ctx.fillStyle=C.muted;ctx.fillText('v∥',cx+Rr+2*dpr,cy+14*dpr);ctx.fillText('v⊥',cx+5*dpr,cy-Rr-2*dpr);
+  ctx.fillText('α_c = '+fmt(ac/DEG)+'°',cx+Rr*0.55,cy-Rr*Math.sin(ac)*0.55-6*dpr);
+  for(const p of sim.parts){const col=p.kind==='e'?C.e:C.i;sc.B(p.x,p.t,P,_B);const Bl=Math.hypot(_B[0],_B[1],_B[2]);
+    const al=Math.asin(Math.sqrt(Math.min(1,Bl/Bmax)));
+    ctx.save();ctx.setLineDash([5*dpr,4*dpr]);ctx.strokeStyle=col;ctx.globalAlpha=0.7;ctx.lineWidth=1.3*dpr;ctx.beginPath();
+    ctx.moveTo(cx,cy);ctx.lineTo(cx+Rr*Math.cos(al),cy-Rr*Math.sin(al));ctx.moveTo(cx,cy);ctx.lineTo(cx-Rr*Math.cos(al),cy-Rr*Math.sin(al));ctx.stroke();ctx.restore();
+    const h=p.h,n=h.pa.length;ctx.strokeStyle=col;ctx.globalAlpha=0.35;ctx.lineWidth=2*dpr;ctx.beginPath();
+    for(let i=Math.max(0,n-120);i<n;i++){const a=h.pa[i],xx=cx+Rr*Math.cos(a),yy=cy-Rr*Math.sin(a);i>Math.max(0,n-120)?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy);}ctx.stroke();ctx.globalAlpha=1;
+    const v=p.v,vv=Math.hypot(v[0],v[1],v[2]);if(vv>0){const vpar=(v[0]*_B[0]+v[1]*_B[1]+v[2]*_B[2])/Bl,a=Math.acos(Math.max(-1,Math.min(1,vpar/vv)));
+      ctx.fillStyle=col;ctx.beginPath();ctx.arc(cx+Rr*Math.cos(a),cy-Rr*Math.sin(a),5*dpr,0,TAU);ctx.fill();}}
+}
+
+/* ----- Maus/Touch ----- */
+const ptrs=new Map();let pinch0=0,span0=0;
+view.addEventListener('pointerdown',e=>{view.setPointerCapture(e.pointerId);ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  if(ptrs.size===2){const a=[...ptrs.values()];pinch0=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y);span0=cam.span;}});
+view.addEventListener('pointermove',e=>{if(!ptrs.has(e.pointerId))return;const pr=ptrs.get(e.pointerId);const dx=e.clientX-pr.x,dy=e.clientY-pr.y;pr.x=e.clientX;pr.y=e.clientY;
+  if(ptrs.size===1){cam.yaw-=dx*0.4;cam.pitch=Math.max(-89,Math.min(90,cam.pitch+dy*0.4));}
+  else if(ptrs.size===2){const a=[...ptrs.values()];const d=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y);if(pinch0>0){cam.span=Math.max(0.5,span0*pinch0/d);if(!cam.follow)cam.eff=cam.span;}}});
+const up=e=>{ptrs.delete(e.pointerId);if(ptrs.size<2)pinch0=0;};
+view.addEventListener('pointerup',up);view.addEventListener('pointercancel',up);
+view.addEventListener('wheel',e=>{e.preventDefault();cam.span=Math.max(0.5,cam.span*Math.exp(e.deltaY*0.0012));if(cam.follow)cam.eff=Math.max(cam.span,cam.eff*Math.exp(e.deltaY*0.0012));},{passive:false});
+view.addEventListener('dblclick',fit);
+
+/* ----- Größe ----- */
+function resize(){dpr=Math.min(2,window.devicePixelRatio||1);
+  for(const c of [view,chartCv]){const r=c.getBoundingClientRect();c.width=Math.max(1,Math.round(r.width*dpr));c.height=Math.max(1,Math.round(r.height*dpr));}
+  draw3D();drawChart();}
+new ResizeObserver(resize).observe(vp);new ResizeObserver(resize).observe(chartCv.parentElement);
+
+/* ----- Schleife ----- */
+function frame(ts){
+  const dt=lastTs?Math.min(0.05,(ts-lastTs)/1000):0;lastTs=ts;frameNo++;
+  if(running&&sim){advanceSim(sim,tempo*Tref(P)*dt,40000);if(sim.parts.every(p=>!p.alive))setRunning(false);}
+  draw3D();
+  if(frameNo%4===0) drawChart();
+  if(ts-lastNum>300){updateNumbers();lastNum=ts;}
+  updateHud();
+  requestAnimationFrame(frame);
+}
+
+/* ----- Start ----- */
+const h0=(location.hash||'').slice(1);const s0=SCEN.find(s=>s.hash===h0);
+selectScenario(s0?s0.id:'gyr',false);
+if(reduce) setRunning(false);
+resize();
+requestAnimationFrame(frame);
+})();
+</script>
+
+</body>
+</html>
