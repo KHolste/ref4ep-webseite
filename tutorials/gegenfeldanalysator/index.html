@@ -235,7 +235,7 @@ dl.grids dd{margin:0}
   <aside class="panel info" id="info">
     <h3>Gegenfeldanalysator (RPA)</h3>
     <p>Das Gitter G2 lässt nur Ionen durch, deren Energie pro Ladung größer ist als seine Spannung. Die Ableitung der Stromkennlinie ist die Energieverteilung.</p>
-    <p>In den Gitteröffnungen ist das Gegenfeld schwächer als am Gitter selbst. Das RPA misst deshalb zu hohe Energien, und Elektronen können durchschlüpfen. Jede Öffnung wirkt außerdem als Linse und lenkt Ionen seitlich ab.</p>
+    <p>In den Gitteröffnungen ist das Gegenfeld schwächer als am Gitter selbst. Das RPA misst deshalb zu hohe Energien, und Elektronen können durchschlüpfen. Jede Öffnung wirkt außerdem als Linse und lenkt Ionen seitlich ab. Kurz vor dem Abschneiden lenkt das Gegenfeld langsame Ionen von den Stegen in die Löcher: Der Strom steigt noch einmal an.</p>
     <div class="formula">
       <div><i>I</i>(<i>U</i><sub>G</sub>) = <i>q A T</i> ∫<sub><i>U</i><sub>G</sub></sub><sup>∞</sup> <i>f</i>(<i>U</i>) d<i>U</i> − <i>I</i><sub>e</sub> <small><i>A</i> Fläche, <i>T</i> Transparenz, <i>U</i> = <i>E</i>/<i>q</i></small></div>
       <div><i>f</i>(<i>U</i><sub>G</sub>) ∝ − <span class="frac"><span>d<i>I</i></span><span>d<i>U</i><sub>G</sub></span></span></div>
@@ -327,22 +327,39 @@ function sags(UG){const G=geo(),U=[U0(),P.u1,UG,P.u3,0],k=G.a/Math.PI*G.att,d=[0
 function hoff(y,p){return y-Math.round(y/p)*p;}
 function lensD(UG,U){const g=geo().g;return [0,((UG-U[1])-(U[1]-U[0]))/g,((U[3]-UG)-(UG-U[1]))/g,0];}
 function Iion(UG,C){const S=sags(UG),G=geo(),U=S.U,d=S.d,a=G.a,g=G.g,p=3*a,ca=Math.cos(P.alpha*Math.PI/180);
-  const D=lensD(UG,U),Kmin=Math.abs(D[2])*a,nu=P.alpha>0?8:1;let s=0;
+  const D=lensD(UG,U),Kmin=Math.abs(D[2])*a,nu=P.alpha>0?8:1,al=P.al==='al';
+  const F=Math.max(0,(UG-U[1])/g)*a, fh=a/(p/2), NW=6, PhiL=UG+d[2]*0.6;   // Landeort nach dem Einfangen: 0,8 a
+  let s=0;
   for(const c of C){if(c.w<=0)continue;let acc=0;
-    for(let j=0;j<NS;j++){const y=a*(j+0.5)/NS,ylo=a*j/NS,yhi=a*(j+1)/NS;
-      for(let i=0;i<nu;i++){const u=nu>1?ca+(1-ca)*(i+0.5)/nu:1,u2=u*u;
-        // Bewegungsenergie an G1 und G2 für ein Ion mit der mittleren Energie der Gruppe
-        let ys=y,Kp=0,wt=1;
-        if(P.lens){const En=c.mu*u2,K1=Math.max(5,En-(U[1]+d[1]*Math.sqrt(1-(y/a)**2))),K2=Math.max(0,En-Math.max(0,UG+d[2]));
+    for(let i=0;i<nu;i++){const u=nu>1?ca+(1-ca)*(i+0.5)/nu:1,u2=u*u,En=c.mu*u2;
+      // Ionen, die geradeaus auf ein Loch von G2 zulaufen
+      for(let j=0;j<NS;j++){const y=a*(j+0.5)/NS,ylo=a*j/NS,yhi=a*(j+1)/NS;
+        let ys=y,Kp=0,wt=1,yw=0;
+        if(P.lens){const K1=Math.max(5,En-(U[1]+d[1]*Math.sqrt(1-(y/a)**2))),K2=Math.max(0,En-Math.max(0,UG+d[2]));
           const kap=2*g*D[1]/(4*K1)/(1+Math.sqrt(K2/K1));Kp=K1*(y*D[1]/(4*K1))**2;
-          if(P.al==='al'){const l=ylo*(1+kap),h=yhi*(1+kap);     // Streifen der Öffnung nach der Ablenkung
-            if(l>=a)continue;wt=Math.min(1,(a-l)/(h-l));ys=Math.min(y*(1+kap),(l+Math.min(h,a))/2);}}
-        const Phi2=UG+d[2]*Math.sqrt(Math.max(0,1-(ys/a)**2)),Vth=Math.max(0,Phi2)+Kp;
-        let part=0.5*erfc((Vth/u2-c.mu)/(c.sig*SQ2));
-        if(P.lens&&P.al==='al'&&part>1e-7)part-=lensLoss(c,u2,ys,ys,Phi2,Kp,D[2],Kmin,U[3],g,a,p);
-        acc+=wt*Math.max(0,part);}}
-    s+=c.w*acc/(NS*nu);}
+          if(al){const l=ylo*(1+kap),h=yhi*(1+kap);                // Streifen der Öffnung nach der Ablenkung durch G1
+            wt=l>=a?0:Math.min(1,(a-l)/(h-l));ys=wt>0?Math.min(y*(1+kap),(l+Math.min(h,a))/2):a;yw=(Math.max(l,a)+h)/2;}}
+        if(wt>0){const Phi2=UG+d[2]*Math.sqrt(Math.max(0,1-(ys/a)**2)),Vth=Math.max(0,Phi2)+Kp;
+          let part=0.5*erfc((Vth/u2-c.mu)/(c.sig*SQ2));
+          if(P.lens&&al&&part>1e-7)part-=lensLoss(c,u2,ys,ys,Phi2,Kp,D[2],Kmin,U[3],g,a,p);
+          acc+=wt*Math.max(0,part)*(al?1:fh)/NS;}
+        if(P.lens&&al&&wt<1)acc+=(1-wt)*capture(c,u2,yw,Kp,UG,PhiL,F,a,p)/NS;}
+      // versetzte Löcher: Ionen, die auf einen Steg von G2 zulaufen
+      if(!al&&P.lens)acc+=(1-fh)*captureAll(c,u2,UG,PhiL,F);}
+    s+=c.w*acc/nu/(al?1:fh);}            // normiert: geradeaus fliegende schnelle Ionen ergeben I0
   return I0*s;}
+// Bündelung vor G2: vor dem Steg ist das Potential höher als vor dem Loch. Das seitliche Feld lenkt ein
+// langsames Ion um δ = (p/2 − y)·F/(8K) zum Loch (null über der Stegmitte); F = Φ'links·a.
+// Eingefangen, wenn δ ≥ y − a, also K ≤ (p/2 − y)·F/(8(y − a)).
+function capture(c,u2,y,Kp,UG,PhiL,F,a,p){if(F<=0||y<=a||y>=p/2)return 0;const Kc=(p/2-y)*F/(8*(y-a));
+  const lo=(Math.max(0,PhiL)+Kp)/u2,hi=(UG+Kp+Kc)/u2;if(hi<=lo)return 0;
+  return 0.5*(erfc((lo-c.mu)/(c.sig*SQ2))-erfc((hi-c.mu)/(c.sig*SQ2)));}
+// über alle Stegorte gemittelt: eingefangener Anteil F/(F + 8K)
+function captureAll(c,u2,UG,PhiL,F){if(F<=0)return 0;
+  const lo=Math.max(Math.max(0,PhiL)/u2,c.mu-6*c.sig),hi=c.mu+6*c.sig;if(hi<=lo)return 0;
+  const N=48,h=(hi-lo)/N;let L=0;
+  for(let i=0;i<N;i++){const E=lo+(i+0.5)*h,K=Math.max(0,E*u2-UG);L+=Math.exp(-0.5*((E-c.mu)/c.sig)**2)/(c.sig*SQ2PI)*F/(F+8*K)*h;}
+  return L;}
 // Anteil, der hinter G2 so stark abgelenkt wird, dass er den Steg von G3 trifft
 function lensLoss(c,u2,ys,y2,Phi2,Kp,D2,Kmin,U3,g,a,p){
   const dy=K=>{const Ke=Math.max(K,Kmin),K3=Math.max(Ke,K+Phi2-U3);return 2*g*(ys*D2/(4*Ke))/(1+Math.sqrt(K3/Ke));};
@@ -491,6 +508,10 @@ function stepParts(dt){accI+=14*dt;accE+=10*dt;
       const v=speed(p,K),z0=p.z;p.z+=p.d*v*h;p.y+=p.vy*h;
       if(P.lens&&p.k!=='e'&&p.d>0)for(const k of [1,2])if(z0<ZG[k]&&p.z>=ZG[k]){const yr=hoff(p.y-FS.of[k],FS.pg);if(Math.abs(yr)<FS.ag){
         const D=FS.D[k],Ke=k===1?Math.max(10,K):Math.max(K,Math.abs(D)*FS.amm),rr=yr*P.g*D/(4*Ke);p.vy+=rr*v;if(k===1)p.E-=Ke*rr*rr;}}
+      const zf=ZG[2]-FS.th-2*FS.ag;
+      if(P.lens&&p.k!=='e'&&p.d>0&&z0<zf&&p.z>=zf){const yr=hoff(p.y-FS.of[2],FS.pg),ya=Math.abs(yr);
+        if(ya>=FS.ag){const F=Math.max(0,(ug-FS.U[1])/P.g)*FS.amm,Kc=(FS.pg/2-ya)*P.g*F/(8*(ya*P.g-FS.amm));
+          if(K<=Kc)p.vy=-Math.sign(yr)*(ya-0.8*FS.ag)*v/(2*FS.ag+FS.th);}}
       if(p.z<ZMIN||(p.z<WALL&&Math.abs(p.y)>HH+0.6)){dead=true;break;}
       if(p.z>=WALL&&Math.abs(p.y)>=HH){flashes.push({z:p.z,y:p.y,t:0.3,k:p.k});dead=true;break;}
       for(let k=0;k<4;k++)if(Math.abs(p.z-ZG[k])<=FS.th+0.002&&rhoA(p.y,k)>=1){flashes.push({z:p.z,y:p.y,t:0.3,k:p.k});dead=true;break;}
