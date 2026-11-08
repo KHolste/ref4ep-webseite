@@ -169,8 +169,8 @@ dl.grids dd{margin:0}
     <div class="ctl">
       <div class="row"><label>Gitter G0</label></div>
       <span class="seg" id="g0seg" role="group" aria-label="Gitter G0">
-        <button type="button" data-v="ground" aria-pressed="true">geerdet</button>
-        <button type="button" data-v="float" aria-pressed="false">floatend</button>
+        <button type="button" data-v="ground" aria-pressed="false">geerdet</button>
+        <button type="button" data-v="float" aria-pressed="true">floatend</button>
       </span>
       <div class="hint">Bei neutralisiertem Strahl oft floatend</div>
     </div>
@@ -284,7 +284,7 @@ const PDEF={
   noise:{grp:'geraet',lab:'Rauschen',min:0,max:5,step:0.1,fmt:p=>NF(1).format(p)+' %',hint:'bezogen auf den Ionenstrom'},
   smooth:{grp:'ausw',lab:'Glättung ±<i>m</i> Punkte',min:1,max:25,step:1,fmt:p=>'±'+p}
 };
-const DEF={ub:1200,dud:25,sig:6,cex:10,up:15,te:3,u1:-30,u3:-15,d:0.2,t:0.1,g:2,alpha:2,step:1,noise:0.5,smooth:3,g0:'ground',lens:true,al:'off',see:true,gam:0.05};
+const DEF={ub:1200,dud:25,sig:6,cex:10,up:15,te:3,u1:-30,u3:-15,d:0.2,t:0.1,g:2,alpha:2,step:1,noise:0.5,smooth:3,g0:'float',lens:true,al:'off',see:true,gam:0.05};
 let P=Object.assign({},DEF), seed=7, view='beam', ug=600, playing=false;
 
 function buildControls(){
@@ -506,10 +506,10 @@ function spawnIon(){const C=M.C,ca=Math.cos(P.alpha*Math.PI/180),slow=Math.rando
   else parts.push({z:ZMIN,y,vy:tn*v0,d:1,E,k:'b'});}
 function spawnEl(){parts.push({z:ZMIN+Math.random()*(ZSH-0.1-ZMIN),y:(Math.random()*2-1)*HH*0.95,vy:(Math.random()-0.5)*1.2,d:1,E:-P.te*Math.log(Math.random()+1e-9),k:'e'});}
 function kin(p){const ph=phiAt(p.z,p.y);return p.k==='e'?p.E-(P.up-ph):p.k==='s'?p.E+ph:p.E-ph;}
-function speed(p,K){K=Math.max(K,0.2);return p.k==='e'||p.k==='s'?Math.min(4,0.8+2.5*Math.sqrt(K/10)):0.25+1.8*Math.sqrt(K/(M.mu+50));}
-function stepParts(dt){accI+=14*dt;accE+=10*dt;
-  while(accI>=1){accI--;if(parts.length<280)spawnIon();}
-  while(accE>=1){accE--;if(parts.length<280)spawnEl();}
+function speed(p,K){K=Math.max(K,0.2);return p.k==='e'||p.k==='s'?Math.min(2,0.35+1.2*Math.sqrt(K/10)):0.25+1.8*Math.sqrt(K/(M.mu+50));}
+function stepParts(dt){accI+=14*dt;accE+=20*dt;
+  while(accI>=1){accI--;if(parts.length<340)spawnIon();}
+  while(accE>=1){accE--;if(parts.length<340)spawnEl();}
   const lim=Math.max(0.002,Math.min(0.01,FS.th)),newSE=[];
   for(let i=parts.length-1;i>=0;i--){const p=parts[i];let dead=false;
     const n=Math.max(1,Math.ceil(speed(p,kin(p))*dt/lim)),h=dt/n;
@@ -560,7 +560,7 @@ function drawCross(){const {ctx,w,h}=prep($('#cross'));const T=34,B=4,{sc,X}=xma
   ctx.save();ctx.beginPath();ctx.rect(LM,T,w-LM-RM,h-T-B);ctx.clip();
   for(const f of flashes){ctx.fillStyle=pcol(f.k);ctx.globalAlpha=Math.min(1,f.t/0.3);ctx.beginPath();ctx.arc(X(f.z),Y(f.y),5*(1.3-f.t/0.35),0,7);ctx.fill();}
   ctx.globalAlpha=1;
-  for(const p of parts){ctx.fillStyle=pcol(p.k);ctx.beginPath();ctx.arc(X(p.z),Y(p.y),p.k==='e'||p.k==='s'?2:p.k==='c'?3:2.6,0,7);ctx.fill();}
+  for(const p of parts){ctx.fillStyle=pcol(p.k);ctx.beginPath();ctx.arc(X(p.z),Y(p.y),p.k==='e'||p.k==='s'?2.8:p.k==='c'?3:2.6,0,7);ctx.fill();}
   ctx.restore();
 }
 function drawPot(){const {ctx,w,h}=prep($('#pot'));const T=8,B=12,{X}=xmap(w);
@@ -574,7 +574,7 @@ function drawPot(){const {ctx,w,h}=prep($('#pot'));const T=8,B=12,{X}=xmap(w);
   const curve=(f,c,wd,da)=>{const N=nodes(f);ctx.strokeStyle=c;ctx.lineWidth=wd;ctx.setLineDash(da);ctx.beginPath();N.forEach(([z,p],i)=>i?ctx.lineTo(X(z),Y(p)):ctx.moveTo(X(z),Y(p)));ctx.stroke();ctx.setLineDash([]);};
   curve(0,COL.muted,1.4,[5,4]);curve(1,COL.ink,2,[]);
   ctx.save();ctx.beginPath();ctx.rect(LM,T,w-LM-RM,h-T-B);ctx.clip();
-  for(const p of parts){ctx.fillStyle=pcol(p.k);ctx.beginPath();ctx.arc(X(p.z),Y(p.k==='e'?P.up-p.E:p.k==='s'?-p.E:p.E),p.k==='e'||p.k==='s'?2:2.6,0,7);ctx.fill();}
+  for(const p of parts){ctx.fillStyle=pcol(p.k);ctx.beginPath();ctx.arc(X(p.z),Y(p.k==='e'?P.up-p.E:p.k==='s'?-p.E:p.E),p.k==='e'||p.k==='s'?2.6:2.6,0,7);ctx.fill();}
   ctx.restore();}
 
 /* ----- Ablauf ----- */
