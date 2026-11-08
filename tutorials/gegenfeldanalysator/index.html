@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gegenfeldanalysator – Tutorials – Ref4EP</title>
+<style>
+html{color-scheme:light}
+body{margin:0}
+[hidden]{display:none!important}
+:root{
+  --bg:#e9edf1; --panel:#fbfcfd; --ink:#14202b; --muted:#566573; --line:#d2dae1; --stage:#ffffff; --grid:#e8edf1; --band:#dde4ea;
+  --accent:#0b6767; --accent-soft:#d9eeec; --on-accent:#ffffff;
+  --c-i:#1f5fc2; --c-e:#c23a2b; --c-rho:#7b3aa6; --c-E:#2c8540; --c-th:#14202b; --c-vac:#9a7a2c; --c-ghost:#9aa6b1;
+  --f-ui:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-head:"IBM Plex Sans Condensed","IBM Plex Sans",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+  --f-math:"Source Serif 4",Cambria,"Times New Roman",serif;
+  --r:7px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0b1115; --panel:#121a20; --ink:#e1e8ed; --muted:#8d9eab; --line:#25323c; --stage:#0a0f13; --grid:#18222b; --band:#1c2933;
+    --accent:#47b6ae; --accent-soft:#15302e; --on-accent:#06110f;
+    --c-i:#62a1ff; --c-e:#ff715f; --c-rho:#c48cf0; --c-E:#5cc46a; --c-th:#e1e8ed; --c-vac:#d9b45a; --c-ghost:#5b6a76; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0b1115; --panel:#121a20; --ink:#e1e8ed; --muted:#8d9eab; --line:#25323c; --stage:#0a0f13; --grid:#18222b; --band:#1c2933;
+  --accent:#47b6ae; --accent-soft:#15302e; --on-accent:#06110f;
+  --c-i:#62a1ff; --c-e:#ff715f; --c-rho:#c48cf0; --c-E:#5cc46a; --c-th:#e1e8ed; --c-vac:#d9b45a; --c-ghost:#5b6a76; color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{background:var(--bg)}
+body{color:var(--ink);font-family:var(--f-ui);font-size:14px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 28px}
+.wrap{max-width:1720px;margin:0 auto}
+.r4bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding-top:10px;font-size:12.5px;color:var(--muted)}
+.r4bar a{color:var(--accent);text-decoration:none}.r4bar a:hover{text-decoration:underline}
+header.top{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 18px;padding-block:16px 12px}
+header.top h1{font-family:var(--f-head);font-weight:600;font-size:26px;letter-spacing:.01em;margin:0}
+header.top .sub{color:var(--muted);margin:0}
+header.top .units{margin-left:auto;font-size:12px;color:var(--muted);font-family:var(--f-mono)}
+.app{display:grid;gap:14px;grid-template-columns:272px minmax(0,1fr) 340px;grid-template-areas:"params stage info";align-items:start}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r)}
+.params{grid-area:params;padding:12px 14px 14px}
+.stage{grid-area:stage;min-width:0;display:flex;flex-direction:column;gap:10px}
+.info{grid-area:info;padding:16px 18px;min-width:0}
+h2.lab{font-family:var(--f-head);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);margin:0 0 8px}
+/* Regler */
+.ctl{display:flex;flex-direction:column;gap:2px;margin-bottom:11px}
+.ctl .row{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.ctl label{font-weight:500}
+.ctl label i,.m i{font-family:var(--f-math);font-style:italic;font-size:1.08em}
+.ctl output{white-space:nowrap;font-family:var(--f-mono);font-size:12.5px;font-variant-numeric:tabular-nums;color:var(--accent);min-width:44px;text-align:center}
+.ctl .hint{font-size:11.5px;color:var(--muted);line-height:1.35}
+input[type=range]{width:100%;accent-color:var(--accent);margin:2px 0}
+input[type=range]:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+.ctl .val{display:flex;align-items:center;gap:4px}
+.stp{all:unset;box-sizing:border-box;width:22px;height:22px;display:grid;place-items:center;border:1px solid var(--line);border-radius:5px;cursor:pointer;font-family:var(--f-mono);font-size:14px;line-height:1;color:var(--ink);user-select:none;touch-action:manipulation}
+.stp:hover{border-color:var(--accent);color:var(--accent)}
+.stp:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.ctl-tip{font-size:11.5px;color:var(--muted);margin:2px 0 10px;line-height:1.4}
+.ctl-tip kbd{font-family:var(--f-mono);font-size:11px;border:1px solid var(--line);border-bottom-width:2px;border-radius:3px;padding:0 4px;background:var(--panel)}
+.sep{border:0;border-top:1px solid var(--line);margin:14px 0 12px}
+.btn{font:inherit;font-weight:500;font-size:13px;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:6px;padding:5px 10px;cursor:pointer}
+.btn:hover{border-color:var(--accent)}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+/* Kennzahlen links */
+dl.kz{display:grid;grid-template-columns:1fr auto;gap:3px 10px;margin:0;font-size:13px}
+dl.kz dt{color:var(--muted)}
+dl.kz dd{margin:0;font-family:var(--f-mono);font-size:12.5px;font-variant-numeric:tabular-nums;text-align:right}
+/* Bühne */
+.toolbar{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
+.toolbar label.chk{display:flex;gap:5px;align-items:center;font-size:13px;cursor:pointer;user-select:none}
+.toolbar label.chk input{accent-color:var(--accent)}
+.toolbar select{font:inherit;font-size:13px;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:4px 6px}
+.plotbox{border:1px solid var(--line);border-radius:var(--r);background:var(--stage);padding:10px 10px 8px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.status{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:baseline}
+.status .tm{font-family:var(--f-mono);font-size:13px;font-variant-numeric:tabular-nums;color:var(--ink);white-space:nowrap}
+.status .ph{font-size:13px;color:var(--muted)}
+.status .ph b{color:var(--ink);font-weight:600}
+.strip{position:relative;height:46px}
+.strip canvas,.plots canvas,.chartwrap canvas{position:absolute;inset:0;width:100%;height:100%}
+.plots{position:relative;height:clamp(420px,62vh,720px)}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--muted)}
+.legend span{display:flex;align-items:center;gap:5px}
+.legend svg{flex:none}
+.transport{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+.transport .tempo{display:flex;align-items:center;gap:8px;flex:1;min-width:220px}
+.transport .tempo input{flex:1}
+.transport output{font-family:var(--f-mono);font-size:12.5px;min-width:112px;color:var(--muted)}
+.below{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:10px}
+.chartbox,.numbox{padding:10px 12px;min-width:0}
+.chartwrap{position:relative;height:210px}
+.chartnote{font-size:11.5px;color:var(--muted);margin-top:4px}
+.numbox .tw{overflow-x:auto}
+table.num{border-collapse:collapse;width:100%;font-size:12.5px}
+table.num th,table.num td{padding:4px 6px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+table.num th:first-child,table.num td:first-child{text-align:left;white-space:normal}
+table.num thead th{font-weight:600;font-size:11.5px;color:var(--muted);vertical-align:bottom}
+table.num td{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+table.num td:first-child{font-family:var(--f-ui)}
+table.num td.sim{font-weight:500}
+table.num td.th{color:var(--muted)}
+/* Info */
+.info h3{font-family:var(--f-head);font-weight:600;font-size:22px;line-height:1.2;margin:0 0 10px;text-wrap:balance}
+.info p{margin:0 0 10px;max-width:65ch}
+.info b{font-weight:600}
+.formula{font-family:var(--f-math);font-size:17px;line-height:1.55;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:10px 2px;margin:4px 0 12px;display:flex;flex-direction:column;gap:8px;overflow-x:auto}
+.formula i{font-style:italic}
+.formula small{display:block;font-family:var(--f-ui);font-size:12px;color:var(--muted)}
+.frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;font-size:.92em;line-height:1.15;margin:0 2px}
+.frac>span:first-child{border-bottom:1px solid currentColor;padding:0 3px}
+.frac>span:last-child{padding:0 3px}
+.sqrt{display:inline-flex;align-items:center}
+.sqrt>span{border-top:1px solid currentColor;padding-top:2px;margin-left:1px}
+.info h4{font-family:var(--f-head);font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:16px 0 6px}
+.tasks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;counter-reset:t}
+.tasks li{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:start;padding:8px 0;border-top:1px solid var(--line)}
+.tasks li:first-child{border-top:0}
+.tasks li p{margin:0}
+.tasks .btn{font-size:12px;padding:3px 8px;white-space:nowrap}
+.m{font-family:var(--f-math)}
+.foot{font-size:12px;color:var(--muted);margin-top:14px;max-width:110ch}
+@media (max-width:1280px){
+  .app{grid-template-columns:272px minmax(0,1fr);grid-template-areas:"params stage" "info info"}
+}
+@media (max-width:860px){
+  .app{grid-template-columns:minmax(0,1fr);grid-template-areas:"stage" "params" "info"}
+  .below{grid-template-columns:minmax(0,1fr)}
+  .plots{height:clamp(420px,120vw,620px)}
+  header.top .units{margin-left:0}
+}
+.schem{position:relative;height:clamp(230px,30vh,300px)}
+.schem canvas{position:absolute;inset:0;width:100%;height:100%}
+.chartwrap.tall{height:clamp(220px,30vh,300px)}
+.sweep{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+.sweep .tempo{display:flex;align-items:center;gap:8px;flex:1;min-width:220px}
+.sweep .tempo input{flex:1}
+.sweep output{font-family:var(--f-mono);font-size:12.5px;min-width:86px;color:var(--accent)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.seg button{font:inherit;font-size:13px;border:0;background:var(--panel);color:var(--ink);padding:4px 10px;cursor:pointer}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent)}
+.below{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+dl.grids{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;margin:0;font-size:13px}
+dl.grids dt{font-family:var(--f-mono);font-size:12.5px;color:var(--muted)}
+dl.grids dd{margin:0}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav class="r4bar" aria-label="Ref4EP"><a href="/">Ref4EP</a><span aria-hidden="true">/</span><a href="/tutorials/">Tutorials</a><span aria-hidden="true">/</span><span>Gegenfeldanalysator</span></nav>
+<header class="top">
+  <h1>Gegenfeldanalysator</h1>
+  <p class="sub">Energieverteilung der Strahlionen eines Ionentriebwerks aus einer Strom-Spannungs-Kennlinie</p>
+  <span class="units">Vier-Gitter-RPA · einfach geladene Ionen · Modellrechnung</span>
+</header>
+
+<div class="app">
+  <section class="panel params" aria-label="Parameter">
+    <h2 class="lab">Ionenstrahl</h2>
+    <div id="ctl-strahl"></div>
+    <hr class="sep">
+    <h2 class="lab">Messgerät</h2>
+    <div id="ctl-geraet"></div>
+    <hr class="sep">
+    <h2 class="lab">Auswertung</h2>
+    <div id="ctl-ausw"></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn" type="button" id="neu">Neue Messung</button>
+      <button class="btn" type="button" id="defaults">Standardwerte</button>
+    </div>
+  </section>
+
+  <main class="stage">
+    <div class="plotbox">
+      <div class="status"><span class="tm" id="tm"></span><span class="ph" id="ph" aria-live="polite"></span></div>
+      <div class="schem"><canvas id="schem" aria-label="Potentialverlauf durch die Gitter mit Ionen auf ihrer Energiehöhe"></canvas></div>
+      <div class="legend" id="legend1"></div>
+      <div class="sweep">
+        <button class="btn primary" type="button" id="play">Sweep starten</button>
+        <div class="tempo"><label for="ug">Gegenspannung <i class="m">U</i><sub>G</sub></label><input type="range" id="ug" min="0" max="1300" step="1"><output id="ugOut"></output></div>
+      </div>
+    </div>
+    <div class="toolbar">
+      <span>Ausschnitt</span>
+      <span class="seg" role="group" aria-label="Ausschnitt">
+        <button type="button" data-v="all" aria-pressed="false">Ganzer Bereich</button>
+        <button type="button" data-v="beam" aria-pressed="true">Hauptstrahl</button>
+        <button type="button" data-v="slow" aria-pressed="false">Langsame Ionen</button>
+      </span>
+    </div>
+    <div class="below">
+      <div class="panel chartbox">
+        <h2 class="lab">Kollektorstrom <i class="m">I</i>(<i class="m">U</i><sub>G</sub>)</h2>
+        <div class="chartwrap tall"><canvas id="cI" aria-label="Kollektorstrom über der Gegenspannung"></canvas></div>
+        <div class="chartnote">Punkte: Messung · Linie: Modell ohne Rauschen</div>
+      </div>
+      <div class="panel chartbox">
+        <h2 class="lab">Energieverteilung −d<i class="m">I</i>/d<i class="m">U</i><sub>G</sub></h2>
+        <div class="chartwrap tall"><canvas id="cF" aria-label="Abgeleitete Energieverteilung"></canvas></div>
+        <div class="chartnote">Linie: aus der Messung abgeleitet · gepunktet: Modell</div>
+      </div>
+    </div>
+    <div class="panel numbox">
+      <h2 class="lab">Auswertung und Modell</h2>
+      <div class="tw"><table class="num" id="numtab"></table></div>
+    </div>
+  </main>
+
+  <aside class="panel info" id="info">
+    <h3>Gegenfeldanalysator (RPA)</h3>
+    <p>Das Gitter G2 lässt nur Ionen durch, deren Energie pro Ladung größer ist als seine Spannung. Die Ableitung der Stromkennlinie ist die Energieverteilung.</p>
+    <div class="formula">
+      <div><i>I</i>(<i>U</i><sub>G</sub>) = <i>q A T</i> ∫<sub><i>U</i><sub>G</sub></sub><sup>∞</sup> <i>f</i>(<i>U</i>) d<i>U</i> <small><i>A</i> Fläche, <i>T</i> Transparenz der Gitter, <i>U</i> = <i>E</i>/<i>q</i></small></div>
+      <div><i>f</i>(<i>U</i><sub>G</sub>) ∝ − <span class="frac"><span>d<i>I</i></span><span>d<i>U</i><sub>G</sub></span></span></div>
+    </div>
+    <dl class="grids">
+      <dt>G0</dt><dd>0 V, schirmt das Plasma ab</dd>
+      <dt>G1</dt><dd>−30 V, hält Elektronen fern</dd>
+      <dt>G2</dt><dd><i class="m">U</i><sub>G</sub>, Gegenfeld</dd>
+      <dt>G3</dt><dd>−15 V, hält Sekundärelektronen am Kollektor</dd>
+    </dl>
+  </aside>
+</div>
+</div>
+
+<script>
+'use strict';
+const $=s=>document.querySelector(s);
+const NF=d=>new Intl.NumberFormat('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d});
+function num(x,d=1){if(x===null||!isFinite(x))return '—';const t=NF(d).format(x);return /^-0([,.]0*)?$/.test(t)?t.slice(1):t.replace('-','−');}
+
+/* ----- Geometrie und feste Gitterspannungen ----- */
+const ZP=0.24, ZG=[0.30,0.45,0.60,0.75,0.90];   // Plasmarand, G0..G3, Kollektor
+const U_REP=-30, U_SUP=-15, I0=10;               // V, V, µA bei U_G = 0
+
+/* ----- Parameter ----- */
+const PDEF={
+  ub:{grp:'strahl',lab:'Strahlspannung <i>U</i><sub>B</sub>',min:300,max:2000,step:10,fmt:p=>NF(0).format(p)+' V',hint:'Spannung des Schirmgitters gegen Masse'},
+  dud:{grp:'strahl',lab:'Plasmapotential über <i>U</i><sub>B</sub>',min:0,max:60,step:1,fmt:p=>NF(0).format(p)+' V',hint:'Entladungsplasma liegt etwas über dem Schirmgitter'},
+  sig:{grp:'strahl',lab:'Energiebreite <i>σ</i>',min:1,max:40,step:0.5,fmt:p=>NF(1).format(p)+' V'},
+  cex:{grp:'strahl',lab:'Anteil langsamer Ionen',min:0,max:40,step:1,fmt:p=>NF(0).format(p)+' %',hint:'Ladungsaustausch mit dem Restgas'},
+  up:{grp:'strahl',lab:'Plasmapotential am Messort',min:2,max:40,step:1,fmt:p=>NF(0).format(p)+' V',hint:'Dort entstehen die langsamen Ionen'},
+  alpha:{grp:'geraet',lab:'Akzeptanzwinkel <i>α</i>',min:0,max:25,step:0.5,fmt:p=>NF(1).format(p)+'°',hint:'Schräge Ionen werden nur mit ihrer Normalenergie gebremst'},
+  step:{grp:'geraet',lab:'Schrittweite Δ<i>U</i><sub>G</sub>',min:0.5,max:20,step:0.5,fmt:p=>NF(1).format(p)+' V'},
+  noise:{grp:'geraet',lab:'Rauschen',min:0,max:5,step:0.1,fmt:p=>NF(1).format(p)+' %',hint:'bezogen auf den Gesamtstrom'},
+  smooth:{grp:'ausw',lab:'Glättung ±<i>m</i> Punkte',min:1,max:25,step:1,fmt:p=>'±'+p}
+};
+const DEF={ub:1200,dud:25,sig:6,cex:10,up:15,alpha:4,step:1,noise:0.5,smooth:3};
+let P=Object.assign({},DEF), seed=7, view='beam', ug=600, playing=false;
+
+function buildControls(){
+  for(const k in PDEF){const d=PDEF[k];const w=document.createElement('div');w.className='ctl';
+    w.innerHTML=`<div class="row"><label for="p-${k}">${d.lab}</label><span class="val"><button type="button" class="stp" data-d="-1" aria-label="verringern">−</button><output id="o-${k}"></output><button type="button" class="stp" data-d="1" aria-label="erhöhen">+</button></span></div>
+      <input type="range" id="p-${k}" min="${d.min}" max="${d.max}" step="${d.step}">${d.hint?`<div class="hint">${d.hint}</div>`:''}`;
+    $('#ctl-'+d.grp).appendChild(w);const inp=w.querySelector('input');
+    inp.addEventListener('input',()=>{P[k]=parseFloat(inp.value);$('#o-'+k).textContent=d.fmt(P[k]);update();});
+    w.querySelectorAll('.stp').forEach(b=>{let t1=null,t2=null;
+      const once=()=>{const v=inp.value;+b.dataset.d>0?inp.stepUp():inp.stepDown();if(inp.value!==v)inp.dispatchEvent(new Event('input'));};
+      const stop=()=>{clearTimeout(t1);clearInterval(t2);t1=t2=null;};
+      b.addEventListener('pointerdown',e=>{e.preventDefault();once();t1=setTimeout(()=>{t2=setInterval(once,90);},380);});
+      ['pointerup','pointerleave','pointercancel'].forEach(ev=>b.addEventListener(ev,stop));
+      b.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();once();}});});
+  }
+  syncControls();}
+function syncControls(){for(const k in PDEF){const i=$('#p-'+k);i.value=P[k];P[k]=parseFloat(i.value);$('#o-'+k).textContent=PDEF[k].fmt(P[k]);}}
+
+/* ----- Modell ----- */
+function erfc(x){const z=Math.abs(x),t=1/(1+0.5*z);
+  const r=t*Math.exp(-z*z-1.26551223+t*(1.00002368+t*(0.37409196+t*(0.09678418+t*(-0.18628806+t*(0.27886807+t*(-1.13520398+t*(1.48851587+t*(-0.82215223+t*0.17087277)))))))));
+  return x>=0?r:2-r;}
+const SQ2=Math.SQRT2, SQ2PI=Math.sqrt(2*Math.PI), NU=48;
+function comps(){const c=P.cex/100;
+  return [{w:1-c,mu:P.ub+P.dud,sig:P.sig,kind:'b'},{w:c,mu:P.up+2,sig:2,kind:'c'}];}
+// Durchlass bei Gegenspannung V: E·u² > V, u = cos θ gleichverteilt in [cos α, 1]
+function Itrue(V,C){const ca=Math.cos(P.alpha*Math.PI/180);let s=0;
+  for(const c of C){if(c.w<=0)continue;
+    if(P.alpha<=0){s+=c.w*0.5*erfc((V-c.mu)/(c.sig*SQ2));continue;}
+    let a=0;for(let j=0;j<NU;j++){const u=ca+(1-ca)*(j+0.5)/NU;a+=0.5*erfc((V/(u*u)-c.mu)/(c.sig*SQ2));}
+    s+=c.w*a/NU;}
+  return I0*s;}
+function Ftrue(V,C){const ca=Math.cos(P.alpha*Math.PI/180);let s=0;
+  const g=(x,c)=>Math.exp(-0.5*((x-c.mu)/c.sig)**2)/(c.sig*SQ2PI);
+  for(const c of C){if(c.w<=0)continue;
+    if(P.alpha<=0){s+=c.w*g(V,c);continue;}
+    let a=0;for(let j=0;j<NU;j++){const u=ca+(1-ca)*(j+0.5)/NU;a+=g(V/(u*u),c)/(u*u);}
+    s+=c.w*a/NU;}
+  return I0*s;}
+
+function rng(s){return function(){s|=0;s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+let M=null;   // Messung
+function measure(){
+  const C=comps(), mu=C[0].mu, h=P.step;
+  const vmax=Math.ceil((mu+Math.max(60,8*P.sig))/h)*h;
+  const n=Math.round(vmax/h)+1, V=new Float64Array(n), I=new Float64Array(n), It=new Float64Array(n);
+  const r=rng(seed);
+  for(let k=0;k<n;k++){V[k]=k*h;It[k]=Itrue(V[k],C);
+    const g=Math.sqrt(-2*Math.log(r()+1e-12))*Math.cos(2*Math.PI*r());
+    I[k]=It[k]+g*P.noise/100*I0;}
+  // Ableitung: Steigung einer Ausgleichsgeraden über ±m Punkte
+  const m=P.smooth, F=new Float64Array(n);
+  for(let k=0;k<n;k++){const a=Math.max(0,k-m),b=Math.min(n-1,k+m);let sx=0,sy=0,c=0;
+    for(let j=a;j<=b;j++){sx+=V[j];sy+=I[j];c++;}const xm=sx/c,ym=sy/c;let sxy=0,sxx=0;
+    for(let j=a;j<=b;j++){sxy+=(V[j]-xm)*(I[j]-ym);sxx+=(V[j]-xm)**2;}
+    F[k]=sxx>0?-sxy/sxx:0;}
+  M={C,mu,h,vmax,n,V,I,It,F};
+  M.ev=evaluate(V,I,F,h,n);
+  M.tr=truth(C);
+}
+function peakFWHM(V,F,k0,k1){let k=k0;for(let j=k0;j<=k1;j++)if(F[j]>F[k])k=j;
+  let pk=V[k];if(k>k0&&k<k1){const d=F[k-1]-2*F[k]+F[k+1];if(d<0)pk+=0.5*(F[k-1]-F[k+1])/d*(V[1]-V[0]);}
+  const half=F[k]/2;let l=k,r=k;while(l>k0&&F[l]>half)l--;while(r<k1&&F[r]>half)r++;
+  let fw=NaN;if(F[l]<=half&&F[r]<=half){
+    const vl=V[l]+(half-F[l])/(F[l+1]-F[l])*(V[l+1]-V[l]);const vr=V[r-1]+(F[r-1]-half)/(F[r-1]-F[r])*(V[r]-V[r-1]);fw=vr-vl;}
+  return {pk,fw,fmax:F[k]};}
+function evaluate(V,I,F,h,n){
+  const ks=Math.min(n-1,Math.ceil(P.ub/2/h));
+  const pf=peakFWHM(V,F,ks,n-1);
+  const avg=(a,b)=>{let s=0,c=0;for(let j=Math.max(0,a);j<=Math.min(n-1,b);j++){s+=I[j];c++;}return s/c;};
+  const w=Math.max(1,Math.round(50/h));const Is=avg(ks-w,ks+w);
+  let integ=0;for(let j=ks;j<n-1;j++)integ+=0.5*(I[j]+I[j+1])*h;
+  const mean=V[ks]+integ/Is;
+  const slow=1-Is/avg(0,Math.max(1,Math.floor(P.up/2/h)));
+  return {pk:pf.pk,fw:pf.fw,mean,slow,fmax:pf.fmax};}
+function truth(C){const b=C[0],ca=Math.cos(P.alpha*Math.PI/180);
+  const lo=b.mu*ca*ca-6*b.sig,hi=b.mu+6*b.sig,N=3000,V=new Float64Array(N),F=new Float64Array(N);
+  for(let i=0;i<N;i++){V[i]=lo+(hi-lo)*i/(N-1);F[i]=Ftrue(V[i],C);}
+  const pf=peakFWHM(V,F,0,N-1);
+  return {pk:pf.pk,fw:pf.fw,mean:b.mu*(1+ca+ca*ca)/3,slow:P.cex};}
+
+/* ----- Farben ----- */
+let COL={};
+function readCols(){const cs=getComputedStyle(document.documentElement);
+  for(const k of ['ink','muted','line','stage','grid','band','accent','accent-soft','c-i','c-e','c-rho','c-E','c-ghost'])COL[k]=cs.getPropertyValue('--'+k).trim();}
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{readCols();dirty=true;});
+
+function prep(cv){const dpr=window.devicePixelRatio||1,w=cv.clientWidth,h=cv.clientHeight;
+  if(cv.width!==Math.round(w*dpr)||cv.height!==Math.round(h*dpr)){cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);}
+  const ctx=cv.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);return {ctx,w,h};}
+function niceStep(r,n){const s=r/n,p=Math.pow(10,Math.floor(Math.log10(s))),f=s/p;return (f<1.5?1:f<3?2:f<7?5:10)*p;}
+
+/* ----- Diagramme ----- */
+function xRange(){const C=M.C,b=C[0],ca=Math.cos(P.alpha*Math.PI/180);
+  if(view==='all')return [0,M.vmax];
+  if(view==='slow')return [0,Math.max(50,P.up+30)];
+  const span=Math.max(5*b.sig,15);return [Math.max(0,b.mu*ca*ca-span),b.mu+span];}
+function plot(cv,o){const {ctx,w,h}=prep(cv);const L=54,R=12,T=10,B=34;
+  const [x0,x1]=o.xr;let [y0,y1]=o.yr;if(!(y1>y0)){y1=y0+1;}
+  const X=x=>L+(x-x0)/(x1-x0)*(w-L-R),Y=y=>T+(1-(y-y0)/(y1-y0))*(h-T-B);
+  ctx.font='11.5px "IBM Plex Sans",system-ui,sans-serif';ctx.lineWidth=1;
+  const xs=niceStep(x1-x0,6),ys=niceStep(y1-y0,5);
+  ctx.strokeStyle=COL.grid;ctx.fillStyle=COL.muted;ctx.textAlign='center';ctx.textBaseline='top';
+  for(let x=Math.ceil(x0/xs)*xs;x<=x1+1e-9;x+=xs){ctx.beginPath();ctx.moveTo(X(x),T);ctx.lineTo(X(x),h-B);ctx.stroke();ctx.fillText(num(x,xs<1?1:0),X(x),h-B+4);}
+  ctx.textAlign='right';ctx.textBaseline='middle';
+  for(let y=Math.ceil(y0/ys)*ys;y<=y1+1e-9;y+=ys){ctx.beginPath();ctx.moveTo(L,Y(y));ctx.lineTo(w-R,Y(y));ctx.stroke();ctx.fillText(num(y,ys<0.1?2:ys<1?1:0),L-5,Y(y));}
+  ctx.strokeStyle=COL.line;ctx.strokeRect(L,T,w-L-R,h-T-B);
+  ctx.fillStyle=COL.muted;ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText(o.xl,L+(w-L-R)/2,h-1);
+  ctx.save();ctx.translate(12,T+(h-T-B)/2);ctx.rotate(-Math.PI/2);ctx.textBaseline='middle';ctx.fillText(o.yl,0,0);ctx.restore();
+  ctx.save();ctx.beginPath();ctx.rect(L,T,w-L-R,h-T-B);ctx.clip();
+  for(const v of o.vl||[]){ctx.strokeStyle=v.c;ctx.setLineDash(v.d||[]);ctx.lineWidth=v.w||1;ctx.beginPath();ctx.moveTo(X(v.x),T);ctx.lineTo(X(v.x),h-B);ctx.stroke();}
+  ctx.setLineDash([]);
+  for(const s of o.s){ctx.strokeStyle=s.c;ctx.fillStyle=s.c;ctx.lineWidth=s.w||1.5;ctx.setLineDash(s.d||[]);
+    if(s.dots){const r=s.r||2;for(let i=0;i<s.x.length;i++){if(s.x[i]<x0||s.x[i]>x1)continue;ctx.beginPath();ctx.arc(X(s.x[i]),Y(s.y[i]),r,0,7);ctx.fill();}}
+    else{ctx.beginPath();let st=false;for(let i=0;i<s.x.length;i++){if(s.x[i]<x0-(x1-x0)*0.02||s.x[i]>x1+(x1-x0)*0.02){st=false;continue;}
+      const px=X(s.x[i]),py=Y(s.y[i]);st?ctx.lineTo(px,py):ctx.moveTo(px,py);st=true;}ctx.stroke();}
+    ctx.setLineDash([]);}
+  for(const p of o.pts||[]){ctx.fillStyle=p.c;ctx.beginPath();ctx.arc(X(p.x),Y(p.y),p.r||4,0,7);ctx.fill();}
+  ctx.restore();}
+function yr(xs,ys,xr,pad0){let lo=pad0?0:Infinity,hi=-Infinity;
+  for(let a=0;a<xs.length;a++){const X=xs[a],Y=ys[a];for(let i=0;i<X.length;i++){if(X[i]<xr[0]||X[i]>xr[1])continue;if(Y[i]<lo)lo=Y[i];if(Y[i]>hi)hi=Y[i];}}
+  if(!isFinite(hi)){hi=1;lo=0;}const d=(hi-lo)||1;return [lo-0.04*d,hi+0.08*d];}
+
+function drawPlots(){const xr=xRange();
+  // Modellkurven fein im Ausschnitt
+  const N=500,Xt=[],It=[],Ft=[];for(let i=0;i<N;i++){const v=xr[0]+(xr[1]-xr[0])*i/(N-1);Xt.push(v);It.push(Itrue(v,M.C));Ft.push(Ftrue(v,M.C));}
+  const V=Array.from(M.V),I=Array.from(M.I),F=Array.from(M.F);
+  const kU=Math.min(M.n-1,Math.round(ug/M.h));
+  const nIn=V.filter(v=>v>=xr[0]&&v<=xr[1]).length;
+  plot($('#cI'),{xr,yr:yr([V,Xt],[I,It],xr,true),xl:'Gegenspannung in V',yl:'Strom in µA',
+    s:[{x:Xt,y:It,c:COL['c-ghost'],w:1.5},{x:V,y:I,c:COL['c-i'],dots:nIn<400,r:nIn<120?2.6:1.8,w:1.4}],
+    vl:[{x:ug,c:COL.accent,d:[4,3],w:1.2}],pts:[{x:V[kU],y:I[kU],c:COL.accent,r:4.5}]});
+  const ev=M.ev,vl=[{x:ug,c:COL.accent,d:[4,3],w:1.2}];
+  if(view!=='slow'&&isFinite(ev.pk))vl.push({x:ev.pk,c:COL['c-e'],d:[2,3]});
+  plot($('#cF'),{xr,yr:yr([V,Xt],[F,Ft],xr,true),xl:'Energie pro Ladung in V',yl:'−dI/dU in µA/V',
+    s:[{x:Xt,y:Ft,c:COL.ink,w:1.4,d:[2,3]},{x:V,y:F,c:COL['c-i'],w:1.6}],vl});
+  const tr=M.tr;
+  const row=(n,a,b,d)=>`<tr><td>${n}</td><td class="sim">${num(a,d)}</td><td class="th">${num(b,d)}</td></tr>`;
+  $('#numtab').innerHTML=`<thead><tr><th>Größe</th><th>aus Messung</th><th>Modell</th></tr></thead><tbody>
+    ${row('Wahrscheinlichste Energie pro Ladung (V)',ev.pk,tr.pk,1)}
+    ${row('Mittlere Energie der schnellen Ionen (V)',ev.mean,tr.mean,1)}
+    ${row('Halbwertsbreite (V)',ev.fw,tr.fw,1)}
+    ${row('Anteil langsamer Ionen (%)',ev.slow*100,tr.slow,1)}
+    ${row('Strahlspannung + Plasmapotential (V)',P.ub+P.dud,P.ub+P.dud,0)}</tbody>`;
+}
+
+/* ----- Potentialbild mit Ionen ----- */
+function phi(z){const pts=[[0,P.up],[ZP,P.up],[ZG[0],0],[ZG[1],U_REP],[ZG[2],ug],[ZG[3],U_SUP],[ZG[4],0],[1,0]];
+  for(let i=1;i<pts.length;i++)if(z<=pts[i][0]){const [a,pa]=pts[i-1],[b,pb]=pts[i];return pa+(pb-pa)*(z-a)/(b-a);}return 0;}
+const ions=[];let flashes=[],spawnAcc=0;
+function gauss(){return Math.sqrt(-2*Math.log(Math.random()+1e-12))*Math.cos(2*Math.PI*Math.random());}
+function spawn(){const C=M.C,ca=Math.cos(P.alpha*Math.PI/180);
+  const slow=Math.random()<C[1].w;const c=slow?C[1]:C[0];
+  let E=c.mu+c.sig*gauss();const u=ca+(1-ca)*Math.random();let En=E*u*u;
+  if(slow){En=Math.max(En,P.up+0.3);ions.push({z:Math.random()*ZP,d:1,En,s:1});}
+  else ions.push({z:0,d:1,En,s:0});}
+function stepIons(dt){const rate=16;spawnAcc+=rate*dt;while(spawnAcc>=1){spawnAcc-=1;if(ions.length<160)spawn();}
+  const Emax=M.mu+50;
+  for(let i=ions.length-1;i>=0;i--){const p=ions[i];const K=p.En-phi(p.z);
+    if(p.d>0&&K<=0)p.d=-1;
+    const v=0.05+0.28*Math.sqrt(Math.max(K,0.3)/Emax);p.z+=p.d*v*dt;
+    if(p.z<0){ions.splice(i,1);continue;}
+    if(p.z>=ZG[4]){flashes.push({t:0.35,y:p.En});ions.splice(i,1);}}
+  for(const f of flashes)f.t-=dt;flashes=flashes.filter(f=>f.t>0);}
+function drawSchem(){const {ctx,w,h}=prep($('#schem'));const L=50,R=12,T=30,B=14;
+  const s=10,ylo=Math.asinh(-45/s),yhi=Math.asinh((Math.max(M.vmax,M.mu+40))/s);
+  const X=z=>L+z*(w-L-R),Y=p=>T+(1-(Math.asinh(p/s)-ylo)/(yhi-ylo))*(h-T-B);
+  ctx.font='11.5px "IBM Plex Sans",system-ui,sans-serif';
+  ctx.fillStyle=COL.band;ctx.fillRect(X(0),T,X(ZP)-X(0),h-T-B);
+  ctx.fillStyle=COL.muted;ctx.textAlign='left';ctx.textBaseline='bottom';ctx.fillText('Strahlplasma',X(0)+6,h-B-4);
+  ctx.strokeStyle=COL.grid;ctx.lineWidth=1;ctx.textAlign='right';ctx.textBaseline='middle';
+  for(const t of [-30,-10,0,10,30,100,300,1000,3000]){if(Math.asinh(t/s)>yhi)continue;ctx.beginPath();ctx.moveTo(L,Y(t));ctx.lineTo(w-R,Y(t));ctx.stroke();ctx.fillText(num(t,0),L-5,Y(t));}
+  ctx.save();ctx.translate(11,T+(h-T-B)/2);ctx.rotate(-Math.PI/2);ctx.textAlign='center';ctx.fillText('Potential, Ionenenergie / e in V',0,0);ctx.restore();
+  const lab=['G0','G1','G2','G3','Kollektor'],sub=['0 V','−30 V',num(ug,0)+' V','−15 V','0 V'];
+  ctx.textAlign='center';ctx.textBaseline='alphabetic';
+  ZG.forEach((z,i)=>{ctx.strokeStyle=i===2?COL.accent:COL.muted;ctx.lineWidth=i===4?4:1.5;ctx.setLineDash(i===4?[]:[3,3]);
+    ctx.beginPath();ctx.moveTo(X(z),T);ctx.lineTo(X(z),h-B);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle=i===2?COL.accent:COL.ink;ctx.font='600 11.5px "IBM Plex Sans",system-ui,sans-serif';ctx.fillText(lab[i],X(z),T-15);
+    ctx.font='11px "IBM Plex Mono",ui-monospace,monospace';ctx.fillStyle=i===2?COL.accent:COL.muted;ctx.fillText(sub[i],X(z),T-3);});
+  ctx.font='11.5px "IBM Plex Sans",system-ui,sans-serif';
+  for(const f of flashes){ctx.fillStyle=COL.accent;ctx.globalAlpha=f.t/0.35;ctx.beginPath();ctx.arc(X(ZG[4]),Y(f.y),6*(1.4-f.t/0.35),0,7);ctx.fill();}
+  ctx.globalAlpha=1;
+  ctx.strokeStyle=COL.ink;ctx.lineWidth=2;ctx.beginPath();for(let i=0;i<=300;i++){const z=i/300;const px=X(z),py=Y(phi(z));i?ctx.lineTo(px,py):ctx.moveTo(px,py);}ctx.stroke();
+  for(const p of ions){ctx.fillStyle=p.s?COL['c-rho']:COL['c-i'];ctx.beginPath();ctx.arc(X(p.z),Y(p.En),p.s?3.2:2.6,0,7);ctx.fill();}
+}
+
+/* ----- Ablauf ----- */
+let dirty=true,last=0,updTimer=null;
+function update(){clearTimeout(updTimer);updTimer=setTimeout(()=>{measure();setUgMax();dirty=true;},30);}
+function setUgMax(){const s=$('#ug');s.max=M.vmax;s.step=M.h;if(ug>M.vmax)ug=M.vmax;s.value=ug;showUg();}
+function showUg(){$('#ugOut').textContent=num(ug,ug%1?1:0)+' V';const k=Math.min(M.n-1,Math.round(ug/M.h));
+  $('#tm').textContent='I = '+num(M.I[k],2)+' µA';
+  const pass=M.mu*Math.cos(P.alpha*Math.PI/180)**2;
+  $('#ph').innerHTML=ug<P.up?'Alle Ionen erreichen den Kollektor.':ug<M.ev.pk-2.5*P.sig&&ug<pass-3*P.sig?'Die langsamen Ionen werden zurückgewiesen, der <b>Hauptstrahl</b> kommt durch.':ug<M.mu+3*P.sig?'Das Gegenfeld schneidet in die <b>Energieverteilung des Hauptstrahls</b>.':'Alle Ionen werden zurückgewiesen.';}
+function frame(t){const dt=Math.min(0.05,(t-last)/1000||0);last=t;
+  if(M){if(playing){const xr=xRange();ug+=(xr[1]-xr[0])/8*dt;
+      if(ug<xr[0]||ug>xr[1])ug=xr[0];
+      $('#ug').value=ug;showUg();dirty=true;}
+    stepIons(dt);drawSchem();if(dirty){drawPlots();dirty=false;}}
+  requestAnimationFrame(frame);}
+
+function legend(){const dot=c=>`<svg width="10" height="10"><circle cx="5" cy="5" r="4" fill="${c}"/></svg>`;
+  $('#legend1').innerHTML=`<span>${dot(COL['c-i'])}Strahlionen</span><span>${dot(COL['c-rho'])}langsame Ionen (Ladungsaustausch)</span><span><svg width="18" height="10"><line x1="0" y1="5" x2="18" y2="5" stroke="${COL.ink}" stroke-width="2"/></svg>Potential</span><span>Höhe eines Ions = seine Energie pro Ladung senkrecht zu den Gittern</span>`;}
+
+buildControls();readCols();legend();
+$('#ug').addEventListener('input',e=>{ug=parseFloat(e.target.value);showUg();dirty=true;});
+$('#play').addEventListener('click',()=>{playing=!playing;$('#play').textContent=playing?'Sweep anhalten':'Sweep starten';});
+$('#neu').addEventListener('click',()=>{seed=(seed*7919+13)%100000;update();});
+$('#defaults').addEventListener('click',()=>{P=Object.assign({},DEF);syncControls();update();});
+document.querySelectorAll('.seg button').forEach(b=>b.addEventListener('click',()=>{view=b.dataset.v;
+  document.querySelectorAll('.seg button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));
+  const xr=xRange();if(ug<xr[0]||ug>xr[1]){ug=view==='slow'?P.up:view==='beam'?M.ev.pk:600;$('#ug').value=ug;showUg();}dirty=true;}));
+window.addEventListener('resize',()=>{dirty=true;});
+measure();ug=Math.round(M.mu-P.sig);setUgMax();requestAnimationFrame(frame);
+</script>
+</body>
+</html>
