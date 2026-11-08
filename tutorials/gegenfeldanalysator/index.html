@@ -175,6 +175,14 @@ dl.grids dd{margin:0}
       <div class="hint">Bei neutralisiertem Strahl oft floatend</div>
     </div>
     <div id="ctl-geraet"></div>
+    <label class="chk" style="display:flex;gap:6px;align-items:center;margin:2px 0 4px;cursor:pointer"><input type="checkbox" id="lens" checked style="accent-color:var(--accent)"> Linsenwirkung der Öffnungen</label>
+    <div class="ctl">
+      <span class="seg" id="alseg" role="group" aria-label="Lage der Gitterlöcher">
+        <button type="button" data-v="off" aria-pressed="true">Löcher versetzt</button>
+        <button type="button" data-v="al" aria-pressed="false">fluchtend</button>
+      </span>
+      <div class="hint">Linsen als dünne Linsen gerechnet; nahe der Abschneidekante nur qualitativ</div>
+    </div>
     <hr class="sep">
     <h2 class="lab">Auswertung</h2>
     <div id="ctl-ausw"></div>
@@ -227,11 +235,12 @@ dl.grids dd{margin:0}
   <aside class="panel info" id="info">
     <h3>Gegenfeldanalysator (RPA)</h3>
     <p>Das Gitter G2 lässt nur Ionen durch, deren Energie pro Ladung größer ist als seine Spannung. Die Ableitung der Stromkennlinie ist die Energieverteilung.</p>
-    <p>In den Gitteröffnungen ist das Gegenfeld schwächer als am Gitter selbst. Das RPA misst deshalb zu hohe Energien, und Elektronen können durchschlüpfen.</p>
+    <p>In den Gitteröffnungen ist das Gegenfeld schwächer als am Gitter selbst. Das RPA misst deshalb zu hohe Energien, und Elektronen können durchschlüpfen. Jede Öffnung wirkt außerdem als Linse und lenkt Ionen seitlich ab.</p>
     <div class="formula">
       <div><i>I</i>(<i>U</i><sub>G</sub>) = <i>q A T</i> ∫<sub><i>U</i><sub>G</sub></sub><sup>∞</sup> <i>f</i>(<i>U</i>) d<i>U</i> − <i>I</i><sub>e</sub> <small><i>A</i> Fläche, <i>T</i> Transparenz, <i>U</i> = <i>E</i>/<i>q</i></small></div>
       <div><i>f</i>(<i>U</i><sub>G</sub>) ∝ − <span class="frac"><span>d<i>I</i></span><span>d<i>U</i><sub>G</sub></span></span></div>
       <div>Δ<i>Φ</i><sub>Mitte</sub> ≈ <span class="frac"><span><i>a</i></span><span>π</span></span> (<i>E</i><sub>links</sub> − <i>E</i><sub>rechts</sub>) e<sup>−1,2 <i>t</i>/<i>a</i></sup> <small><i>a</i> Aperturradius, <i>t</i> Gitterdicke, <i>E</i> Feld beiderseits des Gitters</small></div>
+      <div>Δ<i>r</i>′ ≈ <span class="frac"><span><i>r</i> (<i>Φ</i>′<sub>rechts</sub> − <i>Φ</i>′<sub>links</sub>)</span><span>4 <i>K</i></span></span> <small>Linse nach Davisson-Calbick, <i>K</i> Bewegungsenergie pro Ladung</small></div>
       <div><i>I</i><sub>e</sub> = <i>I</i><sub>e0</sub> e<sup>−(<i>U</i><sub>P</sub> − <i>Φ</i><sub>min</sub>)/<i>T</i><sub>e</sub></sup> <small><i>Φ</i><sub>min</sub> tiefstes Potential auf dem Weg zum Kollektor</small></div>
     </div>
     <dl class="grids">
@@ -273,7 +282,7 @@ const PDEF={
   noise:{grp:'geraet',lab:'Rauschen',min:0,max:5,step:0.1,fmt:p=>NF(1).format(p)+' %',hint:'bezogen auf den Ionenstrom'},
   smooth:{grp:'ausw',lab:'Glättung ±<i>m</i> Punkte',min:1,max:25,step:1,fmt:p=>'±'+p}
 };
-const DEF={ub:1200,dud:25,sig:6,cex:10,up:15,te:3,u1:-30,u3:-15,d:0.2,t:0.1,g:2,alpha:2,step:1,noise:0.5,smooth:3,g0:'ground'};
+const DEF={ub:1200,dud:25,sig:6,cex:10,up:15,te:3,u1:-30,u3:-15,d:0.2,t:0.1,g:2,alpha:2,step:1,noise:0.5,smooth:3,g0:'ground',lens:true,al:'off'};
 let P=Object.assign({},DEF), seed=7, view='beam', ug=600, playing=false;
 
 function buildControls(){
@@ -291,7 +300,9 @@ function buildControls(){
   }
   syncControls();}
 function syncControls(){for(const k in PDEF){const i=$('#p-'+k);i.value=P[k];P[k]=parseFloat(i.value);$('#o-'+k).textContent=PDEF[k].fmt(P[k]);}
-  document.querySelectorAll('#g0seg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===P.g0?'true':'false'));}
+  document.querySelectorAll('#g0seg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===P.g0?'true':'false'));
+  $('#lens').checked=P.lens;
+  document.querySelectorAll('#alseg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===P.al?'true':'false'));}
 
 /* ----- Modell ----- */
 function erfc(x){const z=Math.abs(x),t=1/(1+0.5*z);
@@ -309,15 +320,40 @@ function sags(UG){const G=geo(),U=[U0(),P.u1,UG,P.u3,0],k=G.a/Math.PI*G.att,d=[0
     const lo=Math.min(U[i-1],U[i+1],U[i]),hi=Math.max(U[i-1],U[i+1],U[i]);
     d[i]=Math.min(hi,Math.max(lo,U[i]+k*(sr-sl)))-U[i];}
   return {U,d};}
-// Ionenstrom: Durchlass, wenn E·cos²θ größer als das Potential am Durchtrittsort in G2;
-// Profil in der Öffnung ∝ √(1−ρ²/a²), Ionen gleichmäßig über die Öffnung
-function Iion(UG,C){const d2=sags(UG).d[2],ca=Math.cos(P.alpha*Math.PI/180);let s=0;
-  for(const c of C){if(c.w<=0)continue;let a=0;
-    for(let j=0;j<NS;j++){const V=Math.max(0,UG+d2*Math.sqrt(1-(j+0.5)/NS));
-      if(P.alpha<=0)a+=0.5*erfc((V-c.mu)/(c.sig*SQ2));
-      else{let b=0;for(let i=0;i<NU;i++){const u=ca+(1-ca)*(i+0.5)/NU;b+=0.5*erfc((V/(u*u)-c.mu)/(c.sig*SQ2));}a+=b/NU;}}
-    s+=c.w*a/NS;}
+// Ionenstrom. Ort y in der Öffnung gleichverteilt; Potential in G2 ∝ √(1−y²/a²).
+// Linsen (Davisson-Calbick, dünne Linse): Δr' = y·(Φ'rechts − Φ'links)/(4K).
+// G1 lenkt nach außen: anderer Durchtrittsort in G2, Querenergie K·Δr'² fehlt gegen das Gegenfeld.
+// G2 lenkt knapp durchkommende Ionen stark ab: sie können den Steg von G3 treffen.
+function hoff(y,p){return y-Math.round(y/p)*p;}
+function lensD(UG,U){const g=geo().g;return [0,((UG-U[1])-(U[1]-U[0]))/g,((U[3]-UG)-(UG-U[1]))/g,0];}
+function Iion(UG,C){const S=sags(UG),G=geo(),U=S.U,d=S.d,a=G.a,g=G.g,p=3*a,ca=Math.cos(P.alpha*Math.PI/180);
+  const D=lensD(UG,U),Kmin=Math.abs(D[2])*a,nu=P.alpha>0?8:1;let s=0;
+  for(const c of C){if(c.w<=0)continue;let acc=0;
+    for(let j=0;j<NS;j++){const y=a*(j+0.5)/NS,ylo=a*j/NS,yhi=a*(j+1)/NS;
+      for(let i=0;i<nu;i++){const u=nu>1?ca+(1-ca)*(i+0.5)/nu:1,u2=u*u;
+        // Bewegungsenergie an G1 und G2 für ein Ion mit der mittleren Energie der Gruppe
+        let ys=y,Kp=0,wt=1;
+        if(P.lens){const En=c.mu*u2,K1=Math.max(5,En-(U[1]+d[1]*Math.sqrt(1-(y/a)**2))),K2=Math.max(0,En-Math.max(0,UG+d[2]));
+          const kap=2*g*D[1]/(4*K1)/(1+Math.sqrt(K2/K1));Kp=K1*(y*D[1]/(4*K1))**2;
+          if(P.al==='al'){const l=ylo*(1+kap),h=yhi*(1+kap);     // Streifen der Öffnung nach der Ablenkung
+            if(l>=a)continue;wt=Math.min(1,(a-l)/(h-l));ys=Math.min(y*(1+kap),(l+Math.min(h,a))/2);}}
+        const Phi2=UG+d[2]*Math.sqrt(Math.max(0,1-(ys/a)**2)),Vth=Math.max(0,Phi2)+Kp;
+        let part=0.5*erfc((Vth/u2-c.mu)/(c.sig*SQ2));
+        if(P.lens&&P.al==='al'&&part>1e-7)part-=lensLoss(c,u2,ys,ys,Phi2,Kp,D[2],Kmin,U[3],g,a,p);
+        acc+=wt*Math.max(0,part);}}
+    s+=c.w*acc/(NS*nu);}
   return I0*s;}
+// Anteil, der hinter G2 so stark abgelenkt wird, dass er den Steg von G3 trifft
+function lensLoss(c,u2,ys,y2,Phi2,Kp,D2,Kmin,U3,g,a,p){
+  const dy=K=>{const Ke=Math.max(K,Kmin),K3=Math.max(Ke,K+Phi2-U3);return 2*g*(ys*D2/(4*Ke))/(1+Math.sqrt(K3/Ke));};
+  const lim=a-Math.abs(ys);
+  const Klo=Math.max(0,-Phi2,(c.mu-6*c.sig)*u2-Phi2-Kp),Khi0=(c.mu+6*c.sig)*u2-Phi2-Kp;
+  if(Khi0<=Klo||Math.abs(dy(Klo))<=lim)return 0;
+  let lo=Klo,hi=Klo+1e5;for(let k=0;k<50;k++){const m=(lo+hi)/2;if(Math.abs(dy(m))>lim)lo=m;else hi=m;}
+  const Khi=Math.min(hi,Khi0);if(Khi<=Klo)return 0;
+  const N=40,h=(Khi-Klo)/N;let L=0;
+  for(let i=0;i<N;i++){const K=Klo+(i+0.5)*h;if(Math.abs(hoff(y2+dy(K),p))>=a){const E=(Phi2+Kp+K)/u2;L+=Math.exp(-0.5*((E-c.mu)/c.sig)**2)/(c.sig*SQ2PI)/u2*h;}}
+  return L;}
 // Elektronenstrom zum Kollektor: Boltzmann-Faktor über das tiefste Potential auf dem Weg
 function Iel(UG){const S=sags(UG),Ie0=I0*vRatio();let m=0;
   for(let j=0;j<NS;j++){const f=Math.sqrt(1-(j+0.5)/NS);
@@ -427,20 +463,22 @@ function drawPlots(){const xr=xRange();
 
 /* ----- Querschnitt und Potential mit Teilchen ----- */
 let FS=null, HH=0.8;
-function frameState(){const G=geo(),S=sags(ug);FS={U:S.U,d:S.d,th:G.t/G.g/2,ag:G.a/G.g,pg:3*G.a/G.g};}
-function rhoA(y){const p=FS.pg;return Math.abs(y-Math.round(y/p)*p)/FS.ag;}
-function nodes(f){const th=FS.th,U=FS.U,d=FS.d,p1=U[1]+d[1]*f,p2=U[2]+d[2]*f,p3=U[3]+d[3]*f;
+const OFS=[0,0.37,0.71,0.19];
+function frameState(){const G=geo(),S=sags(ug),pg=3*G.a/G.g;FS={U:S.U,d:S.d,th:G.t/G.g/2,ag:G.a/G.g,pg,D:lensD(ug,S.U),amm:G.a,of:OFS.map(o=>P.al==='al'?0:o*pg)};}
+function rhoA(y,k){return Math.abs(hoff(y-FS.of[k],FS.pg))/FS.ag;}
+function nodes(f){if(typeof f==='number')f=[f,f,f,f];const th=FS.th,U=FS.U,d=FS.d,p1=U[1]+d[1]*f[1],p2=U[2]+d[2]*f[2],p3=U[3]+d[3]*f[3];
   return [[ZMIN,P.up],[ZSH,P.up],[-th,U[0]],[th,U[0]],[1-th,p1],[1+th,p1],[2-th,p2],[2+th,p2],[3-th,p3],[3+th,p3],[ZC,0],[ZMAX,0]];}
 function interp(N,z){if(z<=N[0][0])return N[0][1];for(let i=1;i<N.length;i++)if(z<=N[i][0]){const [a,pa]=N[i-1],[b,pb]=N[i];return b>a?pa+(pb-pa)*(z-a)/(b-a):pb;}return N[N.length-1][1];}
-function phiAt(z,y){const r=rhoA(y);return interp(nodes(r<1?Math.sqrt(1-r*r):0),z);}
+function phiAt(z,y){return interp(nodes([0,1,2,3].map(k=>{const r=rhoA(y,k);return r<1?Math.sqrt(1-r*r):0;})),z);}
 const parts=[];let flashes=[],accI=0,accE=0;
 function gauss(){return Math.sqrt(-2*Math.log(Math.random()+1e-12))*Math.cos(2*Math.PI*Math.random());}
 function spawnIon(){const C=M.C,ca=Math.cos(P.alpha*Math.PI/180),slow=Math.random()<C[1].w,c=slow?C[1]:C[0];
   const u=ca+(1-ca)*Math.random(),tn=Math.sqrt(Math.max(0,1-u*u))/u*(Math.random()<0.5?-1:1);
   let E=(c.mu+c.sig*gauss())*u*u;const y=(Math.random()*2-1)*HH*0.95;
-  if(slow){E=Math.max(E,P.up+0.3);parts.push({z:ZMIN+Math.random()*(ZSH-0.1-ZMIN),y,dy:tn,d:1,E,k:'c'});}
-  else parts.push({z:ZMIN,y,dy:tn,d:1,E,k:'b'});}
-function spawnEl(){parts.push({z:ZMIN+Math.random()*(ZSH-0.1-ZMIN),y:(Math.random()*2-1)*HH*0.95,dy:(Math.random()-0.5)*0.6,d:1,E:-P.te*Math.log(Math.random()+1e-9),k:'e'});}
+  const v0=0.25+1.8*Math.sqrt(Math.max(E,1)/(M.mu+50));
+  if(slow){E=Math.max(E,P.up+0.3);parts.push({z:ZMIN+Math.random()*(ZSH-0.1-ZMIN),y,vy:tn*0.5,d:1,E,k:'c'});}
+  else parts.push({z:ZMIN,y,vy:tn*v0,d:1,E,k:'b'});}
+function spawnEl(){parts.push({z:ZMIN+Math.random()*(ZSH-0.1-ZMIN),y:(Math.random()*2-1)*HH*0.95,vy:(Math.random()-0.5)*1.2,d:1,E:-P.te*Math.log(Math.random()+1e-9),k:'e'});}
 function kin(p){const ph=phiAt(p.z,p.y);return p.k==='e'?p.E-(P.up-ph):p.E-ph;}
 function speed(p,K){K=Math.max(K,0.2);return p.k==='e'?Math.min(4,0.8+2.5*Math.sqrt(K/10)):0.25+1.8*Math.sqrt(K/(M.mu+50));}
 function stepParts(dt){accI+=14*dt;accE+=10*dt;
@@ -450,10 +488,12 @@ function stepParts(dt){accI+=14*dt;accE+=10*dt;
   for(let i=parts.length-1;i>=0;i--){const p=parts[i];let dead=false;
     const n=Math.max(1,Math.ceil(speed(p,kin(p))*dt/lim)),h=dt/n;
     for(let s=0;s<n&&!dead;s++){const K=kin(p);if(p.d>0&&K<=0)p.d=-1;
-      const v=speed(p,K);p.z+=p.d*v*h;p.y+=p.dy*v*h;
+      const v=speed(p,K),z0=p.z;p.z+=p.d*v*h;p.y+=p.vy*h;
+      if(P.lens&&p.k!=='e'&&p.d>0)for(const k of [1,2])if(z0<ZG[k]&&p.z>=ZG[k]){const yr=hoff(p.y-FS.of[k],FS.pg);if(Math.abs(yr)<FS.ag){
+        const D=FS.D[k],Ke=k===1?Math.max(10,K):Math.max(K,Math.abs(D)*FS.amm),rr=yr*P.g*D/(4*Ke);p.vy+=rr*v;if(k===1)p.E-=Ke*rr*rr;}}
       if(p.z<ZMIN||(p.z<WALL&&Math.abs(p.y)>HH+0.6)){dead=true;break;}
       if(p.z>=WALL&&Math.abs(p.y)>=HH){flashes.push({z:p.z,y:p.y,t:0.3,k:p.k});dead=true;break;}
-      for(let k=0;k<4;k++)if(Math.abs(p.z-ZG[k])<=FS.th+0.002&&rhoA(p.y)>=1){flashes.push({z:p.z,y:p.y,t:0.3,k:p.k});dead=true;break;}
+      for(let k=0;k<4;k++)if(Math.abs(p.z-ZG[k])<=FS.th+0.002&&rhoA(p.y,k)>=1){flashes.push({z:p.z,y:p.y,t:0.3,k:p.k});dead=true;break;}
       if(!dead&&p.z>=ZC){flashes.push({z:ZC,y:p.y,t:0.35,k:p.k});dead=true;}}
     if(dead)parts.splice(i,1);}
   for(const f of flashes)f.t-=dt;flashes=flashes.filter(f=>f.t>0);}
@@ -478,7 +518,7 @@ function drawCross(){const {ctx,w,h}=prep($('#cross'));const T=34,B=4,{sc,X}=xma
   for(let k=0;k<4;k++){const x0=X(ZG[k]-FS.th),pw=Math.max(1.5,X(ZG[k]+FS.th)-x0);
     ctx.fillStyle=k===2?COL.accent:COL.ink;ctx.fillRect(x0,Y(HH),pw,Y(-HH)-Y(HH));
     const jm=Math.ceil(HH/FS.pg);ctx.fillStyle=COL.stage;
-    for(let j=-jm;j<=jm;j++){const yc2=j*FS.pg,a=Math.max(-HH,yc2-FS.ag),b=Math.min(HH,yc2+FS.ag);if(b>a)ctx.fillRect(x0-1,Y(b),pw+2,Y(a)-Y(b));}
+    for(let j=-jm-1;j<=jm+1;j++){const yc2=j*FS.pg+FS.of[k],a=Math.max(-HH,yc2-FS.ag),b=Math.min(HH,yc2+FS.ag);if(b>a)ctx.fillRect(x0-1,Y(b),pw+2,Y(a)-Y(b));}
     ctx.textAlign='center';ctx.textBaseline='alphabetic';ctx.font=BOLD;ctx.fillStyle=k===2?COL.accent:COL.ink;ctx.fillText(lab[k],X(ZG[k]),T-17);
     ctx.font=MONO;ctx.fillStyle=k===2?COL.accent:COL.muted;ctx.fillText(num(volt[k],k===0&&P.g0==='float'?1:0)+' V',X(ZG[k]),T-5);}
   ctx.fillStyle='#b87333';ctx.fillRect(X(ZC),Y(HH),X(ZC+0.1)-X(ZC),Y(-HH)-Y(HH));
@@ -522,7 +562,7 @@ function frame(t){const dt=Math.min(0.05,(t-last)/1000||0);last=t;
     frameState();stepParts(dt);drawCross();drawPot();if(dirty){drawPlots();dirty=false;}}
   requestAnimationFrame(frame);}
 function legend(){const dot=c=>`<svg width="10" height="10"><circle cx="5" cy="5" r="4" fill="${c}"/></svg>`,ln=(c,d)=>`<svg width="20" height="10"><line x1="0" y1="5" x2="20" y2="5" stroke="${c}" stroke-width="2" ${d?'stroke-dasharray="4 3"':''}/></svg>`;
-  $('#legend1').innerHTML=`<span>${dot(COL['c-i'])}Strahlionen</span><span>${dot(COL['c-rho'])}langsame Ionen</span><span>${dot(COL['c-e'])}Elektronen</span><span>${ln(COL.ink)}Potential durch die Aperturmitte</span><span>${ln(COL.muted,1)}am Gittersteg</span><span>Querschnitt maßstäblich, Bahnen vereinfacht geradlinig. Unten: Ionen auf Höhe ihrer Energie pro Ladung, Elektronen auf Höhe des tiefsten Potentials, das sie erreichen</span>`;}
+  $('#legend1').innerHTML=`<span>${dot(COL['c-i'])}Strahlionen</span><span>${dot(COL['c-rho'])}langsame Ionen</span><span>${dot(COL['c-e'])}Elektronen</span><span>${ln(COL.ink)}Potential durch die Aperturmitte</span><span>${ln(COL.muted,1)}am Gittersteg</span><span>Querschnitt maßstäblich, Bahnen vereinfacht, Ablenkung durch die Linsen schematisch. Unten: Ionen auf Höhe ihrer Energie pro Ladung, Elektronen auf Höhe des tiefsten Potentials, das sie erreichen</span>`;}
 
 buildControls();readCols();legend();
 $('#ug').addEventListener('input',e=>{ug=parseFloat(e.target.value);showUg();dirty=true;});
@@ -530,6 +570,8 @@ $('#play').addEventListener('click',()=>{playing=!playing;$('#play').textContent
 $('#neu').addEventListener('click',()=>{seed=(seed*7919+13)%100000;update();});
 $('#defaults').addEventListener('click',()=>{P=Object.assign({},DEF);syncControls();update();});
 document.querySelectorAll('#g0seg button').forEach(b=>b.addEventListener('click',()=>{P.g0=b.dataset.v;syncControls();update();}));
+$('#lens').addEventListener('change',e=>{P.lens=e.target.checked;update();});
+document.querySelectorAll('#alseg button').forEach(b=>b.addEventListener('click',()=>{P.al=b.dataset.v;syncControls();update();}));
 document.querySelectorAll('#viewseg button').forEach(b=>b.addEventListener('click',()=>{view=b.dataset.v;
   document.querySelectorAll('#viewseg button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));
   const xr=xRange();if(ug<xr[0]||ug>xr[1]){ug=view==='slow'?P.up:view==='beam'?M.ev.pk:600;$('#ug').value=ug;showUg();}dirty=true;}));
