@@ -93,9 +93,11 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--high); outl
   <header>
     <div class="eyebrow">Plasmaphysik · Kinetische Theorie</div>
     <h1>Liouville-Schere</h1>
-    <p>Jeder Punkt ist eine Kopie desselben Systems mit einem anderen Anfangszustand (Ensemble).
-      Alle Kopien folgen den Hamilton’schen Gleichungen. Das orange markierte Gebiet enthält bei
-      <span class="m">t</span> = 0 einen Teil der Kopien; verfolgt wird, wohin diese Kopien laufen.</p>
+    <p>Das System ist ein Teilchen mit einem Freiheitsgrad, sein Phasenraum ist (<span class="m">x</span>, <span class="m">p</span>).
+      Der Anfangszustand ist nicht genau bekannt. Jeder Punkt ist ein möglicher Zustand, die Dichte
+      der Punkte stellt die Wahrscheinlichkeitsdichte <span class="m">ϱ</span> dar. Jeder mögliche Zustand
+      läuft nach den Hamilton’schen Gleichungen auf genau einer Bahn weiter. Verfolgt wird, wohin
+      die Zustände im orange markierten Gebiet laufen.</p>
   </header>
 
   <div class="main">
@@ -144,9 +146,10 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--high); outl
   <div class="notes">
     <div class="note merke">
       <h2>Was erhalten bleibt</h2>
-      <p>Das Gebiet verschiebt, verformt und streckt sich, seine Fläche bleibt gleich. Es enthält
-        immer dieselben Punkte. Also bleibt die Dichte entlang der Bewegung konstant:
-        d<span class="m">ϱ</span>/d<span class="m">t</span> = 0.</p>
+      <p>Das System ist zur Zeit <span class="m">t</span> genau dann im orangen Gebiet, wenn es
+        bei <span class="m">t</span> = 0 im Rechteck war: Die Wahrscheinlichkeit wandert mit den
+        Zuständen. Das Gebiet verformt sich, seine Fläche bleibt gleich. Also bleibt die Dichte
+        entlang der Bewegung konstant: d<span class="m">ϱ</span>/d<span class="m">t</span> = 0.</p>
     </div>
     <div class="note achtung">
       <h2>Achtung</h2>
