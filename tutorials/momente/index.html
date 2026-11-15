@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Interaktive Visualisierung: Dichte, Strömung und Temperatur als Momente einer Geschwindigkeitsverteilung, und was beim Übergang zum Fluidbild verloren geht.">
+<title>Momente einer Verteilung – Tutorials – Ref4EP</title>
+<style>
+html { color-scheme: light; }
+body { margin: 0; }
+[hidden] { display: none !important; }
+/* Layout: Kopfzeile, Diagramm f(v) links, Regler und Momente rechts, Erklärung unten */
+:root {
+  --bg: #f7f9fb; --panel: #ffffff; --fg: #16212b; --muted: #5b6b7a; --rule: #d5dee6;
+  --accent: #0069b3; --accent-soft: #e3eff8; --high: #d9680f; --high-soft: #fbeadb;
+  --c2: #2e8b57;
+  --font-text: "Latin Modern Roman", "CMU Serif", "STIX Two Text", Cambria, "Times New Roman", serif;
+  --font-ui: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #10171e; --panel: #172029; --fg: #e3eaf0; --muted: #93a3b2; --rule: #2a3742;
+    --accent: #4fa3e0; --accent-soft: #1b3346; --high: #f08a3c; --high-soft: #3a2616; --c2: #5cc48a;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #10171e; --panel: #172029; --fg: #e3eaf0; --muted: #93a3b2; --rule: #2a3742;
+  --accent: #4fa3e0; --accent-soft: #1b3346; --high: #f08a3c; --high-soft: #3a2616; --c2: #5cc48a;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg); font-family: var(--font-text); font-size: 17px; line-height: 1.5;
+  padding-block: 24px 40px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 1120px; margin: 0 auto; display: grid; gap: 20px; }
+.r4bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-family: var(--font-ui); font-size: 0.8rem; color: var(--muted); }
+.r4bar a { color: var(--accent); text-decoration: none; } .r4bar a:hover { text-decoration: underline; }
+.eyebrow { font-family: var(--font-ui); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+header h1 { font-size: 1.9rem; font-weight: 600; margin: 0; color: var(--accent); text-wrap: balance; }
+header p { margin: 4px 0 0; color: var(--muted); max-width: 70ch; }
+header p.subline { margin: 0; font-size: 1.1rem; color: var(--fg); }
+.main { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 20px; align-items: start; }
+@media (max-width: 860px) { .main { grid-template-columns: minmax(0, 1fr); } }
+.stage { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 10px; min-width: 0; }
+canvas { display: block; width: 100%; height: auto; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-family: var(--font-ui); font-size: 0.85rem; color: var(--muted); margin: 6px 4px 0; }
+.legend i { display: inline-block; width: 22px; height: 0; border-top: 3px solid; vertical-align: middle; margin-right: 6px; }
+.panel { display: grid; gap: 14px; font-family: var(--font-ui); font-size: 0.92rem; }
+fieldset { border: 1px solid var(--rule); border-radius: 6px; padding: 8px 12px 10px; margin: 0; background: var(--panel); }
+legend { padding: 0 6px; font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+select { font: inherit; width: 100%; padding: 5px 6px; border: 1px solid var(--rule); border-radius: 4px; background: var(--panel); color: var(--fg); }
+.ctl { display: grid; grid-template-columns: 1fr auto; gap: 0 8px; align-items: baseline; margin-top: 6px; }
+.ctl label { color: var(--fg); }
+.ctl output { font-variant-numeric: tabular-nums; color: var(--accent); font-weight: 600; }
+.ctl input { grid-column: 1 / -1; width: 100%; accent-color: var(--accent); }
+.comp2 .ctl output { color: var(--c2); }
+.comp2 .ctl input { accent-color: var(--c2); }
+.check { display: flex; gap: 8px; align-items: center; cursor: pointer; }
+input:focus-visible, select:focus-visible { outline: 2px solid var(--high); outline-offset: 2px; }
+table.mom { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+table.mom th, table.mom td { padding: 3px 4px; text-align: right; border-bottom: 1px solid var(--rule); }
+table.mom th:first-child, table.mom td:first-child { text-align: left; color: var(--muted); font-weight: 400; }
+table.mom td.fl { color: var(--high); font-weight: 600; }
+.notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+.note { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 12px 16px; min-width: 0; }
+.note h2 { font-size: 1.05rem; margin: 0 0 4px; font-weight: 600; }
+.note p { margin: 0; }
+.note.merke { border-left: 4px solid var(--high); }
+.note.achtung { border-left: 4px solid var(--accent); }
+.m { font-style: italic; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav class="r4bar" aria-label="Ref4EP"><a href="/">Ref4EP</a><span aria-hidden="true">/</span><a href="/tutorials/">Tutorials</a><span aria-hidden="true">/</span><span>Momente einer Verteilung</span></nav>
+  <header>
+    <div class="eyebrow">Plasmaphysik · Kinetische Theorie</div>
+    <h1>Momente einer Verteilung</h1>
+    <p class="subline">Dichte, Strömung und Temperatur aus der Verteilungsfunktion</p>
+    <p>Die Geschwindigkeitsverteilung <span class="m">f</span>(<span class="m">v</span>) ist hier eindimensional und
+      setzt sich aus bis zu zwei Maxwell-Anteilen zusammen. Die Fluidgrößen sind Integrale über
+      <span class="m">f</span>: Dichte, mittlere Geschwindigkeit, Temperatur. Gestrichelt ist die
+      Maxwell-Verteilung mit denselben drei Werten gezeichnet. Mehr sieht das Fluidbild nicht.</p>
+  </header>
+
+  <div class="main">
+    <div class="stage">
+      <canvas id="cv" width="800" height="480" aria-label="Geschwindigkeitsverteilung f(v) und Maxwell-Verteilung mit gleichen Momenten"></canvas>
+      <div class="legend">
+        <span><i style="border-color: var(--accent)"></i>Verteilung <span class="m">f</span>(<span class="m">v</span>)</span>
+        <span><i style="border-color: var(--high); border-top-style: dashed"></i>Maxwell mit gleichem <span class="m">n</span>, <span class="m">u</span>, <span class="m">T</span></span>
+        <span><i style="border-color: var(--c2); border-top-style: dotted"></i>Anteil 2</span>
+      </div>
+    </div>
+
+    <div class="panel">
+      <fieldset>
+        <legend>Beispiel</legend>
+        <select id="preset" aria-label="Beispielverteilung">
+          <option value="maxwell">Maxwell in Ruhe</option>
+          <option value="shift">Verschobene Maxwell (Strömung)</option>
+          <option value="counter">Zwei Gegenstrahlen</option>
+          <option value="beam">Strahl auf Hintergrund</option>
+          <option value="same">Gleiche Momente, andere Form</option>
+          <option value="" disabled>eigene Einstellung</option>
+        </select>
+      </fieldset>
+
+      <fieldset>
+        <legend>Anteil 1</legend>
+        <div class="ctl"><label for="n1">Dichte <span class="m">n</span>₁</label><output id="n1o"></output>
+          <input type="range" id="n1" min="0" max="2" step="0.01"></div>
+        <div class="ctl"><label for="u1">Driftgeschwindigkeit <span class="m">u</span>₁</label><output id="u1o"></output>
+          <input type="range" id="u1" min="-4" max="4" step="0.05"></div>
+        <div class="ctl"><label for="t1">Temperatur <span class="m">T</span>₁</label><output id="t1o"></output>
+          <input type="range" id="t1" min="0.05" max="4" step="0.01"></div>
+      </fieldset>
+
+      <fieldset class="comp2">
+        <legend>Anteil 2</legend>
+        <label class="check"><input type="checkbox" id="on2"> zweiten Anteil verwenden</label>
+        <div class="ctl"><label for="n2">Dichte <span class="m">n</span>₂</label><output id="n2o"></output>
+          <input type="range" id="n2" min="0" max="2" step="0.01"></div>
+        <div class="ctl"><label for="u2">Driftgeschwindigkeit <span class="m">u</span>₂</label><output id="u2o"></output>
+          <input type="range" id="u2" min="-4" max="4" step="0.05"></div>
+        <div class="ctl"><label for="t2">Temperatur <span class="m">T</span>₂</label><output id="t2o"></output>
+          <input type="range" id="t2" min="0.05" max="4" step="0.01"></div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Momente</legend>
+        <table class="mom">
+          <tr><th>Größe</th><th>Wert</th></tr>
+          <tr><td><span class="m">n</span> = ∫ <span class="m">f</span> d<span class="m">v</span></td><td class="fl" id="mn"></td></tr>
+          <tr><td><span class="m">u</span> = ∫ <span class="m">v f</span> d<span class="m">v</span> / <span class="m">n</span></td><td class="fl" id="mu"></td></tr>
+          <tr><td><span class="m">k</span><sub>B</sub><span class="m">T</span> = <span class="m">m</span>⟨<span class="m">w</span>²⟩</td><td class="fl" id="mt"></td></tr>
+          <tr><td>Wärmefluss <span class="m">q</span> ∝ ⟨<span class="m">w</span>³⟩</td><td id="mq"></td></tr>
+          <tr><td>Wölbung ⟨<span class="m">w</span>⁴⟩/⟨<span class="m">w</span>²⟩² (Maxwell: 3)</td><td id="mk"></td></tr>
+        </table>
+      </fieldset>
+    </div>
+  </div>
+
+  <div class="notes">
+    <div class="note merke">
+      <h2>Was die Momente festhalten</h2>
+      <p>Dichte, Strömung und Temperatur sind das nullte, erste und zweite Moment von
+        <span class="m">f</span>. Die Temperatur ist über die Zufallsbewegung
+        <span class="m">w</span> = <span class="m">v</span> − <span class="m">u</span> definiert, auch wenn
+        <span class="m">f</span> keine Maxwell-Verteilung ist.</p>
+    </div>
+    <div class="note achtung">
+      <h2>Was verloren geht</h2>
+      <p>Ganz verschiedene Verteilungen haben dieselben <span class="m">n</span>, <span class="m">u</span>,
+        <span class="m">T</span>. Das Beispiel „Gleiche Momente, andere Form“ zeigt zwei Strahlen, die
+        das Fluidbild nicht von einer ruhenden Maxwell-Verteilung unterscheiden kann. Erst höhere
+        Momente wie Wärmefluss und Wölbung verraten den Unterschied.</p>
+    </div>
+    <div class="note">
+      <h2>Einheiten</h2>
+      <p>Geschwindigkeiten in Einheiten einer Referenzgeschwindigkeit, Temperaturen als
+        <span class="m">k</span><sub>B</sub><span class="m">T</span>/<span class="m">m</span> in denselben Einheiten
+        zum Quadrat, Dichten relativ. Die Verteilung ist eindimensional; in drei Dimensionen
+        gelten dieselben Definitionen mit Vektoren.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const cv = $('cv'), ctx = cv.getContext('2d');
+  const ids = ['n1', 'u1', 't1', 'n2', 'u2', 't2'];
+  const VMIN = -8, VMAX = 8, NV = 1601, DV = (VMAX - VMIN) / (NV - 1);
+  const PRESETS = {
+    maxwell: { n1: 1, u1: 0, t1: 1, on2: false, n2: 0.5, u2: 2, t2: 0.3 },
+    shift:   { n1: 1, u1: 1.5, t1: 1, on2: false, n2: 0.5, u2: 2, t2: 0.3 },
+    counter: { n1: 0.5, u1: -2, t1: 0.3, on2: true, n2: 0.5, u2: 2, t2: 0.3 },
+    beam:    { n1: 1, u1: 0, t1: 1, on2: true, n2: 0.15, u2: 3.5, t2: 0.15 },
+    // zwei Strahlen mit n = 1, u = 0, kT/m = 1 insgesamt: 0,36 + 0,8^2 = 1
+    same:    { n1: 0.5, u1: -0.8, t1: 0.36, on2: true, n2: 0.5, u2: 0.8, t2: 0.36 },
+  };
+  function fmt(v, d = 2) { return (Math.abs(v) < 0.5 * Math.pow(10, -d) ? 0 : v).toFixed(d).replace('.', ',').replace('-', '−'); }
+  function maxw(v, n, u, t) { return n / Math.sqrt(2 * Math.PI * t) * Math.exp(-(v - u) * (v - u) / (2 * t)); }
+  function read() { const p = {}; ids.forEach(k => p[k] = +$(k).value); p.on2 = $('on2').checked; return p; }
+
+  function compute(p) {
+    const f = new Float64Array(NV), f2 = new Float64Array(NV);
+    for (let i = 0; i < NV; i++) { const v = VMIN + i * DV;
+      f2[i] = p.on2 ? maxw(v, p.n2, p.u2, p.t2) : 0; f[i] = maxw(v, p.n1, p.u1, p.t1) + f2[i]; }
+    let n = 0, s1 = 0; for (let i = 0; i < NV; i++) { const v = VMIN + i * DV; n += f[i] * DV; s1 += v * f[i] * DV; }
+    const u = n > 1e-9 ? s1 / n : 0;
+    let m2 = 0, m3 = 0, m4 = 0;
+    for (let i = 0; i < NV; i++) { const w = VMIN + i * DV - u; m2 += w * w * f[i] * DV; m3 += w * w * w * f[i] * DV; m4 += w ** 4 * f[i] * DV; }
+    m2 = n > 1e-9 ? m2 / n : 0; m3 = n > 1e-9 ? m3 / n : 0; m4 = n > 1e-9 ? m4 / n : 0;
+    return { f, f2, n, u, T: m2, q: 0.5 * n * m3, kurt: m2 > 1e-9 ? m4 / (m2 * m2) : 0 };
+  }
+
+  // ---------- Zeichnen ----------
+  let W = 800, H = 480; const pad = { l: 48, r: 14, t: 14, b: 40 };
+  function css(v) { return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
+  function resize() { const dpr = window.devicePixelRatio || 1; W = cv.clientWidth; H = Math.round(W * 0.6);
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); cv.style.height = H + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); draw(); }
+  const XV = v => pad.l + (v - VMIN) / (VMAX - VMIN) * (W - pad.l - pad.r);
+  let ymax = 1;
+  const YF = y => H - pad.b - y / ymax * (H - pad.t - pad.b);
+
+  let last = null;
+  function draw() {
+    if (!last) return;
+    const { f, f2, n, u, T } = last;
+    const fg = css('--fg'), muted = css('--muted'), rule = css('--rule'), acc = css('--accent'), high = css('--high'), c2 = css('--c2');
+    let mx = 0; for (let i = 0; i < NV; i++) mx = Math.max(mx, f[i]);
+    const fm = []; for (let i = 0; i < NV; i++) fm.push(T > 1e-6 ? maxw(VMIN + i * DV, n, u, T) : 0);
+    fm.forEach(y => mx = Math.max(mx, y));
+    ymax = Math.max(0.05, mx * 1.12);
+    ctx.clearRect(0, 0, W, H);
+    // Achsen
+    ctx.strokeStyle = rule; ctx.lineWidth = 1; ctx.strokeRect(pad.l, pad.t, W - pad.l - pad.r, H - pad.t - pad.b);
+    ctx.fillStyle = muted; ctx.font = '13px ' + css('--font-ui'); ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    for (let v = -8; v <= 8; v += 2) { ctx.fillText(String(v).replace('-', '−'), XV(v), H - pad.b + 5);
+      ctx.beginPath(); ctx.moveTo(XV(v), pad.t); ctx.lineTo(XV(v), H - pad.b); ctx.stroke(); }
+    ctx.fillStyle = fg; ctx.font = 'italic 16px ' + css('--font-text'); ctx.textAlign = 'right'; ctx.textBaseline = 'bottom';
+    ctx.fillText('v', W - pad.r, H - 4);
+    ctx.save(); ctx.translate(16, pad.t + (H - pad.t - pad.b) / 2); ctx.rotate(-Math.PI / 2); ctx.textAlign = 'center';
+    ctx.fillText('f(v)', 0, 0); ctx.restore();
+    // f gefüllt
+    ctx.beginPath(); ctx.moveTo(XV(VMIN), YF(0));
+    for (let i = 0; i < NV; i += 2) ctx.lineTo(XV(VMIN + i * DV), YF(f[i]));
+    ctx.lineTo(XV(VMAX), YF(0)); ctx.closePath(); ctx.fillStyle = css('--accent-soft'); ctx.fill();
+    ctx.beginPath(); for (let i = 0; i < NV; i += 2) { const x = XV(VMIN + i * DV), y = YF(f[i]); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
+    ctx.strokeStyle = acc; ctx.lineWidth = 2.2; ctx.stroke();
+    if (last.on2) { ctx.beginPath(); for (let i = 0; i < NV; i += 2) { const x = XV(VMIN + i * DV), y = YF(f2[i]); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
+      ctx.strokeStyle = c2; ctx.lineWidth = 1.6; ctx.setLineDash([2, 4]); ctx.stroke(); ctx.setLineDash([]); }
+    // Maxwell mit gleichen Momenten
+    ctx.beginPath(); for (let i = 0; i < NV; i += 2) { const x = XV(VMIN + i * DV), y = YF(fm[i]); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
+    ctx.strokeStyle = high; ctx.lineWidth = 2; ctx.setLineDash([8, 5]); ctx.stroke(); ctx.setLineDash([]);
+    // u markieren
+    if (n > 1e-6) { ctx.strokeStyle = high; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(XV(u), pad.t); ctx.lineTo(XV(u), H - pad.b); ctx.stroke();
+      ctx.fillStyle = high; ctx.font = '13px ' + css('--font-ui'); ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+      ctx.fillText('u = ' + fmt(u), XV(u) + 4, pad.t + 4); }
+  }
+
+  function update() {
+    const p = read();
+    ids.forEach(k => { $(k + 'o').textContent = fmt(+$(k).value); });
+    document.querySelectorAll('.comp2 input[type=range]').forEach(el => el.disabled = !p.on2);
+    const r = compute(p); r.on2 = p.on2; last = r;
+    $('mn').textContent = fmt(r.n); $('mu').textContent = fmt(r.u); $('mt').textContent = fmt(r.T);
+    $('mq').textContent = fmt(r.q); $('mk').textContent = r.n > 1e-6 ? fmt(r.kurt) : '–';
+    draw();
+  }
+  function applyPreset(name) { const p = PRESETS[name];
+    ids.forEach(k => $(k).value = p[k]); $('on2').checked = p.on2; update(); }
+
+  ids.forEach(k => $(k).addEventListener('input', () => { $('preset').value = ''; update(); }));
+  $('on2').addEventListener('change', () => { $('preset').value = ''; update(); });
+  $('preset').addEventListener('change', e => { if (e.target.value) applyPreset(e.target.value); });
+  window.addEventListener('resize', resize);
+  new MutationObserver(draw).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  if (window.matchMedia) window.matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', draw);
+  applyPreset('same'); $('preset').value = 'same'; resize();
+})();
+</script>
+</body>
+</html>
