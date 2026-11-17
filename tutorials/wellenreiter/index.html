@@ -1,0 +1,787 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Interaktive Visualisierung: Landau-Dämpfung im Bild des Surfers auf der Welle. Einzelne Surfer werfen, Teilchenfang beobachten und im Tippspiel vorhersagen, ob eine Welle wächst oder schrumpft.">
+<title>Wellenreiter – Tutorials – Ref4EP</title>
+<style>
+html { color-scheme: light; }
+body { margin: 0; }
+[hidden] { display: none !important; }
+:root {
+  --bg: #f7f9fb; --panel: #ffffff; --fg: #16212b; --muted: #5b6b7a; --rule: #d5dee6;
+  --accent: #0069b3; --accent-soft: #e3eff8; --high: #d9680f; --slow: #d9680f; --fast: #0069b3; --theo: #5b6b7a;
+  --water: #cfe3f3; --ok: #2e7d32;
+  --font-text: "Latin Modern Roman", "CMU Serif", "STIX Two Text", Cambria, "Times New Roman", serif;
+  --font-ui: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #10171e; --panel: #172029; --fg: #e3eaf0; --muted: #93a3b2; --rule: #2a3742;
+    --accent: #4fa3e0; --accent-soft: #1b3346; --high: #f08a3c; --slow: #f08a3c; --fast: #4fa3e0; --theo: #93a3b2;
+    --water: #1d3a52; --ok: #6cc070;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #10171e; --panel: #172029; --fg: #e3eaf0; --muted: #93a3b2; --rule: #2a3742;
+  --accent: #4fa3e0; --accent-soft: #1b3346; --high: #f08a3c; --slow: #f08a3c; --fast: #4fa3e0; --theo: #93a3b2;
+  --water: #1d3a52; --ok: #6cc070;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg); font-family: var(--font-text); font-size: 17px; line-height: 1.5;
+  padding-block: 24px 40px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 1120px; margin: 0 auto; display: grid; gap: 20px; }
+.r4bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-family: var(--font-ui); font-size: 0.8rem; color: var(--muted); }
+.r4bar a, .note a, header a { color: var(--accent); text-decoration: none; } .r4bar a:hover, .note a:hover, header a:hover { text-decoration: underline; }
+.eyebrow { font-family: var(--font-ui); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+header h1 { font-size: 1.9rem; font-weight: 600; margin: 0; color: var(--accent); text-wrap: balance; }
+header p { margin: 4px 0 0; color: var(--muted); max-width: 72ch; }
+header p.subline { margin: 0; font-size: 1.1rem; color: var(--fg); }
+.tabs { display: flex; gap: 8px; flex-wrap: wrap; font-family: var(--font-ui); }
+.tabs button { border-radius: 999px; padding: 6px 16px; }
+.tabs button[aria-selected="true"] { background: var(--accent); color: var(--panel); }
+.main { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 20px; align-items: start; }
+@media (max-width: 860px) { .main { grid-template-columns: minmax(0, 1fr); } }
+.plots { display: grid; gap: 12px; min-width: 0; }
+.duo { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
+@media (max-width: 640px) { .duo { grid-template-columns: minmax(0, 1fr); } }
+.stage { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 10px 10px; min-width: 0; }
+.stage h2 { font-family: var(--font-ui); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 0 0 4px; font-weight: 600; }
+.stage h2 .sym { text-transform: none; letter-spacing: 0; font-family: var(--font-text); font-style: italic; font-size: 0.95rem; font-weight: 400; }
+canvas { display: block; width: 100%; height: auto; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-family: var(--font-ui); font-size: 0.85rem; color: var(--muted); margin: 6px 4px 0; }
+.legend i { display: inline-block; width: 22px; height: 0; border-top: 3px solid; vertical-align: middle; margin-right: 6px; }
+.legend b { display: inline-block; width: 12px; height: 12px; vertical-align: middle; margin-right: 6px; border-radius: 50%; }
+.panel { display: grid; gap: 14px; font-family: var(--font-ui); font-size: 0.92rem; }
+fieldset { border: 1px solid var(--rule); border-radius: 6px; padding: 8px 12px 10px; margin: 0; background: var(--panel); }
+legend { padding: 0 6px; font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.choice { display: flex; gap: 8px; align-items: baseline; padding: 3px 0; cursor: pointer; }
+.choice small { display: block; color: var(--muted); font-size: 0.82rem; }
+input[type=radio], input[type=checkbox] { accent-color: var(--accent); }
+.ctl { display: grid; grid-template-columns: 1fr auto; gap: 0 8px; align-items: baseline; margin-top: 6px; }
+.ctl output { font-variant-numeric: tabular-nums; color: var(--accent); font-weight: 600; }
+.ctl input { grid-column: 1 / -1; width: 100%; accent-color: var(--accent); }
+.row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+button { font: inherit; font-weight: 600; border: 1px solid var(--accent); color: var(--accent); background: var(--panel); border-radius: 4px; padding: 6px 14px; cursor: pointer; }
+button.primary { background: var(--accent); color: var(--panel); }
+button:disabled { opacity: 0.45; cursor: default; }
+button:focus-visible, input:focus-visible { outline: 2px solid var(--high); outline-offset: 2px; }
+.guess button[aria-pressed="true"] { background: var(--high); border-color: var(--high); color: var(--panel); }
+.guess button { border-color: var(--high); color: var(--high); padding: 5px 10px; }
+.tval { font-variant-numeric: tabular-nums; margin-left: auto; }
+dl.ro { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; margin: 0; font-variant-numeric: tabular-nums; }
+dl.ro dt { color: var(--muted); } dl.ro dd { margin: 0; text-align: right; font-weight: 600; }
+.hint { color: var(--muted); font-size: 0.82rem; margin: 6px 0 0; }
+.verdict { margin: 8px 0 0; padding: 8px 10px; border-radius: 4px; background: var(--accent-soft); font-size: 0.88rem; }
+.verdict strong { color: var(--accent); }
+.verdict.hit strong { color: var(--ok); }
+.verdict.miss strong { color: var(--high); }
+.notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+.note { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 12px 16px; min-width: 0; }
+.note h2 { font-size: 1.05rem; margin: 0 0 4px; font-weight: 600; }
+.note p { margin: 0; }
+.note p + p { margin-top: 6px; }
+.note.merke { border-left: 4px solid var(--high); }
+.note.achtung { border-left: 4px solid var(--accent); }
+.m { font-style: italic; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav class="r4bar" aria-label="Ref4EP"><a href="/">Ref4EP</a><span aria-hidden="true">/</span><a href="/tutorials/">Tutorials</a><span aria-hidden="true">/</span><span>Wellenreiter</span></nav>
+  <header>
+    <div class="eyebrow">Plasmaphysik · Kinetische Theorie</div>
+    <h1>Wellenreiter</h1>
+    <p class="subline">Landau-Dämpfung im Bild des Surfers auf der Welle</p>
+    <p>Elektronen, die fast so schnell sind wie eine Welle, verhalten sich wie Surfer: Etwas langsamere
+      werden von der Welle angeschoben, etwas schnellere schieben die Welle an. Ob die Welle dabei Energie
+      verliert oder gewinnt, hängt davon ab, welche Gruppe größer ist. Erst einzelne Surfer werfen, dann
+      im Tippspiel vorhersagen, was mit der Welle geschieht. Die Rechnung mit der Vlasov-Gleichung zeigt das
+      Tutorial <a href="/tutorials/landau-daempfung/">Landau-Dämpfung</a>.</p>
+  </header>
+
+  <div class="tabs" role="tablist" aria-label="Teil wählen">
+    <button type="button" role="tab" id="tab1" aria-selected="true" aria-controls="part1">1 · Surfer werfen</button>
+    <button type="button" role="tab" id="tab2" aria-selected="false" aria-controls="part2">2 · Welle und viele Surfer</button>
+  </div>
+
+  <!-- ================= Teil 1 ================= -->
+  <section id="part1" role="tabpanel" aria-labelledby="tab1">
+    <div class="main">
+      <div class="plots">
+        <div class="stage"><h2>Die Welle, mitbewegt betrachtet</h2>
+          <canvas id="cvW1" aria-label="Potentiallandschaft der Welle mit Surfern"></canvas>
+          <div class="legend">
+            <span><b style="background: var(--slow)"></b>gerade langsamer als die Welle</span>
+            <span><b style="background: var(--fast)"></b>gerade schneller als die Welle</span>
+          </div>
+        </div>
+        <div class="duo">
+          <div class="stage"><h2>Phasenraum: Ort und <span class="sym">v − v<sub>φ</sub></span></h2>
+            <canvas id="cvS1" aria-label="Bahnen der Surfer im Phasenraum mit Separatrix"></canvas>
+            <div class="legend"><span><i style="border-color: var(--theo); border-top-style: dashed"></i>Grenze des Fangbereichs</span></div>
+          </div>
+          <div class="stage"><h2>Mittlere Energieänderung <span class="sym">⟨ΔE⟩</span> eines Surfers</h2>
+            <canvas id="cvE1" aria-label="Mittlere Energieänderung der geworfenen Surfer über der Zeit"></canvas>
+            <div class="legend"><span>aktueller Wurf kräftig, frühere Würfe blass</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <fieldset>
+          <legend>Welle</legend>
+          <div class="ctl"><label for="fang1">Fangbreite 2√<span class="m">A</span></label><output id="fang1o"></output>
+            <input type="range" id="fang1" min="0.1" max="0.6" step="0.02" value="0.3"></div>
+          <p class="hint">Die Welle läuft mit <span class="m">v</span><sub>φ</sub> = 2 <span class="m">v</span><sub>th</sub>. Ihre Höhe bleibt in Teil 1 fest.</p>
+        </fieldset>
+        <fieldset>
+          <legend>Surfer</legend>
+          <div class="ctl"><label for="u01">Startgeschwindigkeit <span class="m">v</span> − <span class="m">v</span><sub>φ</sub></label><output id="u01o"></output>
+            <input type="range" id="u01" min="-0.8" max="0.8" step="0.02" value="-0.2"></div>
+          <div class="row" style="margin-top: 8px">
+            <button class="primary" id="throwG" type="button">Gruppe werfen</button>
+            <button id="throwS" type="button">Einzelnen Surfer</button>
+          </div>
+          <p class="hint">Eine Gruppe besteht aus 16 Surfern mit gleicher Geschwindigkeit, gleichmäßig über die Welle verteilt.</p>
+        </fieldset>
+        <fieldset>
+          <legend>Zeit</legend>
+          <div class="row">
+            <button id="play1" type="button">Anhalten</button>
+            <button id="clear1" type="button">Kurven löschen</button>
+            <span class="tval" id="t1label"></span>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>Ergebnis des Wurfs</legend>
+          <dl class="ro">
+            <dt>gefangen</dt><dd id="r1trap">–</dd>
+            <dt>Pendeldauer 2π/ω<sub>b</sub></dt><dd id="r1tb">–</dd>
+            <dt>⟨ΔE⟩ / (<span class="m">m</span> <span class="m">v</span><sub>th</sub>²)</dt><dd id="r1de">–</dd>
+          </dl>
+        </fieldset>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= Teil 2 ================= -->
+  <section id="part2" role="tabpanel" aria-labelledby="tab2" hidden>
+    <div class="main">
+      <div class="plots">
+        <div class="stage"><h2>Die Welle und einige resonante Surfer</h2>
+          <canvas id="cvW2" aria-label="Welle mit Surfern, Höhe logarithmisch"></canvas>
+          <div class="legend"><span>Höhe logarithmisch: halbe Höhe = Anfangsamplitude, voll = 100-fach</span></div>
+        </div>
+        <div class="stage"><h2>Phasenraum: wer gewinnt, wer verliert Energie?</h2>
+          <canvas id="cvP2" aria-label="Phasenraum aller Teilchen, gefärbt nach Energieänderung"></canvas>
+          <div class="legend">
+            <span><b style="background: var(--slow)"></b>hat Energie gewonnen</span>
+            <span><b style="background: var(--fast)"></b>hat Energie abgegeben</span>
+            <span>blasse Punkte: wenige Teilchen dieser Geschwindigkeit</span>
+          </div>
+        </div>
+        <div class="duo">
+          <div class="stage"><h2>Verteilung <span class="sym">f(v)</span> um <span class="sym">v<sub>φ</sub></span></h2>
+            <canvas id="cvF2" aria-label="Verteilungsfunktion um die Phasengeschwindigkeit"></canvas>
+            <div class="legend">
+              <span><i style="border-color: var(--theo); border-top-style: dashed"></i>zu Beginn</span>
+              <span><i style="border-color: var(--fg)"></i>jetzt</span>
+            </div>
+          </div>
+          <div class="stage"><h2>Amplitude <span class="sym">A/A<sub>0</sub></span>, logarithmisch</h2>
+            <canvas id="cvA2" aria-label="Amplitude der Welle über der Zeit"></canvas>
+            <div class="legend">
+              <span><i style="border-color: var(--accent)"></i>Simulation</span>
+              <span><i style="border-color: var(--theo); border-top-style: dashed"></i>Steigung γ aus f′(v<sub>φ</sub>)</span>
+            </div>
+          </div>
+        </div>
+        <div class="stage"><h2>Energiebilanz seit dem Start, in Einheiten der Anfangsenergie der Welle</h2>
+          <canvas id="cvB2" aria-label="Energieänderung der langsamen und schnellen Surfer und der Welle"></canvas>
+        </div>
+      </div>
+
+      <div class="panel">
+        <fieldset>
+          <legend>Verteilung f(v)</legend>
+          <label class="choice"><input type="radio" name="dist" value="max" checked>
+            <span>Maxwell<small>f fällt mit v überall ab</small></span></label>
+          <label class="choice"><input type="radio" name="dist" value="beam">
+            <span>Maxwell mit Strahl<small>kleiner Strahl bei 2,8 v<sub>th</sub></small></span></label>
+          <label class="choice"><input type="radio" name="dist" value="plat">
+            <span>Maxwell mit Plateau<small>bei v<sub>φ</sub> abgeflacht</small></span></label>
+        </fieldset>
+        <fieldset>
+          <legend>Welle</legend>
+          <div class="ctl"><label for="vph2">Phasengeschw. <span class="m">v</span><sub>φ</sub>/<span class="m">v</span><sub>th</sub></label><output id="vph2o"></output>
+            <input type="range" id="vph2" min="1.8" max="3.2" step="0.05" value="2"></div>
+          <div class="ctl"><label for="fang2">Anfangs-Fangbreite 2√<span class="m">A</span><sub>0</sub></label><output id="fang2o"></output>
+            <input type="range" id="fang2" min="0" max="5" step="1" value="1"></div>
+        </fieldset>
+        <fieldset class="guess">
+          <legend>Tippspiel: Was macht die Welle?</legend>
+          <div class="row">
+            <button type="button" data-g="waechst" aria-pressed="false">wächst</button>
+            <button type="button" data-g="bleibt" aria-pressed="false">bleibt</button>
+            <button type="button" data-g="schrumpft" aria-pressed="false">schrumpft</button>
+          </div>
+          <p class="hint">Erst tippen, dann abspielen. Ausgewertet wird am Ende der Laufzeit.</p>
+          <div class="verdict" id="verdict" hidden></div>
+          <p class="hint" id="score">Treffer: 0 von 0</p>
+        </fieldset>
+        <fieldset>
+          <legend>Zeit</legend>
+          <div class="row">
+            <button class="primary" id="play2" type="button">Abspielen</button>
+            <button id="reset2" type="button">t = 0</button>
+            <span class="tval" id="t2label"></span>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>Kenngrößen</legend>
+          <dl class="ro">
+            <dt>Steigung f′(v<sub>φ</sub>)</dt><dd id="r2fp">–</dd>
+            <dt>langsame : schnelle</dt><dd id="r2ratio">–</dd>
+            <dt>γ aus f′ (kleine Welle)</dt><dd id="r2gp">–</dd>
+            <dt>γ gemessen (t ≤ 40)</dt><dd id="r2gm">–</dd>
+            <dt>Pendelfrequenz ω<sub>b</sub></dt><dd id="r2wb">–</dd>
+            <dt>A/A<sub>0</sub> jetzt</dt><dd id="r2a">–</dd>
+          </dl>
+          <p class="hint">„langsame : schnelle“ vergleicht die Teilchenzahl in je 0,2 <span class="m">v</span><sub>th</sub> unterhalb und oberhalb von <span class="m">v</span><sub>φ</sub>.</p>
+        </fieldset>
+      </div>
+    </div>
+  </section>
+
+  <div class="notes">
+    <div class="note merke">
+      <h2>Was zeigt das Surferbild?</h2>
+      <p>Im mitbewegten System steht die Welle still und bildet eine Landschaft aus Bergen und Mulden der
+        potentiellen Energie. Ein Surfer, der etwas langsamer ist als die Welle, wird von der nachfolgenden
+        Flanke angeschoben und gewinnt Energie. Ein etwas schnellerer läuft gegen die vordere Flanke an, wird
+        gebremst und gibt Energie an die Welle ab.</p>
+      <p>Die Welle verliert Energie, wenn es nahe <span class="m">v</span><sub>φ</sub> mehr langsamere als schnellere Teilchen gibt,
+        also wenn <span class="m">f</span>′(<span class="m">v</span><sub>φ</sub>) &lt; 0 ist. Das ist bei der Maxwell-Verteilung der Fall.
+        Mit einem Strahl kann <span class="m">f</span>′(<span class="m">v</span><sub>φ</sub>) &gt; 0 sein; dann wächst die Welle.</p>
+    </div>
+    <div class="note">
+      <h2>Warum gewinnen die langsamen Surfer im Mittel?</h2>
+      <p>Von den etwas langsameren Surfern wird zunächst die eine Hälfte beschleunigt, die andere gebremst.
+        Die beschleunigten nähern sich der Geschwindigkeit der Welle, bleiben deshalb länger in der schiebenden
+        Phase und gewinnen weiter. Die gebremsten fallen schneller zurück und verlassen die bremsende Phase
+        früher. Im Mittel bleibt ein Gewinn. Für die etwas schnelleren gilt dasselbe mit umgekehrtem Vorzeichen.</p>
+      <p>In Teil 1 zeigt die Kurve ⟨Δ<span class="m">E</span>⟩ genau diesen Mittelwert über eine Gruppe.</p>
+    </div>
+    <div class="note">
+      <h2>Wann werden Surfer gefangen?</h2>
+      <p>Ein Surfer bleibt in einer Mulde gefangen, wenn |<span class="m">v</span> − <span class="m">v</span><sub>φ</sub>| kleiner ist als
+        die Fangbreite 2√<span class="m">A</span>, wobei <span class="m">A</span> die Tiefe der Mulde ist (genauer: die Lage im Phasenraum muss
+        innerhalb der gestrichelten Separatrix liegen). Gefangene Surfer pendeln mit der Frequenz
+        ω<sub>b</sub> = √<span class="m">A</span> und laufen im Mittel mit der Welle.</p>
+      <p>Ist die Welle klein, wird der Austausch beendet, bevor ein Surfer einmal gependelt ist: Das ist die
+        lineare Landau-Dämpfung. Ist die Welle groß, werden die resonanten Surfer gefangen; die Amplitude pendelt
+        und bleibt bei einem Rest stehen, und <span class="m">f</span>(<span class="m">v</span>) wird bei <span class="m">v</span><sub>φ</sub> flach.</p>
+    </div>
+    <div class="note">
+      <h2>Was wird gerechnet?</h2>
+      <p>Im System der Welle gilt für jedes Teilchen mit Ort ξ (Phase der Welle) und <span class="m">u</span> = <span class="m">v</span> − <span class="m">v</span><sub>φ</sub>:
+        dξ/d<span class="m">t</span> = <span class="m">u</span>, d<span class="m">u</span>/d<span class="m">t</span> = Im(<span class="m">b</span> e<sup>−iξ</sup>).
+        Die potentielle Energie ist −Re(<span class="m">b</span> e<sup>−iξ</sup>), ihre Tiefe <span class="m">A</span> = |<span class="m">b</span>|.
+        In Teil 1 ist <span class="m">b</span> fest. In Teil 2 ändert sich die Welle durch die Teilchen:
+        d<span class="m">b</span>/d<span class="m">t</span> = −i Σ<sub><span class="m">j</span></sub> <span class="m">m</span><sub><span class="m">j</span></sub> e<sup>iξ<sub><span class="m">j</span></sub></sup> (Einwellenmodell).
+        Dabei bleiben Energie und Impuls von Welle und Teilchen zusammen erhalten.</p>
+      <p>Geschwindigkeiten sind in <span class="m">v</span><sub>th</sub> = √(2<span class="m">k</span><sub>B</sub><span class="m">T</span>/<span class="m">m</span>) angegeben,
+        Zeiten in 1/(<span class="m">k</span> <span class="m">v</span><sub>th</sub>) mit der Wellenzahl <span class="m">k</span>.
+        Gerechnet werden 12 800 Teilchen im Fenster |<span class="m">u</span>| &lt; <span class="m">v</span><sub>th</sub>, gewichtet mit
+        <span class="m">f</span>(<span class="m">v</span>) ∝ exp(−<span class="m">v</span>²/<span class="m">v</span><sub>th</sub>²). Für kleine Wellen folgt
+        γ ≈ (π/2) η <span class="m">f</span>′(<span class="m">v</span><sub>φ</sub>) mit der Kopplung η = 0,3.</p>
+    </div>
+    <div class="note achtung">
+      <h2>Wie weit trägt das Bild?</h2>
+      <p>Das Surferbild erklärt, in welche Richtung die Energie fließt. In einem echten Plasma ist die Welle
+        aber selbst eine Schwingung aller Elektronen, und <span class="m">v</span><sub>φ</sub> folgt aus der Dispersionsrelation.
+        Hier sind <span class="m">v</span><sub>φ</sub> und die Kopplung frei gewählt, und nur Teilchen nahe <span class="m">v</span><sub>φ</sub> werden gerechnet.</p>
+      <p>Wohin die Information über die Anfangsstörung geht und warum die Dämpfung reversibel bleibt, zeigt das
+        Surferbild nicht. Dazu dient die Phasenmischung im Tutorial <a href="/tutorials/landau-daempfung/">Landau-Dämpfung</a>.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const TAU = 2 * Math.PI, XI0 = -Math.PI, XSPAN = 2 * TAU;   // zwei Wellenlängen, Mulden bei 0 und 2π
+  const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+  const rgb = hex => { const h = hex.replace('#', ''); return [0, 2, 4].map(i => parseInt(h.slice(i, i + 2), 16)); };
+  const fmt = (x, d) => x.toLocaleString('de-DE', { minimumFractionDigits: d, maximumFractionDigits: d });
+  const sfmt = (x, d) => (x > 0 ? '+' : x < 0 ? '−' : '') + fmt(Math.abs(x), d);
+  const sup = n => String(n).replace('-', '⁻').replace(/\d/g, d => '⁰¹²³⁴⁵⁶⁷⁸⁹'[d]);
+  function fmtSig(x) {
+    const ax = Math.abs(x);
+    if (ax === 0) return '0';
+    if (ax >= 0.01) return sfmt(x, ax >= 0.1 ? 2 : 3);
+    const e = Math.floor(Math.log10(ax)), m = x / 10 ** e;
+    return sfmt(m, 1) + ' · 10' + sup(e);
+  }
+  function setup(cv, ratio) { const dpr = window.devicePixelRatio || 1; const w = cv.clientWidth, h = Math.round(w * ratio);
+    cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); cv.style.height = h + 'px';
+    const c = cv.getContext('2d'); c.setTransform(dpr, 0, 0, dpr, 0, 0); return { c, w, h }; }
+  const pad = { l: 46, r: 12, t: 10, b: 30 };
+  const wrap4 = x => x - XSPAN * Math.floor((x - XI0) / XSPAN);   // in [XI0, XI0 + 4π)
+  function mulberry(a) { return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+
+  // ---------- Zeichenhilfen: Welle und Surfer ----------
+  function surfer(c, x, y, ang, col) {
+    c.save(); c.translate(x, y); c.rotate(ang);
+    c.strokeStyle = col; c.fillStyle = col; c.lineCap = 'round'; c.lineJoin = 'round';
+    c.lineWidth = 3; c.beginPath(); c.moveTo(-9, 0); c.lineTo(9, 0); c.stroke();
+    c.lineWidth = 2; c.beginPath();
+    c.moveTo(-4, -1); c.lineTo(-1, -8); c.lineTo(3, -1);      // Beine
+    c.moveTo(-1, -8); c.lineTo(0, -14);                       // Rumpf
+    c.moveTo(-6, -12); c.lineTo(5, -11); c.stroke();          // Arme
+    c.beginPath(); c.arc(0.5, -17, 3, 0, TAU); c.fill();
+    c.restore();
+  }
+  // Oberfläche y(xi) = yMid + H cos(xi - th): Mulde der potentiellen Energie bei xi = th
+  function drawWave(cv, ratio, H01, th, list, note) {
+    const { c, w, h } = setup(cv, ratio);
+    const x0 = 8, x1 = w - 8, yMid = h * 0.58, Hmax = h * 0.3, H = Math.max(1.5, H01 * Hmax);
+    const X = xi => x0 + (xi - XI0) / XSPAN * (x1 - x0);
+    const Y = xi => yMid + H * Math.cos(xi - th);
+    c.clearRect(0, 0, w, h);
+    c.beginPath(); c.moveTo(x0, h);
+    for (let i = 0; i <= 240; i++) { const xi = XI0 + i / 240 * XSPAN; c.lineTo(X(xi), Y(xi)); }
+    c.lineTo(x1, h); c.closePath(); c.fillStyle = css('--water'); c.fill();
+    c.beginPath();
+    for (let i = 0; i <= 240; i++) { const xi = XI0 + i / 240 * XSPAN; i ? c.lineTo(X(xi), Y(xi)) : c.moveTo(X(xi), Y(xi)); }
+    c.strokeStyle = css('--accent'); c.lineWidth = 2; c.stroke();
+    const dxdxi = (x1 - x0) / XSPAN;
+    for (const s of list) {
+      const xi = wrap4(s.xi), ang = Math.atan(-H * Math.sin(xi - th) / dxdxi);
+      surfer(c, X(xi), Y(xi) - 2, ang, s.col);
+    }
+    c.fillStyle = css('--muted'); c.font = '12px ' + css('--font-ui'); c.textAlign = 'left'; c.textBaseline = 'top';
+    c.fillText(note, x0, 4);
+    c.textAlign = 'right'; c.fillText('Welle läuft nach rechts →', x1, 4);
+  }
+
+  // =====================================================================
+  // Teil 1: einzelne Surfer in einer Welle fester Höhe
+  // =====================================================================
+  const cvW1 = $('cvW1'), cvS1 = $('cvS1'), cvE1 = $('cvE1');
+  const VPH1 = 2, DT1 = 0.02, T1MAX = 120, SPEED1 = 15, NG = 16;
+  const P1 = { A: 0, u0: 0, xs: [], us: [], tr: [], t: 0, curve: [], hist: [], trapped: 0, n: 0, playing: false, last: null };
+
+  function prepare1(group) {
+    if (P1.curve.length > 2) { P1.hist.push({ u0: P1.u0, pts: P1.curve }); if (P1.hist.length > 5) P1.hist.shift(); }
+    const fang = +$('fang1').value;
+    P1.A = (fang / 2) ** 2; P1.u0 = +$('u01').value;
+    P1.n = group ? NG : 1;
+    P1.xs = []; P1.us = []; P1.tr = [];
+    for (let j = 0; j < P1.n; j++) {
+      const xi = group ? XI0 + XSPAN * (j + 0.5) / NG : XI0 + XSPAN * Math.random();
+      P1.xs.push(xi); P1.us.push(P1.u0); P1.tr.push([[xi, P1.u0]]);
+    }
+    // gefangen, wenn die Energie im Wellensystem unter dem Bergkamm liegt
+    P1.trapped = P1.xs.filter(xi => 0.5 * P1.u0 ** 2 - P1.A * Math.cos(xi) < P1.A).length;
+    P1.t = 0; P1.curve = [[0, 0]];
+  }
+  function step1() {
+    let s = 0;
+    for (let j = 0; j < P1.n; j++) {
+      P1.us[j] -= P1.A * Math.sin(P1.xs[j]) * DT1; P1.xs[j] += P1.us[j] * DT1;
+      const u = P1.us[j]; s += VPH1 * (u - P1.u0) + 0.5 * (u * u - P1.u0 * P1.u0);
+    }
+    P1.t += DT1;
+    const k = Math.round(P1.t / DT1);
+    if (k % 5 === 0) {
+      P1.curve.push([P1.t, s / P1.n]);
+      for (let j = 0; j < P1.n; j++) { P1.tr[j].push([P1.xs[j], P1.us[j]]); if (P1.tr[j].length > 1500) P1.tr[j].shift(); }
+    }
+  }
+  function draw1() {
+    const fang = 2 * Math.sqrt(P1.A);
+    drawWave(cvW1, 0.3, fang / 0.6, 0,
+      P1.xs.map((xi, j) => ({ xi, col: P1.us[j] < 0 ? css('--slow') : css('--fast') })),
+      'Höhe ∝ Fangbreite, nicht maßstäblich');
+    drawPhase1(); drawEnergy1();
+    $('t1label').innerHTML = '<span class="m">k v</span><sub>th</sub><span class="m">t</span> = ' + fmt(P1.t, 0);
+    $('play1').textContent = P1.playing ? 'Anhalten' : 'Weiter';
+    $('play1').disabled = P1.t >= T1MAX - 1e-9 || !P1.n;
+    $('r1trap').textContent = P1.n ? P1.trapped + ' von ' + P1.n : '–';
+    $('r1tb').textContent = fmt(TAU / Math.sqrt(P1.A), 0);
+    const de = P1.curve.length ? P1.curve[P1.curve.length - 1][1] : 0;
+    $('r1de').textContent = P1.n ? sfmt(de, 3) : '–';
+  }
+  function drawPhase1() {
+    const { c, w, h } = setup(cvS1, 0.62);
+    const x0 = pad.l, x1 = w - pad.r, y0 = pad.t, y1 = h - pad.b, UM = 0.9;
+    const X = xi => x0 + (xi - XI0) / XSPAN * (x1 - x0), Y = u => y1 - (u + UM) / (2 * UM) * (y1 - y0);
+    c.clearRect(0, 0, w, h);
+    c.strokeStyle = css('--rule'); c.lineWidth = 1; c.strokeRect(x0, y0, x1 - x0, y1 - y0);
+    c.beginPath(); c.moveTo(x0, Y(0)); c.lineTo(x1, Y(0)); c.stroke();
+    c.save(); c.beginPath(); c.rect(x0, y0, x1 - x0, y1 - y0); c.clip();
+    // Separatrix u = ±2√A |cos(ξ/2)|
+    c.strokeStyle = css('--theo'); c.lineWidth = 1.4; c.setLineDash([5, 4]);
+    for (const sg of [1, -1]) { c.beginPath();
+      for (let i = 0; i <= 200; i++) { const xi = XI0 + i / 200 * XSPAN, u = sg * 2 * Math.sqrt(P1.A) * Math.abs(Math.cos(xi / 2)); i ? c.lineTo(X(xi), Y(u)) : c.moveTo(X(xi), Y(u)); }
+      c.stroke(); }
+    c.setLineDash([]);
+    const col = P1.u0 < 0 ? css('--slow') : css('--fast');
+    c.strokeStyle = col; c.globalAlpha = 0.55; c.lineWidth = 1.2;
+    for (const tr of P1.tr) {
+      c.beginPath(); let px = null;
+      for (const [xi, u] of tr) { const x = X(wrap4(xi)), y = Y(u);
+        if (px === null || Math.abs(x - px) > (x1 - x0) / 2) c.moveTo(x, y); else c.lineTo(x, y); px = x; }
+      c.stroke();
+    }
+    c.globalAlpha = 1;
+    P1.xs.forEach((xi, j) => { c.fillStyle = P1.us[j] < 0 ? css('--slow') : css('--fast');
+      c.beginPath(); c.arc(X(wrap4(xi)), Y(P1.us[j]), 3.5, 0, TAU); c.fill(); });
+    c.restore();
+    c.fillStyle = css('--muted'); c.font = '12px ' + css('--font-ui'); c.textAlign = 'right'; c.textBaseline = 'middle';
+    for (const u of [-0.8, -0.4, 0, 0.4, 0.8]) c.fillText(sfmt(u, 1).replace('+', ''), x0 - 5, Y(u));
+    c.textAlign = 'center'; c.textBaseline = 'top';
+    for (let q = -0.5; q <= 1.5; q += 0.5) c.fillText(fmt(q, 1), X(q * TAU), y1 + 4);
+    c.fillStyle = css('--fg'); c.font = 'italic 14px ' + css('--font-text'); c.textAlign = 'right'; c.textBaseline = 'bottom';
+    c.fillText('Ort / λ', x1, h - 1);
+    c.save(); c.translate(12, (y0 + y1) / 2); c.rotate(-Math.PI / 2); c.textAlign = 'center'; c.textBaseline = 'middle';
+    c.fillText('(v − vφ) / vₜₕ', 0, 0); c.restore();
+  }
+  function drawEnergy1() {
+    const { c, w, h } = setup(cvE1, 0.62);
+    const x0 = pad.l + 6, x1 = w - pad.r, y0 = pad.t, y1 = h - pad.b;
+    let mx = 0.02;
+    for (const cu of [...P1.hist.map(hh => hh.pts), P1.curve]) for (const p of cu) mx = Math.max(mx, Math.abs(p[1]));
+    mx *= 1.1;
+    const X = tt => x0 + tt / T1MAX * (x1 - x0), Y = e => (y0 + y1) / 2 - e / mx * (y1 - y0) / 2;
+    c.clearRect(0, 0, w, h);
+    c.strokeStyle = css('--rule'); c.lineWidth = 1; c.strokeRect(x0, y0, x1 - x0, y1 - y0);
+    c.beginPath(); c.moveTo(x0, Y(0)); c.lineTo(x1, Y(0)); c.stroke();
+    c.save(); c.beginPath(); c.rect(x0, y0, x1 - x0, y1 - y0); c.clip();
+    const line = (pts, col, lw, al) => { if (pts.length < 2) return; c.globalAlpha = al; c.strokeStyle = col; c.lineWidth = lw; c.beginPath();
+      pts.forEach((p, i) => i ? c.lineTo(X(p[0]), Y(p[1])) : c.moveTo(X(p[0]), Y(p[1]))); c.stroke(); c.globalAlpha = 1; };
+    c.font = '11px ' + css('--font-ui'); c.textAlign = 'right'; c.textBaseline = 'bottom';
+    for (const hh of P1.hist) { const col = hh.u0 < 0 ? css('--slow') : css('--fast'); line(hh.pts, col, 1.4, 0.4);
+      const e = hh.pts[hh.pts.length - 1]; c.fillStyle = col; c.globalAlpha = 0.7; c.fillText(sfmt(hh.u0, 2), X(e[0]) - 2, Y(e[1]) - 2); c.globalAlpha = 1; }
+    if (P1.n) line(P1.curve, P1.u0 < 0 ? css('--slow') : css('--fast'), 2.2, 1);
+    c.restore();
+    c.fillStyle = css('--muted'); c.font = '12px ' + css('--font-ui'); c.textAlign = 'right'; c.textBaseline = 'middle';
+    const st = mx > 0.4 ? 0.2 : mx > 0.2 ? 0.1 : mx > 0.08 ? 0.05 : 0.02;
+    for (let e = -Math.floor(mx / st) * st; e <= mx + 1e-9; e += st) c.fillText(sfmt(e, 2).replace('+', ''), x0 - 5, Y(e));
+    c.textAlign = 'center'; c.textBaseline = 'top';
+    for (let tt = 0; tt <= T1MAX; tt += 40) c.fillText(String(tt), X(tt), y1 + 4);
+    c.fillStyle = css('--fg'); c.font = 'italic 14px ' + css('--font-text'); c.textAlign = 'right'; c.textBaseline = 'bottom';
+    c.fillText('k vₜₕ t', x1, h - 1);
+    c.textAlign = 'left'; c.textBaseline = 'top'; c.fillStyle = css('--muted'); c.font = '11px ' + css('--font-ui');
+    c.fillText('gewonnen', x0 + 4, y0 + 2); c.textBaseline = 'bottom'; c.fillText('abgegeben', x0 + 4, y1 - 2);
+  }
+  function frame1(ts) {
+    if (!P1.playing) return;
+    if (P1.last !== null) {
+      const n = Math.max(1, Math.round(Math.min(0.05, (ts - P1.last) / 1000) * SPEED1 / DT1));
+      for (let i = 0; i < n; i++) { if (P1.t >= T1MAX - 1e-9) { P1.playing = false; break; } step1(); }
+      draw1();
+    }
+    P1.last = ts; if (P1.playing) requestAnimationFrame(frame1);
+  }
+  function start1() { P1.playing = true; P1.last = null; requestAnimationFrame(frame1); }
+  function stop1() { P1.playing = false; P1.last = null; }
+  $('throwG').addEventListener('click', () => { stop1(); prepare1(true); start1(); draw1(); });
+  $('throwS').addEventListener('click', () => { stop1(); prepare1(false); start1(); draw1(); });
+  $('play1').addEventListener('click', () => { if (P1.playing) stop1(); else if (P1.t < T1MAX) start1(); draw1(); });
+  $('clear1').addEventListener('click', () => { P1.hist = []; draw1(); });
+  const label1 = () => { $('fang1o').textContent = fmt(+$('fang1').value, 2) + ' vₜₕ'; $('u01o').textContent = sfmt(+$('u01').value, 2) + ' vₜₕ'; };
+  // neue Wellenhöhe: Wurf neu aufsetzen, ohne den laufenden Wurf in die Liste früherer Würfe zu übernehmen
+  $('fang1').addEventListener('input', () => { label1(); stop1(); const g = P1.n !== 1; P1.curve = []; prepare1(g); draw1(); });
+  $('u01').addEventListener('input', label1);
+
+  // =====================================================================
+  // Teil 2: Einwellenmodell, Welle und viele Teilchen tauschen Energie
+  // =====================================================================
+  const cvW2 = $('cvW2'), cvP2 = $('cvP2'), cvF2 = $('cvF2'), cvA2 = $('cvA2'), cvB2 = $('cvB2');
+  const NV = 200, NP = 64, N = NV * NP, WU = 1, DU = 2 * WU / NV, ETA = 0.3, DT2 = 0.05, T2MAX = 200, SPEED2 = 25;
+  const FANGS = [0.02, 0.05, 0.1, 0.2, 0.3, 0.45];
+  const xi = new Float64Array(N), u = new Float64Array(N), uI = new Float64Array(N), m = new Float64Array(N);
+  const cs = new Float64Array(N), sn = new Float64Array(N), alpha = new Float64Array(N);
+  const P2 = { br: 0, bi: 0, A0: 0, t: 0, amp: [], playing: false, last: null, vph: 2, dist: 'max', f: null, fp: 0,
+    gp: 0, gm: null, guess: null, hits: 0, tries: 0, done: false, samples: [] };
+
+  const fM = v => Math.exp(-v * v);
+  function makeF(dist, vph) {
+    if (dist === 'beam') return v => fM(v) + 0.04 * Math.exp(-(((v - 2.8) / 0.35) ** 2));
+    if (dist === 'plat') return v => fM(v - 0.4 * Math.tanh((v - vph) / 0.4));   // monoton, f'(vph) = 0
+    return fM;
+  }
+  // Fenster |u| < 1 mit weichem Rand: ein harter Rand wirkt wie ein Strahl und wird instabil
+  const taper = uu => { const q = Math.min(1, Math.max(0, (Math.abs(uu) - 0.6) / 0.4)); return Math.cos(Math.PI / 2 * q) ** 2; };
+
+  function init2() {
+    P2.vph = +$('vph2').value; P2.dist = document.querySelector('input[name=dist]:checked').value;
+    const f = P2.f = makeF(P2.dist, P2.vph);
+    P2.fp = (f(P2.vph + 1e-4) - f(P2.vph - 1e-4)) / 2e-4;
+    P2.gp = Math.PI / 2 * ETA * P2.fp;
+    const fang = FANGS[+$('fang2').value];
+    P2.A0 = (fang / 2) ** 2; P2.br = P2.A0; P2.bi = 0;
+    const rnd = mulberry(7);
+    let mmax = 0;
+    for (let i = 0; i < NV; i++) {
+      const uu = -WU + (i + 0.5) * DU, off = rnd() * TAU / NP, wgt = ETA * f(P2.vph + uu) * taper(uu) * DU / NP;
+      for (let j = 0; j < NP; j++) { const k = i * NP + j;
+        xi[k] = j * TAU / NP + off; u[k] = uI[k] = uu; m[k] = wgt; cs[k] = Math.cos(xi[k]); sn[k] = Math.sin(xi[k]); }
+      mmax = Math.max(mmax, wgt);
+    }
+    for (let k = 0; k < N; k++) alpha[k] = m[k] > 0 ? 0.12 + 0.88 * Math.sqrt(m[k] / mmax) : 0;
+    // Surfer für das Wellenbild: resonante Teilchen aus der Mitte des Fensters
+    P2.samples = [];
+    for (let s = 0; s < 14; s++) { const i = Math.round(NV / 2 + (s - 6.5) * 2.4), j = (s * 23) % NP; P2.samples.push(i * NP + j); }
+    P2.t = 0; P2.amp = [[0, 1]]; P2.gm = null; P2.done = false;
+    $('verdict').hidden = true;
+  }
+  function step2() {
+    const br = P2.br, bi = P2.bi;
+    let sr = 0, si = 0;
+    for (let k = 0; k < N; k++) {
+      const uk = u[k] + (bi * cs[k] - br * sn[k]) * DT2;  // du/dt = Im(b e^{-i xi})
+      u[k] = uk; const x = xi[k] + uk * DT2; xi[k] = x;
+      const c = Math.cos(x), s = Math.sin(x); cs[k] = c; sn[k] = s;
+      sr += m[k] * c; si += m[k] * s;
+    }
+    P2.br += si * DT2; P2.bi -= sr * DT2;              // db/dt = -i Σ m e^{i xi}
+    P2.t += DT2;
+    if (Math.round(P2.t / DT2) % 10 === 0) {
+      P2.amp.push([P2.t, Math.hypot(P2.br, P2.bi) / P2.A0]);
+      if (P2.gm === null && P2.t >= 40) P2.gm = fitRate();
+    }
+  }
+  function fitRate() {   // Ausgleichsgerade an ln(A/A0) für 5 ≤ t ≤ 40
+    let n = 0, sx = 0, sy = 0, sxx = 0, sxy = 0;
+    for (const [tt, a] of P2.amp) if (tt >= 5 && tt <= 40 && a > 0) { const y = Math.log(a); n++; sx += tt; sy += y; sxx += tt * tt; sxy += tt * y; }
+    return n > 3 ? (n * sxy - sx * sy) / (n * sxx - sx * sx) : null;
+  }
+  function energies() {
+    let ks = 0, kf = 0, ep = 0;
+    const v = P2.vph;
+    for (let k = 0; k < N; k++) {
+      const d = m[k] * (v * (u[k] - uI[k]) + 0.5 * (u[k] * u[k] - uI[k] * uI[k]));
+      if (uI[k] < 0) ks += d; else kf += d;
+      ep -= m[k] * (P2.br * cs[k] + P2.bi * sn[k]);
+    }
+    // Energie der Welle: v_phi |b|²/2 plus potentielle Energie der Teilchen im Wellenfeld (zu Beginn null)
+    const ew = v * (P2.br * P2.br + P2.bi * P2.bi - P2.A0 * P2.A0) / 2 + ep;
+    return { ks, kf, ew, W0: v * P2.A0 * P2.A0 / 2 };
+  }
+  const ampNow = () => Math.hypot(P2.br, P2.bi);
+
+  function draw2() {
+    const A = ampNow(), rel = A / P2.A0, th = Math.atan2(P2.bi, P2.br);
+    const H01 = Math.min(1, Math.max(0.02, (Math.log10(Math.max(rel, 1e-6)) + 2) / 4));
+    drawWave(cvW2, 0.22, H01, th, P2.samples.map(k => ({ xi: xi[k], col: u[k] < 0 ? css('--slow') : css('--fast') })),
+      'vφ = ' + fmt(P2.vph, 2) + ' vₜₕ');
+    drawPhase2(th); drawF2(); drawA2(); drawB2();
+    $('t2label').innerHTML = '<span class="m">k v</span><sub>th</sub><span class="m">t</span> = ' + fmt(P2.t, 0);
+    $('play2').textContent = P2.playing ? 'Anhalten' : 'Abspielen';
+    $('r2fp').textContent = fmtSig(P2.fp);
+    let ns = 0, nf = 0;
+    for (let i = 0; i < NV; i++) { const uu = -WU + (i + 0.5) * DU; if (uu > -0.2 && uu < 0) ns += P2.f(P2.vph + uu); else if (uu > 0 && uu < 0.2) nf += P2.f(P2.vph + uu); }
+    $('r2ratio').textContent = fmt(ns / nf, 2) + ' : 1';
+    $('r2gp').textContent = fmtSig(P2.gp);
+    $('r2gm').textContent = P2.gm === null ? '–' : fmtSig(P2.gm);
+    $('r2wb').textContent = fmtSig(Math.sqrt(P2.A0)).replace('+', '');
+    $('r2a').textContent = rel >= 0.01 ? fmt(rel, rel >= 10 ? 0 : 2) : fmtSig(rel).replace('+', '');
+  }
+  const offP = document.createElement('canvas');
+  function drawPhase2(th) {
+    const { c, w, h } = setup(cvP2, 0.36);
+    const x0 = pad.l, x1 = w - pad.r, y0 = pad.t, y1 = h - pad.b, UM = WU;
+    const PW = Math.max(50, Math.round(x1 - x0)), PH = Math.max(40, Math.round(y1 - y0));
+    offP.width = PW; offP.height = PH;
+    const oc = offP.getContext('2d'), img = oc.createImageData(PW, PH), d = img.data;
+    const bg = rgb(css('--panel')), cg = rgb(css('--slow')), cl = rgb(css('--fast')), cn = rgb(css('--muted'));
+    for (let p = 0; p < PW * PH; p++) { d[4 * p] = bg[0]; d[4 * p + 1] = bg[1]; d[4 * p + 2] = bg[2]; d[4 * p + 3] = 255; }
+    // Farbskala: mittlerer Betrag der Energieänderung pro Teilchen
+    const v = P2.vph; let sum = 0;
+    const de = new Float64Array(N);
+    for (let k = 0; k < N; k++) { de[k] = v * (u[k] - uI[k]) + 0.5 * (u[k] * u[k] - uI[k] * uI[k]); sum += Math.abs(de[k]); }
+    const S = Math.max(2.5 * sum / N, 1e-30);
+    const put = (px, py, col, a) => { if (px < 0 || py < 0 || px >= PW || py >= PH) return; const o = 4 * (py * PW + px);
+      d[o] += (col[0] - d[o]) * a; d[o + 1] += (col[1] - d[o + 1]) * a; d[o + 2] += (col[2] - d[o + 2]) * a; };
+    for (let k = 0; k < N; k++) {
+      if (!alpha[k]) continue;
+      const q = Math.min(1, Math.abs(de[k]) / S), col = de[k] > 0 ? cg : cl;
+      const mix = [cn[0] + (col[0] - cn[0]) * q, cn[1] + (col[1] - cn[1]) * q, cn[2] + (col[2] - cn[2]) * q];
+      const py = Math.round((UM - u[k]) / (2 * UM) * (PH - 1));
+      let x = xi[k] - TAU * Math.floor((xi[k] - XI0) / TAU);
+      for (let r = 0; r < 2; r++, x += TAU) {
+        const px = Math.round((x - XI0) / XSPAN * (PW - 1));
+        put(px, py, mix, alpha[k] * 0.8); put(px + 1, py, mix, alpha[k] * 0.5);
+      }
+    }
+    oc.putImageData(img, 0, 0);
+    c.clearRect(0, 0, w, h);
+    c.imageSmoothingEnabled = false; c.drawImage(offP, x0, y0, x1 - x0, y1 - y0);
+    const X = x => x0 + (x - XI0) / XSPAN * (x1 - x0), Y = uu => y1 - (uu + UM) / (2 * UM) * (y1 - y0);
+    c.strokeStyle = css('--rule'); c.lineWidth = 1; c.strokeRect(x0, y0, x1 - x0, y1 - y0);
+    // Separatrix der momentanen Welle
+    const A = ampNow();
+    c.save(); c.beginPath(); c.rect(x0, y0, x1 - x0, y1 - y0); c.clip();
+    c.strokeStyle = css('--fg'); c.lineWidth = 1.2; c.setLineDash([5, 4]);
+    for (const sg of [1, -1]) { c.beginPath();
+      for (let i = 0; i <= 240; i++) { const x = XI0 + i / 240 * XSPAN, uu = sg * 2 * Math.sqrt(A) * Math.abs(Math.cos((x - th) / 2)); i ? c.lineTo(X(x), Y(uu)) : c.moveTo(X(x), Y(uu)); }
+      c.stroke(); }
+    c.setLineDash([]); c.restore();
+    c.fillStyle = css('--muted'); c.font = '12px ' + css('--font-ui'); c.textAlign = 'right'; c.textBaseline = 'middle';
+    for (const uu of [-1, -0.5, 0, 0.5, 1]) c.fillText(sfmt(uu, 1).replace('+', ''), x0 - 5, Y(uu));
+    c.textAlign = 'center'; c.textBaseline = 'top';
+    for (let q = -0.5; q <= 1.5; q += 0.5) c.fillText(fmt(q, 1), X(q * TAU), y1 + 4);
+    c.fillStyle = css('--fg'); c.font = 'italic 14px ' + css('--font-text'); c.textAlign = 'right'; c.textBaseline = 'bottom';
+    c.fillText('Ort / λ', x1, h - 1);
+    c.save(); c.translate(12, (y0 + y1) / 2); c.rotate(-Math.PI / 2); c.textAlign = 'center'; c.textBaseline = 'middle';
+    c.fillText('(v − vφ) / vₜₕ', 0, 0); c.restore();
+  }
+  function drawF2() {
+    const { c, w, h } = setup(cvF2, 0.62);
+    const x0 = pad.l, x1 = w - pad.r, y0 = pad.t, y1 = h - pad.b, f = P2.f, v = P2.vph;
+    // jetzige Verteilung: Gewichte nach u einsortieren, nur im ungedämpften Teil |u| < 0,6
+    const NB = 40, UB = 0.5, hist = new Float64Array(NB);
+    for (let k = 0; k < N; k++) { const b = Math.floor((u[k] + UB) / (2 * UB) * NB); if (b >= 0 && b < NB && Math.abs(uI[k]) < 0.6) hist[b] += m[k]; }
+    const bw = 2 * UB / NB;
+    let fmax = 0; for (let i = 0; i <= 200; i++) fmax = Math.max(fmax, f(v - WU + i / 100 * WU));
+    fmax *= 1.12;
+    const X = uu => x0 + (uu + WU) / (2 * WU) * (x1 - x0), Y = ff => y1 - ff / fmax * (y1 - y0);
+    c.clearRect(0, 0, w, h);
+    // langsame und schnelle Seite
+    c.globalAlpha = 0.12; c.fillStyle = css('--slow'); c.fillRect(X(-0.2), y0, X(0) - X(-0.2), y1 - y0);
+    c.fillStyle = css('--fast'); c.fillRect(X(0), y0, X(0.2) - X(0), y1 - y0); c.globalAlpha = 1;
+    c.strokeStyle = css('--rule'); c.lineWidth = 1; c.strokeRect(x0, y0, x1 - x0, y1 - y0);
+    c.save(); c.beginPath(); c.rect(x0, y0, x1 - x0, y1 - y0); c.clip();
+    c.strokeStyle = css('--theo'); c.lineWidth = 1.6; c.setLineDash([6, 4]); c.beginPath();
+    for (let i = 0; i <= 200; i++) { const uu = -WU + i / 100 * WU; i ? c.lineTo(X(uu), Y(f(v + uu))) : c.moveTo(X(uu), Y(f(v + uu))); }
+    c.stroke(); c.setLineDash([]);
+    c.strokeStyle = css('--fg'); c.lineWidth = 2; c.beginPath();
+    for (let b = 0; b < NB; b++) { const uu = -UB + (b + 0.5) * bw, ff = hist[b] / (ETA * bw); b ? c.lineTo(X(uu), Y(ff)) : c.moveTo(X(uu), Y(ff)); }
+    c.stroke();
+    // Tangente bei v_phi
+    c.strokeStyle = css('--high'); c.lineWidth = 2; c.beginPath();
+    c.moveTo(X(-0.3), Y(f(v) - 0.3 * P2.fp)); c.lineTo(X(0.3), Y(f(v) + 0.3 * P2.fp)); c.stroke();
+    c.restore();
+    c.strokeStyle = css('--high'); c.lineWidth = 1.2; c.setLineDash([3, 3]); c.beginPath(); c.moveTo(X(0), y0); c.lineTo(X(0), y1); c.stroke(); c.setLineDash([]);
+    c.fillStyle = css('--muted'); c.font = '12px ' + css('--font-ui'); c.textAlign = 'center'; c.textBaseline = 'top';
+    for (const uu of [-1, -0.5, 0, 0.5, 1]) c.fillText(fmt(v + uu, 1), X(uu), y1 + 4);
+    c.fillStyle = css('--slow'); c.textBaseline = 'top'; c.fillText('langsamer', X(-0.45), y0 + 3);
+    c.fillStyle = css('--fast'); c.fillText('schneller', X(0.45), y0 + 3);
+    c.fillStyle = css('--fg'); c.font = 'italic 14px ' + css('--font-text'); c.textAlign = 'right'; c.textBaseline = 'bottom';
+    c.fillText('v / vₜₕ', x1, h - 1);
+    c.save(); c.translate(12, (y0 + y1) / 2); c.rotate(-Math.PI / 2); c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('f(v)', 0, 0); c.restore();
+  }
+  function drawA2() {
+    const { c, w, h } = setup(cvA2, 0.62);
+    const x0 = pad.l, x1 = w - pad.r, y0 = pad.t, y1 = h - pad.b;
+    let lo = 1, hi = 1; for (const p of P2.amp) { lo = Math.min(lo, p[1]); hi = Math.max(hi, p[1]); }
+    const LMIN = Math.max(-3, Math.min(-1, Math.floor(Math.log10(Math.max(lo, 1e-6))))), LMAX = Math.min(3, Math.max(1, Math.ceil(Math.log10(hi) + 0.02)));
+    const X = tt => x0 + tt / T2MAX * (x1 - x0);
+    const Y = a => { const l = Math.log10(Math.max(a, 1e-30)); return y1 - (Math.max(Math.min(l, LMAX), LMIN - 0.05) - LMIN) / (LMAX - LMIN) * (y1 - y0); };
+    c.clearRect(0, 0, w, h);
+    c.save(); c.beginPath(); c.rect(x0, y0, x1 - x0, y1 - y0); c.clip();
+    c.strokeStyle = css('--rule'); c.lineWidth = 1;
+    for (let l = LMIN; l <= LMAX; l++) { c.beginPath(); c.moveTo(x0, Y(10 ** l)); c.lineTo(x1, Y(10 ** l)); c.stroke(); }
+    c.strokeStyle = css('--theo'); c.lineWidth = 1.6; c.setLineDash([6, 4]); c.beginPath();
+    c.moveTo(X(0), Y(1)); c.lineTo(X(T2MAX), Y(Math.exp(P2.gp * T2MAX))); c.stroke(); c.setLineDash([]);
+    if (P2.amp.length > 1) { c.strokeStyle = css('--accent'); c.lineWidth = 2; c.beginPath();
+      P2.amp.forEach((p, i) => i ? c.lineTo(X(p[0]), Y(p[1])) : c.moveTo(X(p[0]), Y(p[1]))); c.stroke(); }
+    c.restore();
+    c.strokeStyle = css('--rule'); c.strokeRect(x0, y0, x1 - x0, y1 - y0);
+    c.fillStyle = css('--muted'); c.font = '12px ' + css('--font-ui'); c.textAlign = 'right'; c.textBaseline = 'middle';
+    for (let l = LMIN; l <= LMAX; l++) c.fillText(l === 0 ? '1' : '10' + sup(l), x0 - 5, Y(10 ** l));
+    c.textAlign = 'center'; c.textBaseline = 'top';
+    for (let tt = 0; tt <= T2MAX; tt += 50) c.fillText(String(tt), X(tt), y1 + 4);
+    c.fillStyle = css('--fg'); c.font = 'italic 14px ' + css('--font-text'); c.textAlign = 'right'; c.textBaseline = 'bottom';
+    c.fillText('k vₜₕ t', x1, h - 1);
+  }
+  function drawB2() {
+    const { c, w, h } = setup(cvB2, 0.16);
+    const e = energies(), rows = [['langsame Surfer', e.ks, css('--slow')], ['schnelle Surfer', e.kf, css('--fast')], ['Welle', e.ew, css('--accent')]];
+    let mx = 1; for (const r of rows) mx = Math.max(mx, Math.abs(r[1]) / e.W0);
+    const lw = Math.min(130, w * 0.28), x0 = lw, x1 = w - 70, xm = (x0 + x1) / 2, rh = (h - 8) / 3;
+    c.clearRect(0, 0, w, h);
+    c.font = '13px ' + css('--font-ui'); c.textBaseline = 'middle';
+    rows.forEach(([lab, val, col], i) => {
+      const y = 4 + (i + 0.5) * rh, q = val / e.W0, bw = q / mx * (x1 - x0) / 2;
+      c.fillStyle = css('--fg'); c.textAlign = 'left'; c.fillText(lab, 0, y);
+      c.fillStyle = col; c.fillRect(Math.min(xm, xm + bw), y - rh * 0.3, Math.abs(bw), rh * 0.6);
+      c.fillStyle = css('--fg'); c.textAlign = 'right';
+      const a = Math.abs(q); c.fillText(sfmt(q, a >= 100 ? 0 : a >= 10 ? 1 : 2), w - 2, y);
+    });
+    c.strokeStyle = css('--muted'); c.lineWidth = 1; c.beginPath(); c.moveTo(xm, 2); c.lineTo(xm, h - 2); c.stroke();
+  }
+  function evaluate() {
+    const tail = P2.amp.filter(p => p[0] >= T2MAX - 20), mean = tail.reduce((s, p) => s + p[1], 0) / tail.length;
+    const out = mean > 1.12 ? 'waechst' : mean < 0.8 ? 'schrumpft' : 'bleibt';
+    const word = { waechst: 'gewachsen', schrumpft: 'geschrumpft', bleibt: 'etwa gleich geblieben' }[out];
+    let why;
+    if (P2.fp < -1e-3) why = 'Bei v<sub>φ</sub> fällt f ab: Es gibt mehr langsamere als schnellere Surfer, die Welle gibt Energie ab.';
+    else if (P2.fp > 1e-3) why = 'Bei v<sub>φ</sub> steigt f an: Es gibt mehr schnellere als langsamere Surfer, sie schieben die Welle an.';
+    else why = 'Bei v<sub>φ</sub> ist f flach oder fast leer: Gewinn und Verlust gleichen sich aus.';
+    if (out === 'bleibt' && Math.abs(P2.fp) > 1e-3) why += ' Der Effekt ist hier aber klein, weil nahe v<sub>φ</sub> kaum Teilchen sind oder die Welle groß ist.';
+    if (Math.sqrt(P2.A0) > Math.abs(P2.gp) && Math.abs(P2.fp) > 1e-3 && out !== 'bleibt')
+      why += ' Weil die Welle groß ist, werden resonante Surfer gefangen; die Amplitude pendelt und bleibt bei einem Rest stehen.';
+    const v = $('verdict'); v.hidden = false; v.className = 'verdict';
+    let head = 'Die Welle ist ' + word + ' (A/A<sub>0</sub> ≈ ' + (mean >= 0.01 ? fmt(mean, mean >= 10 ? 0 : 2) : fmtSig(mean).replace('+', '')) + ').';
+    if (P2.guess) { P2.tries++; const hit = P2.guess === out; if (hit) P2.hits++; v.classList.add(hit ? 'hit' : 'miss');
+      head = '<strong>' + (hit ? 'Richtig getippt.' : 'Daneben.') + '</strong> ' + head; }
+    v.innerHTML = head + ' ' + why;
+    $('score').textContent = 'Treffer: ' + P2.hits + ' von ' + P2.tries;
+    P2.guess = null; document.querySelectorAll('.guess button').forEach(b => b.setAttribute('aria-pressed', 'false'));
+  }
+  function frame2(ts) {
+    if (!P2.playing) return;
+    if (P2.last !== null) {
+      const n = Math.max(1, Math.round(Math.min(0.05, (ts - P2.last) / 1000) * SPEED2 / DT2));
+      for (let i = 0; i < n; i++) { if (P2.t >= T2MAX - 1e-9) { P2.playing = false; P2.done = true; evaluate(); break; } step2(); }
+      draw2();
+    }
+    P2.last = ts; if (P2.playing) requestAnimationFrame(frame2);
+  }
+  function start2() { P2.playing = true; P2.last = null; requestAnimationFrame(frame2); }
+  function stop2() { P2.playing = false; P2.last = null; }
+  $('play2').addEventListener('click', () => {
+    if (P2.playing) { stop2(); draw2(); return; }
+    if (P2.done) init2();
+    start2(); draw2();
+  });
+  $('reset2').addEventListener('click', () => { stop2(); init2(); draw2(); });
+  const label2 = () => { $('vph2o').textContent = fmt(+$('vph2').value, 2); $('fang2o').textContent = fmt(FANGS[+$('fang2').value], 2) + ' vₜₕ'; };
+  ['vph2', 'fang2'].forEach(id => $(id).addEventListener('input', () => { label2(); stop2(); init2(); draw2(); }));
+  document.querySelectorAll('input[name=dist]').forEach(el => el.addEventListener('change', () => { stop2(); init2(); draw2(); }));
+  document.querySelectorAll('.guess button').forEach(b => b.addEventListener('click', () => {
+    P2.guess = b.dataset.g;
+    document.querySelectorAll('.guess button').forEach(o => o.setAttribute('aria-pressed', String(o === b)));
+  }));
+
+  // ---------- Reiter, Größe, Farbschema ----------
+  function show(n) {
+    $('part1').hidden = n !== 1; $('part2').hidden = n !== 2;
+    $('tab1').setAttribute('aria-selected', String(n === 1)); $('tab2').setAttribute('aria-selected', String(n === 2));
+    if (n === 1) { stop2(); draw1(); } else { stop1(); draw2(); }
+  }
+  $('tab1').addEventListener('click', () => show(1));
+  $('tab2').addEventListener('click', () => show(2));
+  const redraw = () => { if (!$('part1').hidden) draw1(); else draw2(); };
+  window.addEventListener('resize', redraw);
+  new MutationObserver(redraw).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  if (window.matchMedia) window.matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', redraw);
+
+  label1(); label2(); prepare1(true); init2();
+  if (location.hash === '#teil2') show(2); else { draw1(); start1(); }
+})();
+</script>
+</body>
+</html>
