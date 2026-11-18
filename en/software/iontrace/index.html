@@ -1,0 +1,1049 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description"
+        content="IONTRACE: simulation code for static and time-dependent ion optics – three-dimensional or translationally symmetric in two dimensions – with gridded ion sources, space charge, neutral gas, charge exchange and electrode erosion.">
+  <title>IONTRACE – Software – Ref4EP</title>
+  <link rel="stylesheet" href="/assets/style.css">
+  <link rel="alternate" hreflang="de" href="https://www.ref4ep.de/software/iontrace/">
+  <link rel="alternate" hreflang="en" href="https://www.ref4ep.de/en/software/iontrace/">
+</head>
+
+<body>
+  <a class="skip-link" href="#inhalt">Skip to content</a>
+
+  <header>
+    <div class="nav">
+      <a class="brand" href="/en/" aria-label="Ref4EP home page">
+        <span class="brand-mark">R4</span>
+        <span>Ref4EP</span>
+      </a>
+
+      <nav aria-label="Main navigation">
+        <ul>
+          <li><a href="/en/#projekt">Project</a></li>
+          <li><a href="/en/#ziele">Objectives</a></li>
+          <li><a href="/en/#partner">Partners</a></li>
+          <li><a href="/en/#arbeit">Work Areas</a></li>
+          <li><a href="/en/#daten">Data &amp; Standards</a></li>
+          <li><a href="/en/software/" aria-current="page">Software</a></li>
+          <li><a href="/en/tutorials/">Tutorials</a></li>
+          <li><a href="/en/#kontakt">Contact</a></li>
+          <li class="lang-item"><a class="lang" href="/software/iontrace/" hreflang="de" lang="de" title="Deutsch">DE</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <section class="subhero">
+    <div class="subhero-inner">
+      <p class="breadcrumb">
+        <a href="/en/">Home</a>
+        <span aria-hidden="true">/</span>
+        <a href="/en/software/">Software</a>
+        <span aria-hidden="true">/</span>
+        IONTRACE
+      </p>
+
+      <h1>IONTRACE</h1>
+
+      <p class="lead">
+        IONTRACE is a simulation code for static and time-dependent
+        ion optics, in particular for the extraction of ions from
+        gridded ion sources. Computations are either fully three-dimensional or
+        translationally symmetric in two dimensions.
+        Electric field, ion trajectories and space charge are
+        computed self-consistently. In addition, neutral gas,
+        charge exchange, electrode erosion and the resulting
+        grid lifetime can be investigated.
+      </p>
+
+      <div class="pills">
+        <span class="pill">Windows 10/11, 64-bit</span>
+        <span class="pill">Version 2.1.2</span>
+        <span class="pill">2D and 3D computation</span>
+        <span class="pill">German and English</span>
+        <span class="pill">Graphical interface</span>
+        <span class="pill">Manual (PDF)</span>
+        <span class="pill">Installation without administrator rights</span>
+        <span class="pill">Access on request</span>
+      </div>
+    </div>
+  </section>
+
+  <main id="inhalt">
+
+    <section>
+      <div class="split">
+        <div class="panel">
+          <h2>What is IONTRACE for?</h2>
+
+          <p>
+            The extraction optics largely determine the beam current, the
+            beam shape and the lifetime of the grids. These quantities are closely
+            coupled: space charge affects the electric
+            field and hence the ion trajectories. Charge-exchange collisions between
+            beam ions and the neutral gas create slow ions, which are
+            accelerated by the electric field towards the grids, where they can cause
+            erosion. The progressive change in
+            grid geometry in turn affects the electric field and the
+            extracted ion beam.
+          </p>
+
+          <p>
+            IONTRACE captures these interactions in a coupled
+            three-dimensional simulation. The grid geometry can be updated over
+            successive operating intervals, so that
+            the effects of erosion on the field, particle trajectories and
+            neutral gas distribution can be taken into account.
+          </p>
+        </div>
+
+        <figure class="shot">
+          <img src="/software/iontrace/bilder/trajektorien-3d.jpg"
+               width="1565"
+               height="1159"
+               alt="Three-dimensional view of the grid system with ion trajectories; transmitted trajectories are shown in blue, trajectories hitting an electrode in red.">
+
+          <figcaption>
+            <b>Ion trajectories in the grid system</b>
+            Transmitted ion trajectories are shown in blue, direct impingement
+            on the electrodes in red. This makes the transmission of the grid system
+            and the locations of primary ion losses visible.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-heading">
+        <h2>Physical models and features</h2>
+
+        <p>
+          The functionality is modular. Depending on the task,
+          the following models and analyses can be
+          combined.
+        </p>
+      </div>
+
+      <ul class="feature-list">
+        <li>
+          <b>Two- and three-dimensional computation</b> – the same software computes
+          either fully in three dimensions or translationally symmetric in
+          two dimensions. The 2D mode uses the same interface and the same
+          analyses, but solves large grids much faster, which makes it
+          suitable for preliminary studies and for translationally symmetric
+          arrangements such as the cylindrical analyser.
+        </li>
+
+        <li>
+          <b>Plasma and ion emission</b> – models for self-consistent
+          plasma extraction with Boltzmann electrons, and for prescribed
+          emitter surfaces and initial distributions.
+        </li>
+
+        <li>
+          <b>Electric field computation</b> – solution of the Poisson or
+          Poisson–Boltzmann equation including space charge. Multigrid, SOR and
+          direct solvers are available for the resulting systems of linear
+          equations.
+        </li>
+
+        <li>
+          <b>Coupled particle computation</b> – ion trajectories and space-charge density
+          are coupled iteratively with the electric field.
+        </li>
+
+        <li>
+          <b>Time-dependent potentials</b> – time-varying
+          electrode voltages allow dynamic ion optics to be studied,
+          for example time-of-flight arrangements.
+        </li>
+
+        <li>
+          <b>Curved electrode surfaces</b> – either the classic
+          staircase representation or the Shortley–Weller sub-cell correction for
+          more accurate representation of curved boundaries.
+        </li>
+
+        <li>
+          <b>Symmetries and multiple apertures</b> – mirror boundary conditions
+          allow reduced computational domains. Geometries with multiple
+          apertures can also be studied in a common computational domain.
+        </li>
+
+        <li>
+          <b>Geometry creation</b> – parametric construction from geometric
+          primitives – including cylinder segment, half-cylinder and curved
+          electrodes – that can be positioned freely in space and rotated
+          by arbitrary angles, and a readable, text-based,
+          version-controllable file format.
+        </li>
+
+        <li>
+          <b>Neutral gas</b> – test-particle Monte Carlo simulation of the spatial
+          neutral gas distribution within the electrode geometry.
+        </li>
+
+        <li>
+          <b>Charge exchange</b> – generation and tracking of
+          charge-exchange ions based on the local neutral gas density, the
+          ion beam and the corresponding cross-sections.
+          Locations of origin and electrode impact points can be analysed
+          spatially.
+        </li>
+
+        <li>
+          <b>Erosion and lifetime</b> – computation of material-, energy- and
+          angle-dependent electrode erosion. The progressively changing
+          geometry can be carried over into the subsequent field, particle and
+          neutral gas computations.
+        </li>
+
+        <li>
+          <b>Visualisation and analysis</b> – integrated 3D display,
+          convergence and progress monitoring, and export of simulation and
+          analysis data.
+        </li>
+      </ul>
+    </section>
+
+    <section>
+      <div class="section-heading">
+        <h2>Fields and trajectories</h2>
+
+        <p>
+          All figures come from the same simulation run of a
+          two-grid optics system with a screen grid at +1400 V and an
+          accelerator grid at &minus;180 V.
+        </p>
+      </div>
+
+      <div class="figure-grid figure-grid--wide">
+        <figure class="shot">
+          <img src="/software/iontrace/bilder/potential-xy.jpg"
+               width="1800"
+               height="364"
+               alt="Colour map of the electric potential in the XY plane with superimposed ion trajectories and outlined electrodes.">
+
+          <figcaption>
+            <b>Potential and ion trajectories</b>
+            Shown is the potential distribution between plasma, screen grid
+            and accelerator grid. The superimposed ion trajectories show the
+            focusing of the beam as it passes through the apertures.
+          </figcaption>
+        </figure>
+
+        <figure class="shot">
+          <img src="/software/iontrace/bilder/feldstaerke-xy.jpg"
+               width="1800"
+               height="372"
+               alt="Magnitude of the electric field strength in the XY plane with field lines.">
+
+          <figcaption>
+            <b>Field strength and field lines</b>
+            Shown are the magnitude of the electric field strength and the
+            course of the field lines. They illustrate in which direction
+            positive charge-exchange ions are accelerated and which
+            grid regions they can hit.
+          </figcaption>
+        </figure>
+
+        <figure class="shot">
+          <img src="/software/iontrace/bilder/ladungsdichte-xy.jpg"
+               width="1800"
+               height="365"
+               alt="Colour map of the local net charge density of the ions and electrons considered, in the XY plane.">
+
+          <figcaption>
+            <b>Space-charge density</b>
+            The local net charge density of the ions and
+            electrons considered enters the Poisson equation as a source term. Through it,
+            the particle distribution influences the electric field.
+          </figcaption>
+        </figure>
+
+        <figure class="shot">
+          <img src="/software/iontrace/bilder/debye-aufloesung.jpg"
+               width="1800"
+               height="363"
+               alt="Map of the ratio of mesh spacing to Debye length in the XY plane; only the plasma region in front of the screen grid is coloured.">
+
+          <figcaption>
+            <b>Resolution of the Debye length</b>
+            Shown is the ratio of the mesh spacing to the local
+            Debye length in the plasma region. Values below one indicate that the
+            computational mesh resolves the Debye length.
+          </figcaption>
+        </figure>
+
+        <figure class="shot">
+          <img src="/software/iontrace/bilder/energie-achse.jpg"
+               width="1600"
+               height="896"
+               alt="Ion energy along the beam axis with median and spread bands of the trajectories; below, the number of contributing trajectories per axial segment.">
+
+          <figcaption>
+            <b>Ion energy along the beam axis</b>
+            Median and spread bands of the energy over all trajectories, compared with
+            the ideal energy from the potential difference. The lower part
+            shows how many trajectories contribute to each axial segment; the
+            drop at the screen grid corresponds to the ions intercepted there.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-heading">
+        <h2>Neutral gas and charge exchange</h2>
+
+        <p>
+          Where charge-exchange ions are created depends on the spatial overlap
+          of the ion beam with the neutral gas. The electric field then
+          determines their trajectories and impact energies. Together with
+          the material properties, this yields the spatial distribution of
+          electrode erosion.
+        </p>
+      </div>
+
+      <div class="figure-grid">
+        <figure class="shot">
+          <img src="/software/iontrace/bilder/restgas-karte.jpg"
+               width="1600"
+               height="910"
+               alt="Map of the neutral gas density in the XY section for the region around the screen and accelerator grids, logarithmically colour-coded with iso-density lines.">
+
+          <figcaption>
+            <b>Neutral gas density in section</b>
+            Shown is the region around the two grids. The lines
+            mark decades of density. Downstream of the accelerator grid,
+            the neutral gas density drops by more than an order of magnitude.
+          </figcaption>
+        </figure>
+
+        <figure class="shot">
+          <img src="/software/iontrace/bilder/restgas-profil.jpg"
+               width="1600"
+               height="898"
+               alt="Cross-section-averaged axial profile of the neutral gas density on a logarithmic axis, with the positions of the screen and accelerator grids marked.">
+
+          <figcaption>
+            <b>Axial profile of the neutral gas density</b>
+            The cross-section-averaged neutral gas density along the
+            beam axis, together with the distribution of the ion beam, forms the
+            basis for computing the spatial production rate of
+            charge-exchange ions.
+          </figcaption>
+        </figure>
+
+        <figure class="shot">
+          <img src="/software/iontrace/bilder/ladungsaustausch-rate.jpg"
+               width="1600"
+               height="831"
+               alt="Production rate of charge-exchange ions: top, as a logarithmically colour-coded map in section; bottom, as a cross-section-averaged axial profile.">
+
+          <figcaption>
+            <b>Production rate of charge-exchange ions</b>
+            Top: the spatial distribution in section; bottom: the
+            cross-section-averaged profile along the beam axis. The rate is
+            highest where the focused beam meets dense neutral gas,
+            and falls off downstream of the accelerator grid along with the gas density.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-heading">
+        <h2>Erosion and lifetime</h2>
+
+        <p>
+          The local erosion rate is computed from the spatial impact rate of the ions, their energies and
+          angles of incidence, and the material-dependent sputter yield.
+          By updating the grid geometry over time, its evolution over the operating
+          period can be studied and the lifetime estimated.
+        </p>
+      </div>
+
+      <div class="figure-grid">
+        <figure class="shot">
+          <img src="/software/iontrace/bilder/erosion-zelle.jpg"
+               width="1565"
+               height="1073"
+               alt="Three-dimensional view of the computational cell with colour-coded local erosion on the surface of the accelerator grid.">
+
+          <figcaption>
+            <b>Local erosion</b>
+            Shown is the computed erosion on the surface of the
+            accelerator grid within the simulated cell. In this
+            example, the highest values are on the aperture wall, in the
+            downstream half of the aperture.
+          </figcaption>
+        </figure>
+
+        <figure class="shot">
+          <img src="/software/iontrace/bilder/erosion-periodisch.jpg"
+               width="1400"
+               height="879"
+               alt="Periodic display of the erosion rate with a central hexagonal unit cell and six neighbouring cells.">
+
+          <figcaption>
+            <b>Periodic grid pattern</b>
+            A single unit cell is simulated. For visualisation, its
+            result is copied to the six neighbouring cells of the hexagonal
+            aperture pattern. This shows the periodic repetition of the
+            computed erosion pattern.
+          </figcaption>
+        </figure>
+
+        <figure class="shot">
+          <img src="/software/iontrace/bilder/erosion-profil.jpg"
+               width="1600"
+               height="892"
+               alt="Aperture profile of the accelerator grid after 2500 operating hours with initial contour, current contour, eroded material and the critical location marked.">
+
+          <figcaption>
+            <b>Aperture profile after 2500 hours</b>
+            Initial contour, current contour and eroded material at the
+            accelerator grid, averaged over the two apertures of the
+            computational cell. At the critical location, the aperture radius has
+            widened by 65 µm.
+          </figcaption>
+        </figure>
+
+        <figure class="shot" style="grid-column:1 / -1">
+          <img src="/software/iontrace/bilder/erosion-verlauf.gif"
+               width="1400"
+               height="802"
+               alt="Animation of the progressive widening of the two accelerator grid apertures in 25 steps up to 2500 operating hours.">
+
+          <figcaption>
+            <b>Erosion over time</b>
+            The animation shows the widening of the two apertures of the computational cell
+            in 25 steps of 100 hours each, up to an operating time of
+            2500 hours.
+          </figcaption>
+        </figure>
+
+        <figure class="shot" style="grid-column:1 / -1">
+          <img src="/software/iontrace/bilder/potential-erodiert.jpg"
+               width="1800"
+               height="345"
+               alt="Colour map of the electric potential in the XY plane after 2500 operating hours with ion trajectories and the eroded contour of the accelerator grid outlined.">
+
+          <figcaption>
+            <b>Potential on the eroded geometry</b>
+            Field and ion trajectories after 2500 hours. The computation runs on the
+            updated geometry; the orange line marks the
+            eroded contour of the accelerator grid.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-heading">
+        <h2>Verification and comparison</h2>
+
+        <p>
+          The individual models are checked against analytical reference cases,
+          mesh convergence studies and comparisons with independent
+          simulation programs.
+        </p>
+      </div>
+
+      <ul class="feature-list">
+        <li>
+          <b>Analytical verification</b> – comparison of the electrostatic
+          field solver with the exact solution for a parallel-plate capacitor.
+        </li>
+
+        <li>
+          <b>Mesh convergence</b> – study of the solution on increasingly finer
+          meshes and comparison of the classic staircase representation with the
+          Shortley–Weller sub-cell treatment.
+        </li>
+
+        <li>
+          <b>Comparison with KOBRA</b> – comparison of selected field,
+          beam and current quantities for a common reference case.
+          Remaining differences are assessed taking into account the respective
+          plasma and emission models.
+        </li>
+
+        <li>
+          <b>Testing the erosion computation</b> – defined test cases for the
+          processing of ion impacts, the computation of material removal
+          and the step-by-step update of the geometry.
+        </li>
+
+        <li>
+          <b>Verification of the neutral gas computation</b> – comparison of the computed
+          transmission through a cylindrical aperture with the corresponding
+          Clausing factor in the molecular flow regime.
+        </li>
+      </ul>
+    </section>
+
+    <section id="handbuch">
+      <div class="download">
+        <div>
+          <h2>Manual</h2>
+
+          <p>
+            The user manual describes plasma ion extraction step
+            by step using the supplied example setup: from the geometry
+            via plasma, solver and convergence to residual gas, charge exchange,
+            erosion, lifetime computation and parameter studies. Numerous
+            screenshots show the interface and the analyses; a
+            dedicated chapter covers how to check the reliability of a
+            result. The manual is freely available and
+            can be read in the browser without installation.
+          </p>
+
+          <dl>
+            <dt>Title</dt>
+            <dd>IONTRACE User Manual, Part I: Plasma ion extraction</dd>
+
+            <dt>Status</dt>
+            <dd>First draft for version 2.1.1, 8 October 2026</dd>
+
+            <dt>Language</dt>
+            <dd>English</dd>
+
+            <dt>Length</dt>
+            <dd>76 pages</dd>
+
+            <dt>File</dt>
+            <dd>IONTRACE-Manual-2.1.1.pdf</dd>
+
+            <dt>Size</dt>
+            <dd>5.1 MB</dd>
+          </dl>
+        </div>
+
+        <a class="button button-solid"
+           href="/software/iontrace/download/IONTRACE-Manual-2.1.1.pdf"
+           type="application/pdf">
+          Open manual (PDF)
+        </a>
+      </div>
+    </section>
+
+    <section id="download">
+      <div class="download">
+        <div>
+          <h2>Download</h2>
+
+          <p>
+            IONTRACE is provided as an installer for Windows.
+            It is installed for the current user account only,
+            requires no administrator rights and does not change any
+            system-wide settings.
+          </p>
+
+          <dl>
+            <dt>Version</dt>
+            <dd>2.1.2</dd>
+
+            <dt>Released</dt>
+            <dd>8 October 2026</dd>
+
+            <dt>Operating system</dt>
+            <dd>Windows 10/11, 64-bit</dd>
+
+            <dt>Language</dt>
+            <dd>German and English, switchable</dd>
+
+            <dt>File</dt>
+            <dd>IONTRACE-Setup-2.1.2.exe</dd>
+
+            <dt>Size</dt>
+            <dd>205 MB</dd>
+
+            <dt>SHA-256</dt>
+            <dd class="hash">
+              fb781afba835c32c0f7e683fed87a1e4712fc6fd804ed7a35d6bd2b694a13a48
+            </dd>
+
+            <dt>Manual</dt>
+            <dd><a href="#handbuch">User manual as PDF</a></dd>
+
+            <dt>Development</dt>
+            <dd>Dr. Kristof Holste, Justus Liebig University Giessen</dd>
+          </dl>
+        </div>
+
+        <a class="button button-solid"
+           href="/software/iontrace/download/IONTRACE-Setup-2.1.2.exe"
+           download>
+          Download IONTRACE 2.1.2
+        </a>
+      </div>
+
+      <div class="download" style="margin-top:1rem">
+        <div>
+          <h3>Previous version</h3>
+
+          <p>
+            Version 2.1.0 remains available for download in case something does not
+            work as expected with the new version in an existing working
+            environment. Setups and results from 2.1.0 should still open in 2.1.2;
+            this is not guaranteed, however.
+          </p>
+
+          <dl>
+            <dt>Version</dt>
+            <dd>2.1.0</dd>
+
+            <dt>Released</dt>
+            <dd>4 October 2026</dd>
+
+            <dt>File</dt>
+            <dd>IONTRACE-Setup-2.1.0.exe</dd>
+
+            <dt>Size</dt>
+            <dd>184 MB</dd>
+
+            <dt>SHA-256</dt>
+            <dd class="hash">
+              63334486742fd0e544c3fe19d76caa5552dc911b41e02f2e6e2b5b2d4de186d9
+            </dd>
+          </dl>
+        </div>
+
+        <a class="button button-outline"
+           href="/software/iontrace/download/IONTRACE-Setup-2.1.0.exe"
+           download>
+          Download IONTRACE 2.1.0
+        </a>
+      </div>
+
+      <h3 style="margin-top:1.5rem">What's new in version 2.1.2</h3>
+
+      <p style="margin:0 0 1rem; color:var(--muted)">
+        Version 2.1.2 replaces 2.1.1 and fixes an error in the
+        supplied example setups. All new features from 2.1.1 are
+        included.
+      </p>
+
+      <ul class="feature-list">
+        <li>
+          <b>Charge exchange in the REX-3G examples.</b> The four example setups
+          now explicitly specify xenon as the beam species and as the collision partner
+          for charge exchange. Previously only the ion mass was given in the setup; anyone
+          who enabled charge exchange had it rejected. The message for a missing
+          species now names the fields Ion species and Collision partner, in which the
+          species is to be selected.
+        </li>
+      </ul>
+
+      <h3 style="margin-top:1.5rem">What's new in version 2.1.1</h3>
+
+      <p style="margin:0 0 1rem; color:var(--muted)">
+        Version 2.1.1 completes the English interface, takes the
+        ion temperature into account when launching particles, and brings the
+        display of the eroded wall into line with the computation. For the first time
+        there is a user manual. Thermal spread of the ions and the
+        new wall position for charge-exchange ions are enabled by default;
+        numerical results may therefore differ from 2.1.0. Setups and
+        results from 2.1.0 should still open, without guarantee.
+        As before, the connection to computing clusters is not part of the
+        installation package.
+      </p>
+
+      <ul class="feature-list">
+        <li>
+          <b>User manual.</b> An English-language manual describes
+          plasma ion extraction from geometry to
+          lifetime computation using the supplied example setup, with
+          reference values to reproduce and a chapter on checking the
+          reliability of a result. It is available
+          <a href="#handbuch">on this page as a PDF</a>.
+        </li>
+        <li>
+          <b>English interface completed.</b> The labels
+          were systematically checked for remaining German text and
+          completed, among others in the status lines of the convergence tab, the
+          key-figure cards, the descriptions of the sputter models, the
+          parameter study, and the export and body dialogs. Controls that did
+          not respond in English were fixed along the way: the
+          sweep button of the beam line, the point-cloud selection in the
+          beam profile and the preview button of the setup wizard.
+        </li>
+        <li>
+          <b>Ion temperature in particle launch.</b> The ion temperature spreads
+          the initial velocity of the ions transverse to the beam direction and longitudinally
+          around the Bohm velocity; previously all ions started exactly
+          parallel. The spread can be switched in the plasma dialog; when switched off,
+          the program computes as before.
+        </li>
+        <li>
+          <b>Estimating the fraction of doubly charged xenon ions.</b> A
+          suggestion button next to the input field estimates the fraction from the
+          electron temperature, plasma density and neutral gas density of the
+          discharge: direct double ionisation after Rejoub et al. (2002),
+          stepwise ionisation via Xe<sup>+</sup> with the measured
+          cross-section of Bell, Djurić and Dunn (1993). Only values that are
+          explicitly accepted are entered.
+        </li>
+        <li>
+          <b>Wall position for charge-exchange ions.</b> Whether a charge-exchange ion hits the
+          wall is now checked against the same wall that the field solver
+          uses. Previously, for these ions it was offset by half a cell
+          width; in computational cells with two quarter apertures, one
+          aperture therefore acted too wide and the other too narrow.
+        </li>
+        <li>
+          <b>Eroded wall in display and analysis.</b> The field tabs draw
+          the eroded contour from the fill level of the cells, i.e. the wall
+          actually used in the computation; thin material remnants no longer appear as
+          teeth. For a snapshot of the lifetime run, the 3D view shows
+          its wall and the impacts of the corresponding
+          erosion round. The radius profile of the bore extends over the entire
+          length of the electrode, including the end layers.
+        </li>
+      </ul>
+
+      <h3 style="margin-top:1.5rem">What's new in version 2.1.0</h3>
+
+      <p style="margin:0 0 1rem; color:var(--muted)">
+        Version 2.1.0 extends the beam and charge exchange to mixed
+        charge states and custom cross-section tables, considerably reduces the
+        memory requirements of long lifetime runs and speeds up the
+        analysis tabs. Setups and results from 2.0.1 should
+        still open, without guarantee. As before, the connection to computing clusters
+        is not part of the installation package.
+      </p>
+
+      <ul class="feature-list">
+        <li>
+          <b>Mixed charge states in the beam.</b> The beam can contain singly
+          and doubly charged ions at the same time; the fraction is specified as a
+          particle or current fraction and enters the field computation via space charge and
+          plasma density. Directly impinging ions contribute to erosion
+          with their own energy and particle current for each charge state.
+          Charge exchange for Xe<sup>2+</sup> takes into account double and
+          single exchange after Miller (2002), and the lifetime run
+          includes the mixture.
+        </li>
+        <li>
+          <b>Custom charge-exchange cross-sections.</b> Cross-sections can be loaded as
+          a custom table. The file header names the reaction as well as the
+          reference frame and unit of energy; a help button explains the
+          format. Custom values are used as soon as the setup names their
+          reaction.
+        </li>
+        <li>
+          <b>Erosion at the aperture wall.</b> By default, the angle of incidence now follows
+          the already eroded wall instead of the initial shape, and the aperture wall
+          keeps its direction up to both ends of the plate. For computational cells with
+          several apertures, the eroded volume is reported per aperture.
+        </li>
+        <li>
+          <b>Lower memory requirements.</b> A lifetime run now keeps only one
+          trajectory set in memory, and the charge-exchange computation no longer needs a
+          stored trajectory set. Before the start, the memory requirement is
+          estimated and the user is asked if memory is tight; during the
+          run, the live window shows memory usage.
+        </li>
+        <li>
+          <b>Log of the lifetime run.</b> Each run automatically writes
+          a file to its results folder: setup, operating point and
+          model choices in the header, one line per erosion step and a summary
+          with termination reason, totals and run time. Even an aborted run is
+          thus fully documented.
+        </li>
+        <li>
+          <b>Faster analysis.</b> The energy tab evaluates all trajectories in
+          a single pass, and the field sections redraw only once after a
+          rebuild. The upper limit on displayed trajectories
+          now also applies to the field maps, and switching tabs no longer redraws a
+          finished image.
+        </li>
+        <li>
+          <b>Setups and comparison computations.</b> The operational computation of the
+          residual gas now also handles mirror cells with two quarter channels; the
+          corresponding hex cells are included as setups. For krypton, a
+          comparison of the yield computation with the measurements of Manova et al.
+          (2026) is documented, including the deviations of the model.
+        </li>
+        <li>
+          <b>Operation and export.</b> A loaded setup retains its
+          residual gas map and its lifetime settings. Settings windows
+          open at the size their content requires, the 3D view of the
+          setup tab shows the particle launch surface and appears
+          correctly in the saved image, and the erosion export writes the
+          outline of the entire electrodes including the boundary of the computational domain.
+        </li>
+      </ul>
+
+      <h3 style="margin-top:1.5rem">What's new in version 2.0.1</h3>
+
+      <p style="margin:0 0 1rem; color:var(--muted)">
+        The step to version 2 brings together three developments: the software has
+        become bilingual, the models for ion species and material removal
+        rest on a documented and referenced basis, and the
+        lifetime computation takes into account how erosion itself feeds back on residual gas
+        and field. Setups and results from 1.2.1 should
+        still open, without guarantee. The terms under which the software
+        may be used are shown in the interface at start-up and must be
+        confirmed there. As before, the connection to computing clusters is not part
+        of the installation package.
+      </p>
+
+      <ul class="feature-list">
+        <li>
+          <b>Bilingual operation.</b> The entire interface can be
+          switched between German and English: menus, settings,
+          explanations, messages, tables, the axis and legend texts of all
+          plots, and the wizard for new setups. English is the
+          default. The installer also follows the system language.
+        </li>
+        <li>
+          <b>Reorganised interface.</b> The start area offers the three ways
+          into a computation directly and leads from there to the
+          supplied example setups. The controls of a
+          results tab are arranged in a column next to the image, the most important
+          key figures as cards. Expert values can be hidden behind a switch,
+          and numeric fields take effect only once the input is confirmed.
+        </li>
+        <li>
+          <b>Ion species and charge exchange.</b> An ion species is defined by its
+          composition; mass and charge state follow from it and
+          are two separate quantities. In addition to xenon and krypton, nitrogen is included with
+          its own charge-exchange cross-section, with a source reference.
+          Molecular ions fly as a whole particle and are split into their atoms only at the
+          surface. Every energy value states which
+          energy it refers to.
+        </li>
+        <li>
+          <b>Models for material removal.</b> The yield computation after
+          Yamamura and Tawara is implemented faithfully to the source, NIFS-DATA-23,
+          including Thomas–Fermi stopping, the electronic denominator and the
+          published material parameters. As a second model, the
+          description by Tartz and Neumann (2007) for xenon on carbon is
+          available, plus a mixed option that selects the appropriate model for each material.
+          The yield can be adjusted to your own measurements with a factor;
+          the comparison with published measurements is
+          documented, including where the model deviates.
+        </li>
+        <li>
+          <b>Lifetime and erosion with feedback.</b> The residual gas map is
+          computed on the actual, widened channel shape, and each
+          erosion step starts from the field of the previous one. The
+          neutral gas transparency is recorded over the run time, and a
+          completed run can be extended by further hours without starting
+          from scratch. Control images are produced for every time step; also
+          new are a model-independent impact list per erosion step,
+          which can later be re-evaluated with other assumptions, and a
+          balance of the redeposited material.
+        </li>
+        <li>
+          <b>Shorter computation times.</b> The field solver runs in a separate
+          process, and the program remains responsive during a run. The
+          solver tolerance adapts as convergence progresses, the charge-exchange pass
+          uses all cores, and the residual gas run takes a tenth of the previous
+          time. Parameter studies compute several points simultaneously, and
+          program start-up takes only half as long.
+        </li>
+        <li>
+          <b>Analysis and image output.</b> A measuring cursor reads values in the
+          section and surface images. Every results tab states from
+          which computation step its image originates, and outputs its numbers as a table
+          at the push of a button. A dedicated export window for
+          publications allows freely placed labels and outputs both raster
+          and vector formats; field lines and equipotential lines have been added as
+          display options.
+        </li>
+        <li>
+          <b>Example setups and comparison computations.</b> Included is
+          a freely designed three-grid stack in four variants, with which
+          the software can be tried out without your own geometry data. For
+          validation, setups based on published work have been
+          added, including a hexagonal unit cell for xenon and
+          krypton and a comparison with a 2500-hour endurance test.
+        </li>
+      </ul>
+
+      <h3 style="margin-top:1.5rem">What's new in version 1.2.1</h3>
+
+      <p style="margin:0 0 1rem; color:var(--muted)">
+        The computational core of the three-dimensional simulation has remained
+        unchanged; existing setups and results from 1.1.1 can
+        still be opened. As before, the HPC connection is not part of the
+        installation package.
+      </p>
+
+      <ul class="feature-list">
+        <li>
+          <b>Two-dimensional computation mode.</b> IONTRACE now computes either
+          three-dimensionally or translationally symmetric in two dimensions. The
+          2D mode is not a second piece of software, but a computation mode within
+          the same program: same interface, same open dialog,
+          same tabs. Large grids solve much faster, the computation
+          can be aborted while running, and the computational mesh can be
+          displayed. A 2D model of the 127-degree cylindrical analyser is included as a
+          complete application example.
+        </li>
+        <li>
+          <b>Residual gas from the operating data of the source.</b> The neutral gas state
+          is determined from current, gas flow and efficiency instead of from a
+          density set by hand. The operational computation runs over three
+          pages with a readiness check, a sketch of the real geometry and an
+          accuracy estimate. The map shows the local density from the
+          velocity moments instead of an average.
+        </li>
+        <li>
+          <b>Freely rotatable bodies in the geometry.</b> Bodies can be positioned freely in
+          space and rotated by arbitrary angles; the body shape remains
+          true to scale. New are cylinder segment, half-cylinder and curved
+          electrodes. Composite bodies may be assigned their own potential,
+          and the section plane can be rotated by 90 degrees.
+        </li>
+        <li>
+          <b>More accurate erosion and lifetime computation.</b> The aperture radius
+          is determined from the open area instead of from a threshold; this
+          eliminates a systematic offset of almost three micrometres. In addition to
+          the ring average, the erosion at the deepest point is now shown – the ring average
+          alone considerably dilutes local pitting. The eroded area is displayed
+          between the initial and final contours, and the erosion history
+          can be written as a video.
+        </li>
+        <li>
+          <b>Parameter studies and time-of-flight path.</b> A free voltage without
+          an assigned formula can also be swept as a study variable; individual
+          parameter points can be viewed specifically, and failed
+          variants state a named reason instead of a number. The tabs of the
+          time-of-flight path are once again linked to the time-of-flight result, and the lines of the
+          time-of-flight spectrum are additionally listed in a table.
+        </li>
+        <li>
+          <b>Revised image export.</b> Title, legend and colour scale can be
+          placed in the export image with the mouse. Field images drawn to scale
+          are centred instead of at the right edge, field lines and arrows follow
+          the selected colour palette, and the canvas is no longer
+          inflated.
+        </li>
+        <li>
+          <b>Continuous diagnostics.</b> No program exit goes without a
+          diagnostic entry: each session writes its own folder with a
+          heartbeat and a closing message. An external watchdog detects hanging
+          sessions, but never restarts or terminates anything on its own. A
+          stress test with 472 individual checks was passed.
+        </li>
+      </ul>
+
+      <h3 style="margin-top:1.5rem">What's new in version 1.1.1</h3>
+      <ul class="feature-list">
+        <li>
+          <b>New export dialog for all figures.</b> Every graphic is
+          saved via the same dialog: on the left a preview of what
+          is actually written to the file, on the right the settings.
+          Size and font are specified in centimetres and typographic points
+          and therefore no longer depend on window size,
+          screen resolution or display scaling. The entered
+          dimensions are binding: 16 × 11 cm results in a file measuring 16 × 11 cm.
+        </li>
+        <li>
+          <b>Faulty SVG and EPS files fixed.</b> In SVG, the
+          labels now remain selectable text instead of mere outlines; EPS
+          receives the required end-of-file marker and a verified
+          bounding box. Transparency that EPS cannot represent is
+          either blended with the background or rasterised — instead of
+          silently being drawn opaque. Overlong
+          axis labels are no longer cut off in any format.
+        </li>
+        <li>
+          <b>Export profiles and defaults.</b> Settings are remembered per
+          file format; custom profiles can be created,
+          renamed, imported and exported, and set as the default for a format
+          or a plot type. Profiles for
+          single-column and double-column publications and for
+          presentations are included.
+        </li>
+        <li>
+          <b>Selectable image content.</b> Title, legend, electrode and
+          potential labels and hint texts can be shown or hidden individually for
+          export without changing the display in the
+          program.
+        </li>
+        <li>
+          <b>Revised results area for parameter studies.</b> The
+          space now belongs to the plot: a narrow tool column with
+          the toggles Curves, Display and Analysis, a two-line
+          header with study selection and status, readable curve names and
+          an export menu.
+        </li>
+        <li>
+          <b>Progress monitor for parameter studies.</b> During a
+          run, the characteristic curve builds up live: electrode currents versus the
+          varied parameter, together with a variant table with status,
+          computation time and error messages, and an estimate of the remaining time.
+        </li>
+        <li>
+          Truncated labels in the sidebars fixed; their
+          width now adapts to the content and grows with the
+          font size and the Windows display scaling.
+        </li>
+      </ul>
+
+      <h3 style="margin-top:1.5rem">What's new in version 1.1.0</h3>
+      <ul class="feature-list">
+        <li>
+          Considerably faster field computation thanks to a parallelised
+          AMG solver.
+        </li>
+        <li>
+          Optimised memory management and faster processing of
+          particle trajectories.
+        </li>
+        <li>
+          Improved runtime diagnostics and numerous stability and
+          detail improvements.
+        </li>
+      </ul>
+
+      <p class="notice" style="margin-top:1rem">
+        <b>Use and licence.</b>
+        IONTRACE may be used free of charge by universities and publicly funded
+        research institutions for non-commercial
+        scientific purposes. Any commercial use
+        requires the prior written permission of the author.
+        The licence terms enclosed with the installation package are authoritative.
+      </p>
+
+      <p class="notice notice--info" style="margin-top:.75rem">
+        <b>Installation password required.</b>
+        The installer can be downloaded freely; however, a password is
+        required for installation. You can obtain it on
+        request by email to
+        <a href="mailto:Kristof.Holste@physik.jlug.de?subject=IONTRACE%20-%20Installation%20password">Kristof.Holste@physik.jlug.de</a>.
+        Please briefly state your institution and the intended
+        use of IONTRACE.
+      </p>
+
+      <p class="notice" style="margin-top:.75rem">
+        <b>Note on Windows installation.</b>
+        The installer is currently not digitally signed. Windows
+        may therefore display a warning about an unknown or
+        unrecognised app when it is started. The installation can be continued via
+        “More info” and then “Run anyway”.
+      </p>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <span>&copy; Ref4EP consortium</span>
+      <span>Reference diagnostics for electric space propulsion</span>
+      <a href="/en/impressum.html">Legal notice</a>
+      <a href="/en/datenschutz.html">Privacy policy</a>
+    </div>
+  </footer>
+</body>
+</html>

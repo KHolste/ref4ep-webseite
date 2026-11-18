@@ -1,0 +1,619 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Retarding potential analyser – Tutorials – Ref4EP</title>
+<link rel="alternate" hreflang="de" href="https://www.ref4ep.de/tutorials/gegenfeldanalysator/">
+<link rel="alternate" hreflang="en" href="https://www.ref4ep.de/en/tutorials/gegenfeldanalysator/">
+<style>
+html{color-scheme:light}
+body{margin:0}
+[hidden]{display:none!important}
+:root{
+  --bg:#e9edf1; --panel:#fbfcfd; --ink:#14202b; --muted:#566573; --line:#d2dae1; --stage:#ffffff; --grid:#e8edf1; --band:#dde4ea;
+  --accent:#0b6767; --accent-soft:#d9eeec; --on-accent:#ffffff;
+  --c-i:#1f5fc2; --c-e:#c23a2b; --c-rho:#7b3aa6; --c-E:#2c8540; --c-th:#14202b; --c-vac:#9a7a2c; --c-ghost:#9aa6b1;
+  --f-ui:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-head:"IBM Plex Sans Condensed","IBM Plex Sans",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+  --f-math:"Source Serif 4",Cambria,"Times New Roman",serif;
+  --r:7px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0b1115; --panel:#121a20; --ink:#e1e8ed; --muted:#8d9eab; --line:#25323c; --stage:#0a0f13; --grid:#18222b; --band:#1c2933;
+    --accent:#47b6ae; --accent-soft:#15302e; --on-accent:#06110f;
+    --c-i:#62a1ff; --c-e:#ff715f; --c-rho:#c48cf0; --c-E:#5cc46a; --c-th:#e1e8ed; --c-vac:#d9b45a; --c-ghost:#5b6a76; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0b1115; --panel:#121a20; --ink:#e1e8ed; --muted:#8d9eab; --line:#25323c; --stage:#0a0f13; --grid:#18222b; --band:#1c2933;
+  --accent:#47b6ae; --accent-soft:#15302e; --on-accent:#06110f;
+  --c-i:#62a1ff; --c-e:#ff715f; --c-rho:#c48cf0; --c-E:#5cc46a; --c-th:#e1e8ed; --c-vac:#d9b45a; --c-ghost:#5b6a76; color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{background:var(--bg)}
+body{color:var(--ink);font-family:var(--f-ui);font-size:14px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 28px}
+.wrap{max-width:1720px;margin:0 auto}
+.r4bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding-top:10px;font-size:12.5px;color:var(--muted)}
+.r4bar a{color:var(--accent);text-decoration:none}.r4bar a:hover{text-decoration:underline}
+header.top{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 18px;padding-block:16px 12px}
+header.top h1{font-family:var(--f-head);font-weight:600;font-size:26px;letter-spacing:.01em;margin:0}
+header.top .sub{color:var(--muted);margin:0}
+header.top .units{margin-left:auto;font-size:12px;color:var(--muted);font-family:var(--f-mono)}
+.app{display:grid;gap:14px;grid-template-columns:272px minmax(0,1fr) 340px;grid-template-areas:"params stage info";align-items:start}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r)}
+.params{grid-area:params;padding:12px 14px 14px}
+.stage{grid-area:stage;min-width:0;display:flex;flex-direction:column;gap:10px}
+.info{grid-area:info;padding:16px 18px;min-width:0}
+h2.lab{font-family:var(--f-head);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);margin:0 0 8px}
+/* Regler */
+.ctl{display:flex;flex-direction:column;gap:2px;margin-bottom:11px}
+.ctl .row{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.ctl label{font-weight:500}
+.ctl label i,.m i{font-family:var(--f-math);font-style:italic;font-size:1.08em}
+.ctl output{white-space:nowrap;font-family:var(--f-mono);font-size:12.5px;font-variant-numeric:tabular-nums;color:var(--accent);min-width:44px;text-align:center}
+.ctl .hint{font-size:11.5px;color:var(--muted);line-height:1.35}
+input[type=range]{width:100%;accent-color:var(--accent);margin:2px 0}
+input[type=range]:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+.ctl .val{display:flex;align-items:center;gap:4px}
+.stp{all:unset;box-sizing:border-box;width:22px;height:22px;display:grid;place-items:center;border:1px solid var(--line);border-radius:5px;cursor:pointer;font-family:var(--f-mono);font-size:14px;line-height:1;color:var(--ink);user-select:none;touch-action:manipulation}
+.stp:hover{border-color:var(--accent);color:var(--accent)}
+.stp:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.ctl-tip{font-size:11.5px;color:var(--muted);margin:2px 0 10px;line-height:1.4}
+.ctl-tip kbd{font-family:var(--f-mono);font-size:11px;border:1px solid var(--line);border-bottom-width:2px;border-radius:3px;padding:0 4px;background:var(--panel)}
+.sep{border:0;border-top:1px solid var(--line);margin:14px 0 12px}
+.btn{font:inherit;font-weight:500;font-size:13px;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:6px;padding:5px 10px;cursor:pointer}
+.btn:hover{border-color:var(--accent)}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+/* Kennzahlen links */
+dl.kz{display:grid;grid-template-columns:1fr auto;gap:3px 10px;margin:0;font-size:13px}
+dl.kz dt{color:var(--muted)}
+dl.kz dd{margin:0;font-family:var(--f-mono);font-size:12.5px;font-variant-numeric:tabular-nums;text-align:right}
+/* Bühne */
+.toolbar{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
+.toolbar label.chk{display:flex;gap:5px;align-items:center;font-size:13px;cursor:pointer;user-select:none}
+.toolbar label.chk input{accent-color:var(--accent)}
+.toolbar select{font:inherit;font-size:13px;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:4px 6px}
+.plotbox{border:1px solid var(--line);border-radius:var(--r);background:var(--stage);padding:10px 10px 8px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.status{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:baseline}
+.status .tm{font-family:var(--f-mono);font-size:13px;font-variant-numeric:tabular-nums;color:var(--ink);white-space:nowrap}
+.status .ph{font-size:13px;color:var(--muted)}
+.status .ph b{color:var(--ink);font-weight:600}
+.strip{position:relative;height:46px}
+.strip canvas,.plots canvas,.chartwrap canvas{position:absolute;inset:0;width:100%;height:100%}
+.plots{position:relative;height:clamp(420px,62vh,720px)}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--muted)}
+.legend span{display:flex;align-items:center;gap:5px}
+.legend svg{flex:none}
+.transport{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+.transport .tempo{display:flex;align-items:center;gap:8px;flex:1;min-width:220px}
+.transport .tempo input{flex:1}
+.transport output{font-family:var(--f-mono);font-size:12.5px;min-width:112px;color:var(--muted)}
+.below{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:10px}
+.chartbox,.numbox{padding:10px 12px;min-width:0}
+.chartwrap{position:relative;height:210px}
+.chartnote{font-size:11.5px;color:var(--muted);margin-top:4px}
+.numbox .tw{overflow-x:auto}
+table.num{border-collapse:collapse;width:100%;font-size:12.5px}
+table.num th,table.num td{padding:4px 6px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+table.num th:first-child,table.num td:first-child{text-align:left;white-space:normal}
+table.num thead th{font-weight:600;font-size:11.5px;color:var(--muted);vertical-align:bottom}
+table.num td{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+table.num td:first-child{font-family:var(--f-ui)}
+table.num td.sim{font-weight:500}
+table.num td.th{color:var(--muted)}
+/* Info */
+.info h3{font-family:var(--f-head);font-weight:600;font-size:22px;line-height:1.2;margin:0 0 10px;text-wrap:balance}
+.info p{margin:0 0 10px;max-width:65ch}
+.info b{font-weight:600}
+.formula{font-family:var(--f-math);font-size:17px;line-height:1.55;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:10px 2px;margin:4px 0 12px;display:flex;flex-direction:column;gap:8px;overflow-x:auto}
+.formula i{font-style:italic}
+.formula small{display:block;font-family:var(--f-ui);font-size:12px;color:var(--muted)}
+.frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;font-size:.92em;line-height:1.15;margin:0 2px}
+.frac>span:first-child{border-bottom:1px solid currentColor;padding:0 3px}
+.frac>span:last-child{padding:0 3px}
+.sqrt{display:inline-flex;align-items:center}
+.sqrt>span{border-top:1px solid currentColor;padding-top:2px;margin-left:1px}
+.info h4{font-family:var(--f-head);font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:16px 0 6px}
+.tasks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;counter-reset:t}
+.tasks li{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:start;padding:8px 0;border-top:1px solid var(--line)}
+.tasks li:first-child{border-top:0}
+.tasks li p{margin:0}
+.tasks .btn{font-size:12px;padding:3px 8px;white-space:nowrap}
+.m{font-family:var(--f-math)}
+.foot{font-size:12px;color:var(--muted);margin-top:14px;max-width:110ch}
+@media (max-width:1280px){
+  .app{grid-template-columns:272px minmax(0,1fr);grid-template-areas:"params stage" "info info"}
+}
+@media (max-width:860px){
+  .app{grid-template-columns:minmax(0,1fr);grid-template-areas:"stage" "params" "info"}
+  .below{grid-template-columns:minmax(0,1fr)}
+  .plots{height:clamp(420px,120vw,620px)}
+  header.top .units{margin-left:0}
+}
+.cross{position:relative;height:clamp(250px,32vh,320px)}
+.pot{position:relative;height:clamp(170px,22vh,220px)}
+.cross canvas,.pot canvas{position:absolute;inset:0;width:100%;height:100%}
+.chartwrap.tall{height:clamp(220px,30vh,300px)}
+.sweep{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+.sweep .tempo{display:flex;align-items:center;gap:8px;flex:1;min-width:220px}
+.sweep .tempo input{flex:1}
+.sweep output{font-family:var(--f-mono);font-size:12.5px;min-width:86px;color:var(--accent)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;align-self:flex-start}
+.seg button{font:inherit;font-size:13px;border:0;background:var(--panel);color:var(--ink);padding:4px 10px;cursor:pointer}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent)}
+.below{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+dl.grids{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;margin:0;font-size:13px}
+dl.grids dt{font-family:var(--f-mono);font-size:12.5px;color:var(--muted)}
+dl.grids dd{margin:0}
+.r4bar .lang{margin-left:auto}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav class="r4bar" aria-label="Ref4EP"><a href="/en/">Ref4EP</a><span aria-hidden="true">/</span><a href="/en/tutorials/">Tutorials</a><span aria-hidden="true">/</span><span>Retarding potential analyser</span><a class="lang" href="/tutorials/gegenfeldanalysator/" hreflang="de" lang="de" title="Deutsch">DE</a></nav>
+<header class="top">
+  <h1>Retarding potential analyser</h1>
+  <p class="sub">Energy distribution of the beam ions of an ion thruster from a current–voltage characteristic</p>
+  <span class="units">Four-grid RPA · xenon, singly charged · approximate model</span>
+</header>
+
+<div class="app">
+  <section class="panel params" aria-label="Parameters">
+    <h2 class="lab">Ion beam</h2>
+    <div id="ctl-strahl"></div>
+    <hr class="sep">
+    <h2 class="lab">Instrument</h2>
+    <div class="ctl">
+      <div class="row"><label>Grid G0</label></div>
+      <span class="seg" id="g0seg" role="group" aria-label="Grid G0">
+        <button type="button" data-v="ground" aria-pressed="false">grounded</button>
+        <button type="button" data-v="float" aria-pressed="true">floating</button>
+      </span>
+      <div class="hint">Often floating for a neutralised beam</div>
+    </div>
+    <div id="ctl-geraet"></div>
+    <label class="chk" style="display:flex;gap:6px;align-items:center;margin:2px 0 4px;cursor:pointer"><input type="checkbox" id="see" checked style="accent-color:var(--accent)"> Secondary electrons at the collector</label>
+    <label class="chk" style="display:flex;gap:6px;align-items:center;margin:2px 0 4px;cursor:pointer"><input type="checkbox" id="lens" checked style="accent-color:var(--accent)"> Lens effect of the apertures</label>
+    <div class="ctl">
+      <span class="seg" id="alseg" role="group" aria-label="Alignment of the grid holes">
+        <button type="button" data-v="off" aria-pressed="true">Holes offset</button>
+        <button type="button" data-v="al" aria-pressed="false">aligned</button>
+      </span>
+      <div class="hint">Computed as thin lenses; only qualitative near the cut-off</div>
+    </div>
+    <hr class="sep">
+    <h2 class="lab">Analysis</h2>
+    <div id="ctl-ausw"></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn" type="button" id="neu">New measurement</button>
+      <button class="btn" type="button" id="defaults">Defaults</button>
+    </div>
+    <hr class="sep">
+    <h2 class="lab">At the current retarding voltage</h2>
+    <dl class="kz" id="kz"></dl>
+  </section>
+
+  <main class="stage">
+    <div class="plotbox">
+      <div class="status"><span class="tm" id="tm"></span><span class="ph" id="ph" aria-live="polite"></span></div>
+      <div class="cross"><canvas id="cross" aria-label="Cross-section of the retarding potential analyser with ions and electrons"></canvas></div>
+      <div class="pot"><canvas id="pot" aria-label="Potential along the axis, through the aperture centre and at the grid bar"></canvas></div>
+      <div class="legend" id="legend1"></div>
+      <div class="sweep">
+        <button class="btn primary" type="button" id="play">Start sweep</button>
+        <div class="tempo"><label for="ug">Retarding voltage <i class="m">U</i><sub>G</sub></label><input type="range" id="ug" min="0" max="1300" step="1"><output id="ugOut"></output></div>
+      </div>
+    </div>
+    <div class="toolbar">
+      <span>View</span>
+      <span class="seg" id="viewseg" role="group" aria-label="View">
+        <button type="button" data-v="all" aria-pressed="false">Full range</button>
+        <button type="button" data-v="beam" aria-pressed="true">Main beam</button>
+        <button type="button" data-v="slow" aria-pressed="false">Slow ions</button>
+      </span>
+    </div>
+    <div class="below">
+      <div class="panel chartbox">
+        <h2 class="lab">Collector current <i class="m">I</i>(<i class="m">U</i><sub>G</sub>)</h2>
+        <div class="chartwrap tall"><canvas id="cI" aria-label="Collector current versus retarding voltage"></canvas></div>
+        <div class="chartnote">Dots: measurement · line: ideal instrument</div>
+      </div>
+      <div class="panel chartbox">
+        <h2 class="lab">Energy distribution −d<i class="m">I</i>/d<i class="m">U</i><sub>G</sub></h2>
+        <div class="chartwrap tall"><canvas id="cF" aria-label="Derived energy distribution"></canvas></div>
+        <div class="chartnote">Line: derived from the measurement · dotted: distribution in the beam</div>
+      </div>
+    </div>
+    <div class="panel numbox">
+      <h2 class="lab">Analysis and beam</h2>
+      <div class="tw"><table class="num" id="numtab"></table></div>
+    </div>
+  </main>
+
+  <aside class="panel info" id="info">
+    <h3>Retarding potential analyser (RPA)</h3>
+    <p>Grid G2 only lets through ions whose energy per charge exceeds its voltage. The derivative of the current characteristic is the energy distribution.</p>
+    <p>In the grid apertures the retarding potential is lower than on the grid itself. The RPA therefore measures energies that are too high, and electrons can slip through. Each aperture also acts as a lens and deflects ions sideways. Just before cut-off, the retarding field steers slow ions from the bars into the holes: the current rises once more.</p>
+    <div class="formula">
+      <div><i>I</i>(<i>U</i><sub>G</sub>) = <i>q A T</i> ∫<sub><i>U</i><sub>G</sub></sub><sup>∞</sup> <i>f</i>(<i>U</i>) d<i>U</i> − <i>I</i><sub>e</sub> <small><i>A</i> area, <i>T</i> transparency, <i>U</i> = <i>E</i>/<i>q</i></small></div>
+      <div><i>f</i>(<i>U</i><sub>G</sub>) ∝ − <span class="frac"><span>d<i>I</i></span><span>d<i>U</i><sub>G</sub></span></span></div>
+      <div>Δ<i>Φ</i><sub>centre</sub> ≈ <span class="frac"><span><i>a</i></span><span>π</span></span> (<i>E</i><sub>left</sub> − <i>E</i><sub>right</sub>) e<sup>−1.2 <i>t</i>/<i>a</i></sup> <small><i>a</i> aperture radius, <i>t</i> grid thickness, <i>E</i> field on either side of the grid</small></div>
+      <div>Δ<i>r</i>′ ≈ <span class="frac"><span><i>r</i> (<i>Φ</i>′<sub>right</sub> − <i>Φ</i>′<sub>left</sub>)</span><span>4 <i>K</i></span></span> <small>Davisson–Calbick lens, <i>K</i> kinetic energy per charge</small></div>
+      <div><i>I</i><sub>e</sub> = <i>I</i><sub>e0</sub> e<sup>−(<i>U</i><sub>P</sub> − <i>Φ</i><sub>min</sub>)/<i>T</i><sub>e</sub></sup> <small><i>Φ</i><sub>min</sub> lowest potential on the way to the collector</small></div>
+    </div>
+    <dl class="grids">
+      <dt>G0</dt><dd>grounded or floating, screens off the plasma</dd>
+      <dt>G1</dt><dd><i class="m">U</i><sub>1</sub>, repels the beam electrons</dd>
+      <dt>G2</dt><dd><i class="m">U</i><sub>G</sub>, retarding field for the ions</dd>
+      <dt>G3</dt><dd><i class="m">U</i><sub>3</sub>, keeps electrons away from the collector and secondary electrons on it</dd>
+    </dl>
+  </aside>
+</div>
+</div>
+
+<script>
+'use strict';
+const $=s=>document.querySelector(s);
+const NF=d=>new Intl.NumberFormat('en-GB',{useGrouping:false,minimumFractionDigits:d,maximumFractionDigits:d});
+function num(x,d=1){if(x===null||!isFinite(x))return '—';const t=NF(d).format(x);return /^-0([,.]0*)?$/.test(t)?t.slice(1):t.replace('-','−');}
+
+/* ----- Konstanten und Geometrie (z in Einheiten des Gitterabstands) ----- */
+const QE=1.602177e-19, ME=9.10938e-31, MXE=131.293*1.660539e-27;
+const I0=10, NS=12, NU=24, SQ2=Math.SQRT2, SQ2PI=Math.sqrt(2*Math.PI);
+const ZMIN=-1.5, ZSH=-0.25, ZG=[0,1,2,3], ZC=4, ZMAX=4.45, WALL=-0.12;
+
+/* ----- Parameter ----- */
+const PDEF={
+  ub:{grp:'strahl',lab:'Beam voltage <i>U</i><sub>B</sub>',min:300,max:2000,step:10,fmt:p=>NF(0).format(p)+' V'},
+  dud:{grp:'strahl',lab:'Plasma potential above <i>U</i><sub>B</sub>',min:0,max:60,step:1,fmt:p=>NF(0).format(p)+' V',hint:'Discharge plasma sits above the screen grid'},
+  sig:{grp:'strahl',lab:'Energy spread <i>σ</i>',min:1,max:40,step:0.5,fmt:p=>NF(1).format(p)+' V'},
+  cex:{grp:'strahl',lab:'Fraction of slow ions',min:0,max:40,step:1,fmt:p=>NF(0).format(p)+' %',hint:'Charge exchange with the residual gas'},
+  up:{grp:'strahl',lab:'Plasma potential <i>U</i><sub>P</sub> at the probe',min:2,max:40,step:1,fmt:p=>NF(0).format(p)+' V'},
+  te:{grp:'strahl',lab:'Electron temperature <i>T</i><sub>e</sub>',min:0.5,max:10,step:0.5,fmt:p=>NF(1).format(p)+' eV',hint:'Neutralised beam: as many electrons as ions'},
+  u1:{grp:'geraet',lab:'Voltage <i>U</i><sub>1</sub> on G1',min:-80,max:0,step:1,fmt:p=>num(p,0)+' V'},
+  u3:{grp:'geraet',lab:'Voltage <i>U</i><sub>3</sub> on G3',min:-40,max:0,step:1,fmt:p=>num(p,0)+' V'},
+  d:{grp:'geraet',lab:'Aperture diameter <i>d</i>',min:0.05,max:2,step:0.05,fmt:p=>NF(2).format(p)+' mm'},
+  t:{grp:'geraet',lab:'Grid thickness <i>t</i>',min:0.02,max:1,step:0.02,fmt:p=>NF(2).format(p)+' mm'},
+  g:{grp:'geraet',lab:'Grid spacing <i>g</i>',min:0.5,max:5,step:0.1,fmt:p=>NF(1).format(p)+' mm'},
+  gam:{grp:'geraet',lab:'Secondary electron yield at 1 keV',min:0.02,max:0.3,step:0.01,fmt:p=>NF(2).format(p),hint:'Electrons per ion striking the collector'},
+  alpha:{grp:'geraet',lab:'Acceptance angle <i>α</i>',min:0,max:25,step:0.5,fmt:p=>NF(1).format(p)+'°',hint:'Oblique ions are retarded only by their normal energy'},
+  step:{grp:'geraet',lab:'Step size Δ<i>U</i><sub>G</sub>',min:0.5,max:20,step:0.5,fmt:p=>NF(1).format(p)+' V'},
+  noise:{grp:'geraet',lab:'Noise',min:0,max:5,step:0.1,fmt:p=>NF(1).format(p)+' %',hint:'relative to the ion current'},
+  smooth:{grp:'ausw',lab:'Smoothing ±<i>m</i> points',min:1,max:25,step:1,fmt:p=>'±'+p}
+};
+const DEF={ub:1200,dud:25,sig:6,cex:10,up:15,te:3,u1:-30,u3:-15,d:0.2,t:0.1,g:2,alpha:2,step:1,noise:0.5,smooth:3,g0:'float',lens:true,al:'off',see:true,gam:0.05};
+let P=Object.assign({},DEF), seed=7, view='beam', ug=600, playing=false;
+
+function buildControls(){
+  for(const k in PDEF){const d=PDEF[k];const w=document.createElement('div');w.className='ctl';
+    w.innerHTML=`<div class="row"><label for="p-${k}">${d.lab}</label><span class="val"><button type="button" class="stp" data-d="-1" aria-label="decrease">−</button><output id="o-${k}"></output><button type="button" class="stp" data-d="1" aria-label="increase">+</button></span></div>
+      <input type="range" id="p-${k}" min="${d.min}" max="${d.max}" step="${d.step}">${d.hint?`<div class="hint">${d.hint}</div>`:''}`;
+    $('#ctl-'+d.grp).appendChild(w);const inp=w.querySelector('input');
+    inp.addEventListener('input',()=>{P[k]=parseFloat(inp.value);$('#o-'+k).textContent=d.fmt(P[k]);update();});
+    w.querySelectorAll('.stp').forEach(b=>{let t1=null,t2=null;
+      const once=()=>{const v=inp.value;+b.dataset.d>0?inp.stepUp():inp.stepDown();if(inp.value!==v)inp.dispatchEvent(new Event('input'));};
+      const stop=()=>{clearTimeout(t1);clearInterval(t2);t1=t2=null;};
+      b.addEventListener('pointerdown',e=>{e.preventDefault();once();t1=setTimeout(()=>{t2=setInterval(once,90);},380);});
+      ['pointerup','pointerleave','pointercancel'].forEach(ev=>b.addEventListener(ev,stop));
+      b.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();once();}});});
+  }
+  syncControls();}
+function syncControls(){for(const k in PDEF){const i=$('#p-'+k);i.value=P[k];P[k]=parseFloat(i.value);$('#o-'+k).textContent=PDEF[k].fmt(P[k]);}
+  document.querySelectorAll('#g0seg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===P.g0?'true':'false'));
+  $('#lens').checked=P.lens;$('#see').checked=P.see;
+  document.querySelectorAll('#alseg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===P.al?'true':'false'));}
+
+/* ----- Modell ----- */
+function erfc(x){const z=Math.abs(x),t=1/(1+0.5*z);
+  const r=t*Math.exp(-z*z-1.26551223+t*(1.00002368+t*(0.37409196+t*(0.09678418+t*(-0.18628806+t*(0.27886807+t*(-1.13520398+t*(1.48851587+t*(-0.82215223+t*0.17087277)))))))));
+  return x>=0?r:2-r;}
+function comps(){const c=P.cex/100;return [{w:1-c,mu:P.ub+P.dud,sig:P.sig},{w:c,mu:P.up+2,sig:2}];}
+// Geometrie in mm; Dicke höchstens 0,4 g, Radius höchstens g
+function geo(){const g=P.g,a=Math.min(P.d/2,g),t=Math.min(P.t,0.4*g);return {g,a,t,att:Math.exp(-1.2*t/a)};}
+// mittlere Elektronengeschwindigkeit zur Wand (v̄/4) über Ionengeschwindigkeit
+function vRatio(){const Ek=Math.max(1,P.ub+P.dud-P.up);return Math.sqrt(QE*P.te/(2*Math.PI*ME))/Math.sqrt(2*QE*Ek/MXE);}
+function U0(){return P.g0==='float'?P.up-P.te*Math.log(Math.max(1,vRatio())):0;}
+// Potential in der Aperturmitte von G1..G3: U_k + d_k (Durchgriff der Nachbarfelder)
+function sags(UG){const G=geo(),U=[U0(),P.u1,UG,P.u3,0],k=G.a/Math.PI*G.att,d=[0,0,0,0,0];
+  for(let i=1;i<=3;i++){const sl=(U[i]-U[i-1])/G.g,sr=(U[i+1]-U[i])/G.g;
+    const lo=Math.min(U[i-1],U[i+1],U[i]),hi=Math.max(U[i-1],U[i+1],U[i]);
+    d[i]=Math.min(hi,Math.max(lo,U[i]+k*(sr-sl)))-U[i];}
+  return {U,d};}
+// Ionenstrom. Ort y in der Öffnung gleichverteilt; Potential in G2 ∝ √(1−y²/a²).
+// Linsen (Davisson-Calbick, dünne Linse): Δr' = y·(Φ'rechts − Φ'links)/(4K).
+// G1 lenkt nach außen: anderer Durchtrittsort in G2, Querenergie K·Δr'² fehlt gegen das Gegenfeld.
+// G2 lenkt knapp durchkommende Ionen stark ab: sie können den Steg von G3 treffen.
+function hoff(y,p){return y-Math.round(y/p)*p;}
+function lensD(UG,U){const g=geo().g;return [0,((UG-U[1])-(U[1]-U[0]))/g,((U[3]-UG)-(UG-U[1]))/g,0];}
+function Iion(UG,C){const S=sags(UG),G=geo(),U=S.U,d=S.d,a=G.a,g=G.g,p=3*a,ca=Math.cos(P.alpha*Math.PI/180);
+  const D=lensD(UG,U),Kmin=Math.abs(D[2])*a,nu=P.alpha>0?8:1,al=P.al==='al';
+  const F=Math.max(0,(UG-U[1])/g)*a, fh=a/(p/2), NW=6, PhiL=UG+d[2]*0.6, pe=P.see?Pesc(UG):0;   // Landeort nach dem Einfangen: 0,8 a
+  let s=0;
+  for(const c of C){if(c.w<=0)continue;let acc=0;
+    for(let i=0;i<nu;i++){const u=nu>1?ca+(1-ca)*(i+0.5)/nu:1,u2=u*u,En=c.mu*u2;
+      // Ionen, die geradeaus auf ein Loch von G2 zulaufen
+      for(let j=0;j<NS;j++){const y=a*(j+0.5)/NS,ylo=a*j/NS,yhi=a*(j+1)/NS;
+        let ys=y,Kp=0,wt=1,yw=0;
+        if(P.lens){const K1=Math.max(5,En-(U[1]+d[1]*Math.sqrt(1-(y/a)**2))),K2=Math.max(0,En-Math.max(0,UG+d[2]));
+          const kap=2*g*D[1]/(4*K1)/(1+Math.sqrt(K2/K1));Kp=K1*(y*D[1]/(4*K1))**2;
+          if(al){const l=ylo*(1+kap),h=yhi*(1+kap);                // Streifen der Öffnung nach der Ablenkung durch G1
+            wt=l>=a?0:Math.min(1,(a-l)/(h-l));ys=wt>0?Math.min(y*(1+kap),(l+Math.min(h,a))/2):a;yw=(Math.max(l,a)+h)/2;}}
+        if(wt>0){const Phi2=UG+d[2]*Math.sqrt(Math.max(0,1-(ys/a)**2)),Vth=Math.max(0,Phi2)+Kp;
+          let part=0.5*erfc((Vth/u2-c.mu)/(c.sig*SQ2));
+          if(P.lens&&al&&part>1e-7)part-=lensLoss(c,u2,ys,ys,Phi2,Kp,D[2],Kmin,U[3],g,a,p);
+          acc+=wt*Math.max(0,part)*(al?1:fh)/NS;}
+        if(P.lens&&al&&wt<1)acc+=(1-wt)*capture(c,u2,yw,Kp,UG,PhiL,F,a,p)/NS;}
+      // versetzte Löcher: Ionen, die auf einen Steg von G2 zulaufen
+      if(!al&&P.lens)acc+=(1-fh)*captureAll(c,u2,UG,PhiL,F);}
+    s+=c.w*acc/nu/(al?1:fh)*(1+(P.see?gamma(c.mu)*pe:0));}   // normiert: geradeaus fliegende schnelle Ionen ergeben I0
+  return I0*s;}
+// Bündelung vor G2: vor dem Steg ist das Potential höher als vor dem Loch. Das seitliche Feld lenkt ein
+// langsames Ion um δ = (p/2 − y)·F/(8K) zum Loch (null über der Stegmitte); F = Φ'links·a.
+// Eingefangen, wenn δ ≥ y − a, also K ≤ (p/2 − y)·F/(8(y − a)).
+function capture(c,u2,y,Kp,UG,PhiL,F,a,p){if(F<=0||y<=a||y>=p/2)return 0;const Kc=(p/2-y)*F/(8*(y-a));
+  const lo=(Math.max(0,PhiL)+Kp)/u2,hi=(UG+Kp+Kc)/u2;if(hi<=lo)return 0;
+  return 0.5*(erfc((lo-c.mu)/(c.sig*SQ2))-erfc((hi-c.mu)/(c.sig*SQ2)));}
+// über alle Stegorte gemittelt: eingefangener Anteil F/(F + 8K)
+function captureAll(c,u2,UG,PhiL,F){if(F<=0)return 0;
+  const lo=Math.max(Math.max(0,PhiL)/u2,c.mu-6*c.sig),hi=c.mu+6*c.sig;if(hi<=lo)return 0;
+  const N=48,h=(hi-lo)/N;let L=0;
+  for(let i=0;i<N;i++){const E=lo+(i+0.5)*h,K=Math.max(0,E*u2-UG);L+=Math.exp(-0.5*((E-c.mu)/c.sig)**2)/(c.sig*SQ2PI)*F/(F+8*K)*h;}
+  return L;}
+// Anteil, der hinter G2 so stark abgelenkt wird, dass er den Steg von G3 trifft
+function lensLoss(c,u2,ys,y2,Phi2,Kp,D2,Kmin,U3,g,a,p){
+  const dy=K=>{const Ke=Math.max(K,Kmin),K3=Math.max(Ke,K+Phi2-U3);return 2*g*(ys*D2/(4*Ke))/(1+Math.sqrt(K3/Ke));};
+  const lim=a-Math.abs(ys);
+  const Klo=Math.max(0,-Phi2,(c.mu-6*c.sig)*u2-Phi2-Kp),Khi0=(c.mu+6*c.sig)*u2-Phi2-Kp;
+  if(Khi0<=Klo||Math.abs(dy(Klo))<=lim)return 0;
+  let lo=Klo,hi=Klo+1e5;for(let k=0;k<50;k++){const m=(lo+hi)/2;if(Math.abs(dy(m))>lim)lo=m;else hi=m;}
+  const Khi=Math.min(hi,Khi0);if(Khi<=Klo)return 0;
+  const N=40,h=(Khi-Klo)/N;let L=0;
+  for(let i=0;i<N;i++){const K=Klo+(i+0.5)*h;if(Math.abs(hoff(y2+dy(K),p))>=a){const E=(Phi2+Kp+K)/u2;L+=Math.exp(-0.5*((E-c.mu)/c.sig)**2)/(c.sig*SQ2PI)/u2*h;}}
+  return L;}
+// Elektronenstrom zum Kollektor: Boltzmann-Faktor über das tiefste Potential auf dem Weg
+function Iel(UG){const S=sags(UG),Ie0=I0*vRatio();let m=0;
+  for(let j=0;j<NS;j++){const f=Math.sqrt(1-(j+0.5)/NS);
+    const pm=Math.min(S.U[0],S.U[1]+S.d[1]*f,S.U[3]+S.d[3]*f,0);m+=Math.exp(-Math.max(0,P.up-pm)/P.te);}
+  return Ie0*m/NS;}
+// Sekundärelektronen: Ausbeute γ(E) = Potentialemission + kinetischer Anteil ab 300 eV;
+// sie entkommen, wenn ihre Energie (Verteilung mit 2 eV) die Barriere −Φ3 in der Öffnung von G3 übersteigt
+const T_SE=2, GAM_P=0.015;
+function gamma(E){return GAM_P+Math.max(0,P.gam-GAM_P)*Math.max(0,E-300)/700;}
+function Pesc(UG){const S=sags(UG);let m=0;
+  for(let j=0;j<NS;j++){const f=Math.sqrt(1-(j+0.5)/NS);m+=Math.exp(-Math.max(0,-(S.U[3]+S.d[3]*f))/T_SE);}
+  return m/NS;}
+function Imeas(V,C){return Iion(V,C)-Iel(V);}
+function Iideal(V,C){let s=0;for(const c of C)s+=c.w*0.5*erfc((V-c.mu)/(c.sig*SQ2));return I0*s;}
+function Fideal(V,C){let s=0;for(const c of C)if(c.w>0)s+=c.w*Math.exp(-0.5*((V-c.mu)/c.sig)**2)/(c.sig*SQ2PI);return I0*s;}
+
+function rng(s){return function(){s|=0;s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+let M=null;
+function measure(){
+  const C=comps(), mu=C[0].mu, h=P.step, shift=-sags(mu).d[2];
+  const vmax=Math.ceil((mu+Math.max(60,8*P.sig)+shift)/h)*h;
+  const n=Math.round(vmax/h)+1, V=new Float64Array(n), I=new Float64Array(n);
+  const r=rng(seed);
+  for(let k=0;k<n;k++){V[k]=k*h;
+    const g=Math.sqrt(-2*Math.log(r()+1e-12))*Math.cos(2*Math.PI*r());
+    I[k]=Imeas(V[k],C)+g*P.noise/100*I0;}
+  // Ableitung: Steigung einer Ausgleichsgeraden über ±m Punkte
+  const m=P.smooth, F=new Float64Array(n);
+  for(let k=0;k<n;k++){const a=Math.max(0,k-m),b=Math.min(n-1,k+m);let sx=0,sy=0,c=0;
+    for(let j=a;j<=b;j++){sx+=V[j];sy+=I[j];c++;}const xm=sx/c,ym=sy/c;let sxy=0,sxx=0;
+    for(let j=a;j<=b;j++){sxy+=(V[j]-xm)*(I[j]-ym);sxx+=(V[j]-xm)**2;}
+    F[k]=sxx>0?-sxy/sxx:0;}
+  M={C,mu,h,vmax,n,V,I,F,shift};
+  M.ev=evaluate(V,I,F,h,n);
+}
+function peakFWHM(V,F,k0,k1){let k=k0;for(let j=k0;j<=k1;j++)if(F[j]>F[k])k=j;
+  let pk=V[k];if(k>k0&&k<k1){const d=F[k-1]-2*F[k]+F[k+1];if(d<0)pk+=0.5*(F[k-1]-F[k+1])/d*(V[1]-V[0]);}
+  const half=F[k]/2;let l=k,r=k;while(l>k0&&F[l]>half)l--;while(r<k1&&F[r]>half)r++;
+  let fw=NaN;if(F[l]<=half&&F[r]<=half&&l<k&&r>k){
+    const vl=V[l]+(half-F[l])/(F[l+1]-F[l])*(V[l+1]-V[l]);const vr=V[r-1]+(F[r-1]-half)/(F[r-1]-F[r])*(V[r]-V[r-1]);fw=vr-vl;}
+  return {pk,fw};}
+function evaluate(V,I,F,h,n){
+  const ks=Math.min(n-1,Math.ceil(P.ub/2/h));
+  const pf=peakFWHM(V,F,ks,n-1);
+  const avg=(a,b)=>{let s=0,c=0;for(let j=Math.max(0,a);j<=Math.min(n-1,b);j++){s+=I[j];c++;}return s/c;};
+  const w=Math.max(1,Math.round(50/h)),Is=avg(ks-w,ks+w);
+  let integ=0;for(let j=ks;j<n-1;j++)integ+=0.5*(I[j]+I[j+1])*h;
+  return {pk:pf.pk,fw:pf.fw,mean:V[ks]+integ/Is,slow:1-Is/avg(0,Math.max(1,Math.floor(P.up/2/h)))};}
+
+/* ----- Farben, Zeichenhilfen ----- */
+let COL={};
+function readCols(){const cs=getComputedStyle(document.documentElement);
+  for(const k of ['ink','muted','line','stage','grid','band','accent','c-i','c-e','c-rho','c-E','c-vac','c-ghost'])COL[k]=cs.getPropertyValue('--'+k).trim();
+  COL.dark=matchMedia('(prefers-color-scheme: dark)').matches;}
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{readCols();legend();dirty=true;});
+function prep(cv){const dpr=window.devicePixelRatio||1,w=cv.clientWidth,h=cv.clientHeight;
+  if(cv.width!==Math.round(w*dpr)||cv.height!==Math.round(h*dpr)){cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);}
+  const ctx=cv.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);return {ctx,w,h};}
+function niceStep(r,n){const s=r/n,p=Math.pow(10,Math.floor(Math.log10(s))),f=s/p;return (f<1.5?1:f<3?2:f<7?5:10)*p;}
+const FONT='11.5px "IBM Plex Sans",system-ui,sans-serif', BOLD='600 11.5px "IBM Plex Sans",system-ui,sans-serif', MONO='11px "IBM Plex Mono",ui-monospace,monospace';
+
+/* ----- Diagramme ----- */
+function xRange(){const b=M.C[0],ca=Math.cos(P.alpha*Math.PI/180);
+  if(view==='all')return [0,M.vmax];
+  if(view==='slow')return [0,Math.max(50,P.up+30)];
+  const span=Math.max(5*b.sig,15);return [Math.max(0,b.mu*ca*ca-span),b.mu+span+M.shift];}
+function plot(cv,o){const {ctx,w,h}=prep(cv);const L=54,R=12,T=10,B=34;
+  const [x0,x1]=o.xr;let [y0,y1]=o.yr;if(!(y1>y0))y1=y0+1;
+  const X=x=>L+(x-x0)/(x1-x0)*(w-L-R),Y=y=>T+(1-(y-y0)/(y1-y0))*(h-T-B);
+  ctx.font=FONT;ctx.lineWidth=1;
+  const xs=niceStep(x1-x0,6),ys=niceStep(y1-y0,5);
+  ctx.strokeStyle=COL.grid;ctx.fillStyle=COL.muted;ctx.textAlign='center';ctx.textBaseline='top';
+  for(let x=Math.ceil(x0/xs)*xs;x<=x1+1e-9;x+=xs){ctx.beginPath();ctx.moveTo(X(x),T);ctx.lineTo(X(x),h-B);ctx.stroke();ctx.fillText(num(x,xs<1?1:0),X(x),h-B+4);}
+  ctx.textAlign='right';ctx.textBaseline='middle';
+  for(let y=Math.ceil(y0/ys)*ys;y<=y1+1e-9;y+=ys){ctx.beginPath();ctx.moveTo(L,Y(y));ctx.lineTo(w-R,Y(y));ctx.stroke();ctx.fillText(num(y,ys<0.1?2:ys<1?1:0),L-5,Y(y));}
+  ctx.strokeStyle=COL.line;ctx.strokeRect(L,T,w-L-R,h-T-B);
+  ctx.fillStyle=COL.muted;ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText(o.xl,L+(w-L-R)/2,h-1);
+  ctx.save();ctx.translate(12,T+(h-T-B)/2);ctx.rotate(-Math.PI/2);ctx.textBaseline='middle';ctx.fillText(o.yl,0,0);ctx.restore();
+  ctx.save();ctx.beginPath();ctx.rect(L,T,w-L-R,h-T-B);ctx.clip();
+  if(y0<0&&y1>0){ctx.strokeStyle=COL.muted;ctx.beginPath();ctx.moveTo(L,Y(0));ctx.lineTo(w-R,Y(0));ctx.stroke();}
+  for(const v of o.vl||[]){ctx.strokeStyle=v.c;ctx.setLineDash(v.d||[]);ctx.lineWidth=v.w||1;ctx.beginPath();ctx.moveTo(X(v.x),T);ctx.lineTo(X(v.x),h-B);ctx.stroke();}
+  ctx.setLineDash([]);
+  for(const s of o.s){ctx.strokeStyle=s.c;ctx.fillStyle=s.c;ctx.lineWidth=s.w||1.5;ctx.setLineDash(s.d||[]);
+    if(s.dots){const r=s.r||2;for(let i=0;i<s.x.length;i++){if(s.x[i]<x0||s.x[i]>x1)continue;ctx.beginPath();ctx.arc(X(s.x[i]),Y(s.y[i]),r,0,7);ctx.fill();}}
+    else{ctx.beginPath();let st=false;for(let i=0;i<s.x.length;i++){if(s.x[i]<x0-(x1-x0)*0.02||s.x[i]>x1+(x1-x0)*0.02){st=false;continue;}
+      const px=X(s.x[i]),py=Y(s.y[i]);st?ctx.lineTo(px,py):ctx.moveTo(px,py);st=true;}ctx.stroke();}
+    ctx.setLineDash([]);}
+  for(const p of o.pts||[]){ctx.fillStyle=p.c;ctx.beginPath();ctx.arc(X(p.x),Y(p.y),p.r||4,0,7);ctx.fill();}
+  ctx.restore();}
+function yr(xs,ys,xr){let lo=0,hi=-Infinity;
+  for(let a=0;a<xs.length;a++){const X=xs[a],Y=ys[a];for(let i=0;i<X.length;i++){if(X[i]<xr[0]||X[i]>xr[1])continue;if(Y[i]<lo)lo=Y[i];if(Y[i]>hi)hi=Y[i];}}
+  if(!isFinite(hi)){hi=1;lo=0;}const d=(hi-lo)||1;return [lo-0.04*d,hi+0.08*d];}
+
+function drawPlots(){const xr=xRange();
+  const N=500,Xt=[],It=[],Ft=[];for(let i=0;i<N;i++){const v=xr[0]+(xr[1]-xr[0])*i/(N-1);Xt.push(v);It.push(Iideal(v,M.C));Ft.push(Fideal(v,M.C));}
+  const V=Array.from(M.V),I=Array.from(M.I),F=Array.from(M.F);
+  const kU=Math.min(M.n-1,Math.round(ug/M.h));
+  const nIn=V.filter(v=>v>=xr[0]&&v<=xr[1]).length;
+  plot($('#cI'),{xr,yr:yr([V,Xt],[I,It],xr),xl:'Retarding voltage in V',yl:'Current in µA',
+    s:[{x:Xt,y:It,c:COL['c-ghost'],w:1.5},{x:V,y:I,c:COL['c-i'],dots:nIn<400,r:nIn<120?2.6:1.8,w:1.4}],
+    vl:[{x:ug,c:COL.accent,d:[4,3],w:1.2}],pts:[{x:V[kU],y:I[kU],c:COL.accent,r:4.5}]});
+  const ev=M.ev,vl=[{x:ug,c:COL.accent,d:[4,3],w:1.2}];
+  if(view!=='slow'&&isFinite(ev.pk))vl.push({x:ev.pk,c:COL['c-e'],d:[2,3]});
+  plot($('#cF'),{xr,yr:yr([V,Xt],[F,Ft],xr),xl:'Energy per charge in V',yl:'−dI/dU in µA/V',
+    s:[{x:Xt,y:Ft,c:COL.ink,w:1.4,d:[2,3]},{x:V,y:F,c:COL['c-i'],w:1.6}],vl});
+  const b=M.C[0];
+  const row=(n,a,t,d)=>`<tr><td>${n}</td><td class="sim">${num(a,d)}</td><td class="th">${num(t,d)}</td></tr>`;
+  $('#numtab').innerHTML=`<thead><tr><th>Quantity</th><th>measured</th><th>in beam</th></tr></thead><tbody>
+    ${row('Most probable energy per charge (V)',ev.pk,b.mu,1)}
+    ${row('Mean energy of the fast ions (V)',ev.mean,b.mu,1)}
+    ${row('FWHM (V)',ev.fw,2.3548*b.sig,1)}
+    ${row('Fraction of slow ions (%)',ev.slow*100,P.cex,1)}</tbody>`;
+}
+
+/* ----- Querschnitt und Potential mit Teilchen ----- */
+let FS=null, HH=0.8;
+const OFS=[0,0.37,0.71,0.19];
+function frameState(){const G=geo(),S=sags(ug),pg=3*G.a/G.g;FS={U:S.U,d:S.d,th:G.t/G.g/2,ag:G.a/G.g,pg,D:lensD(ug,S.U),amm:G.a,of:OFS.map(o=>P.al==='al'?0:o*pg)};}
+function rhoA(y,k){return Math.abs(hoff(y-FS.of[k],FS.pg))/FS.ag;}
+function nodes(f){if(typeof f==='number')f=[f,f,f,f];const th=FS.th,U=FS.U,d=FS.d,p1=U[1]+d[1]*f[1],p2=U[2]+d[2]*f[2],p3=U[3]+d[3]*f[3];
+  return [[ZMIN,P.up],[ZSH,P.up],[-th,U[0]],[th,U[0]],[1-th,p1],[1+th,p1],[2-th,p2],[2+th,p2],[3-th,p3],[3+th,p3],[ZC,0],[ZMAX,0]];}
+function interp(N,z){if(z<=N[0][0])return N[0][1];for(let i=1;i<N.length;i++)if(z<=N[i][0]){const [a,pa]=N[i-1],[b,pb]=N[i];return b>a?pa+(pb-pa)*(z-a)/(b-a):pb;}return N[N.length-1][1];}
+function phiAt(z,y){return interp(nodes([0,1,2,3].map(k=>{const r=rhoA(y,k);return r<1?Math.sqrt(1-r*r):0;})),z);}
+const parts=[];let flashes=[],accI=0,accE=0;
+function gauss(){return Math.sqrt(-2*Math.log(Math.random()+1e-12))*Math.cos(2*Math.PI*Math.random());}
+function spawnIon(){const C=M.C,ca=Math.cos(P.alpha*Math.PI/180),slow=Math.random()<C[1].w,c=slow?C[1]:C[0];
+  const u=ca+(1-ca)*Math.random(),tn=Math.sqrt(Math.max(0,1-u*u))/u*(Math.random()<0.5?-1:1);
+  let E=(c.mu+c.sig*gauss())*u*u;const y=(Math.random()*2-1)*HH*0.95;
+  const v0=0.25+1.8*Math.sqrt(Math.max(E,1)/(M.mu+50));
+  if(slow){E=Math.max(E,P.up+0.3);parts.push({z:ZMIN+Math.random()*(ZSH-0.1-ZMIN),y,vy:tn*0.5,d:1,E,k:'c'});}
+  else parts.push({z:ZMIN,y,vy:tn*v0,d:1,E,k:'b'});}
+function spawnEl(){parts.push({z:ZMIN+Math.random()*(ZSH-0.1-ZMIN),y:(Math.random()*2-1)*HH*0.95,vy:(Math.random()-0.5)*1.2,d:1,E:-P.te*Math.log(Math.random()+1e-9),k:'e'});}
+function kin(p){const ph=phiAt(p.z,p.y);return p.k==='e'?p.E-(P.up-ph):p.k==='s'?p.E+ph:p.E-ph;}
+function speed(p,K){K=Math.max(K,0.2);return p.k==='e'||p.k==='s'?Math.min(2,0.35+1.2*Math.sqrt(K/10)):0.25+1.8*Math.sqrt(K/(M.mu+50));}
+function stepParts(dt){accI+=14*dt;accE+=20*dt;
+  while(accI>=1){accI--;if(parts.length<340)spawnIon();}
+  while(accE>=1){accE--;if(parts.length<340)spawnEl();}
+  const lim=Math.max(0.002,Math.min(0.01,FS.th)),newSE=[];
+  for(let i=parts.length-1;i>=0;i--){const p=parts[i];let dead=false;
+    const n=Math.max(1,Math.ceil(speed(p,kin(p))*dt/lim)),h=dt/n;
+    for(let s=0;s<n&&!dead;s++){const K=kin(p);if(p.k==='s'){if(p.d<0&&K<=0)p.d=1;}else if(p.d>0&&K<=0)p.d=-1;
+      const v=speed(p,K),z0=p.z;p.z+=p.d*v*h;p.y+=p.vy*h;
+      if(P.lens&&p.k!=='e'&&p.d>0)for(const k of [1,2])if(z0<ZG[k]&&p.z>=ZG[k]){const yr=hoff(p.y-FS.of[k],FS.pg);if(Math.abs(yr)<FS.ag){
+        const D=FS.D[k],Ke=k===1?Math.max(10,K):Math.max(K,Math.abs(D)*FS.amm),rr=yr*P.g*D/(4*Ke);p.vy+=rr*v;if(k===1)p.E-=Ke*rr*rr;}}
+      const zf=ZG[2]-FS.th-2*FS.ag;
+      if(P.lens&&p.k!=='e'&&p.d>0&&z0<zf&&p.z>=zf){const yr=hoff(p.y-FS.of[2],FS.pg),ya=Math.abs(yr);
+        if(ya>=FS.ag){const F=Math.max(0,(ug-FS.U[1])/P.g)*FS.amm,Kc=(FS.pg/2-ya)*P.g*F/(8*(ya*P.g-FS.amm));
+          if(K<=Kc)p.vy=-Math.sign(yr)*(ya-0.8*FS.ag)*v/(2*FS.ag+FS.th);}}
+      if(p.z<ZMIN||(p.z<WALL&&Math.abs(p.y)>HH+0.6)){dead=true;break;}
+      if(p.z>=WALL&&Math.abs(p.y)>=HH){flashes.push({z:p.z,y:p.y,t:0.3,k:p.k});dead=true;break;}
+      for(let k=0;k<4;k++)if(Math.abs(p.z-ZG[k])<=FS.th+0.002&&rhoA(p.y,k)>=1){flashes.push({z:p.z,y:p.y,t:0.3,k:p.k});dead=true;break;}
+      if(!dead&&p.z>=ZC){flashes.push({z:ZC,y:p.y,t:0.35,k:p.k});dead=true;
+        if(P.see&&p.k!=='e'&&p.k!=='s'&&Math.random()<3*gamma(p.E))newSE.push({z:ZC-0.005,y:p.y,vy:(Math.random()-0.5)*0.8,d:-1,E:-T_SE*Math.log(Math.random()+1e-9),k:'s'});}
+      if(!dead&&p.k==='s'){if(p.d<0&&kin(p)<=0)p.d=1;if(p.z<ZG[2]){flashes.push({z:p.z,y:p.y,t:0.3,k:'s'});dead=true;}}}
+    if(dead)parts.splice(i,1);}
+  parts.push(...newSE);
+  for(const f of flashes)f.t-=dt;flashes=flashes.filter(f=>f.t>0);}
+const pcol=k=>k==='e'?COL['c-e']:k==='s'?COL['c-E']:k==='c'?COL['c-rho']:COL['c-i'];
+const LM=50,RM=12;
+function xmap(w){const sc=(w-LM-RM)/(ZMAX-ZMIN);return {sc,X:z=>LM+(z-ZMIN)*sc};}
+function drawCross(){const {ctx,w,h}=prep($('#cross'));const T=34,B=4,{sc,X}=xmap(w);
+  const yc=T+(h-T-B)/2,Y=y=>yc-y*sc,H=(h-T-B)/2/sc,wall=Math.max(0.08,7/sc);HH=H-wall;
+  ctx.fillStyle=COL.band;ctx.fillRect(X(ZMIN),T,X(WALL)-X(ZMIN),h-T-B);
+  ctx.font=FONT;ctx.fillStyle=COL.muted;ctx.textAlign='left';ctx.textBaseline='bottom';ctx.fillText('Beam plasma',X(ZMIN)+6,h-B-4);
+  // Gehäuse
+  ctx.fillStyle=COL['c-ghost'];
+  ctx.fillRect(X(WALL),Y(H),X(ZMAX)-X(WALL),Y(HH)-Y(H));ctx.fillRect(X(WALL),Y(-HH),X(ZMAX)-X(WALL),Y(-H)-Y(-HH));
+  ctx.fillRect(X(ZMAX-0.1),Y(H),X(ZMAX)-X(ZMAX-0.1),Y(-H)-Y(H));
+  // Isolatoren zwischen den Gittern
+  ctx.fillStyle=COL['c-vac'];ctx.globalAlpha=0.55;const zz=[...ZG,ZC],ins=Math.min(0.12,HH*0.15);
+  for(let k=0;k<4;k++){const a=X(zz[k]+FS.th),b=X(zz[k+1]-(k<3?FS.th:0));
+    ctx.fillRect(a,Y(HH),b-a,Y(HH-ins)-Y(HH));ctx.fillRect(a,Y(-HH+ins),b-a,Y(-HH)-Y(-HH+ins));}
+  ctx.globalAlpha=1;
+  // Gitter mit Öffnungen
+  const lab=['G0','G1','G2','G3'],volt=[FS.U[0],FS.U[1],ug,FS.U[3]];
+  for(let k=0;k<4;k++){const x0=X(ZG[k]-FS.th),pw=Math.max(1.5,X(ZG[k]+FS.th)-x0);
+    ctx.fillStyle=k===2?COL.accent:COL.ink;ctx.fillRect(x0,Y(HH),pw,Y(-HH)-Y(HH));
+    const jm=Math.ceil(HH/FS.pg);ctx.fillStyle=COL.stage;
+    for(let j=-jm-1;j<=jm+1;j++){const yc2=j*FS.pg+FS.of[k],a=Math.max(-HH,yc2-FS.ag),b=Math.min(HH,yc2+FS.ag);if(b>a)ctx.fillRect(x0-1,Y(b),pw+2,Y(a)-Y(b));}
+    ctx.textAlign='center';ctx.textBaseline='alphabetic';ctx.font=BOLD;ctx.fillStyle=k===2?COL.accent:COL.ink;ctx.fillText(lab[k],X(ZG[k]),T-17);
+    ctx.font=MONO;ctx.fillStyle=k===2?COL.accent:COL.muted;ctx.fillText(num(volt[k],k===0&&P.g0==='float'?1:0)+' V',X(ZG[k]),T-5);}
+  ctx.fillStyle='#b87333';ctx.fillRect(X(ZC),Y(HH),X(ZC+0.1)-X(ZC),Y(-HH)-Y(HH));
+  ctx.font=BOLD;ctx.fillStyle=COL.ink;ctx.fillText('Collector',X(ZC+0.05),T-17);ctx.font=MONO;ctx.fillStyle=COL.muted;ctx.fillText('0 V',X(ZC+0.05),T-5);
+  // Teilchen
+  ctx.save();ctx.beginPath();ctx.rect(LM,T,w-LM-RM,h-T-B);ctx.clip();
+  for(const f of flashes){ctx.fillStyle=pcol(f.k);ctx.globalAlpha=Math.min(1,f.t/0.3);ctx.beginPath();ctx.arc(X(f.z),Y(f.y),5*(1.3-f.t/0.35),0,7);ctx.fill();}
+  ctx.globalAlpha=1;
+  for(const p of parts){ctx.fillStyle=pcol(p.k);ctx.beginPath();ctx.arc(X(p.z),Y(p.y),p.k==='e'||p.k==='s'?2.8:p.k==='c'?3:2.6,0,7);ctx.fill();}
+  ctx.restore();
+}
+function drawPot(){const {ctx,w,h}=prep($('#pot'));const T=8,B=12,{X}=xmap(w);
+  const s=10,lo=Math.min(-45,FS.U[1]-10,FS.U[3]-10),ylo=Math.asinh(lo/s),yhi=Math.asinh(Math.max(M.vmax,M.mu+40)/s);
+  const Y=p=>T+(1-(Math.asinh(p/s)-ylo)/(yhi-ylo))*(h-T-B);
+  ctx.font=FONT;ctx.fillStyle=COL.band;ctx.fillRect(X(ZMIN),T,X(WALL)-X(ZMIN),h-T-B);
+  ctx.strokeStyle=COL.grid;ctx.lineWidth=1;ctx.fillStyle=COL.muted;ctx.textAlign='right';ctx.textBaseline='middle';
+  for(const t of [-30,-10,0,10,30,100,300,1000,3000]){if(Math.asinh(t/s)>yhi||t<lo)continue;ctx.beginPath();ctx.moveTo(LM,Y(t));ctx.lineTo(w-RM,Y(t));ctx.stroke();ctx.fillText(num(t,0),LM-5,Y(t));}
+  ctx.save();ctx.translate(11,T+(h-T-B)/2);ctx.rotate(-Math.PI/2);ctx.textAlign='center';ctx.fillText('Potential in V',0,0);ctx.restore();
+  ctx.setLineDash([3,3]);for(const z of [...ZG,ZC]){ctx.strokeStyle=z===2?COL.accent:COL.muted;ctx.beginPath();ctx.moveTo(X(z),T);ctx.lineTo(X(z),h-B);ctx.stroke();}ctx.setLineDash([]);
+  const curve=(f,c,wd,da)=>{const N=nodes(f);ctx.strokeStyle=c;ctx.lineWidth=wd;ctx.setLineDash(da);ctx.beginPath();N.forEach(([z,p],i)=>i?ctx.lineTo(X(z),Y(p)):ctx.moveTo(X(z),Y(p)));ctx.stroke();ctx.setLineDash([]);};
+  curve(0,COL.muted,1.4,[5,4]);curve(1,COL.ink,2,[]);
+  ctx.save();ctx.beginPath();ctx.rect(LM,T,w-LM-RM,h-T-B);ctx.clip();
+  for(const p of parts){ctx.fillStyle=pcol(p.k);ctx.beginPath();ctx.arc(X(p.z),Y(p.k==='e'?P.up-p.E:p.k==='s'?-p.E:p.E),p.k==='e'||p.k==='s'?2.6:2.6,0,7);ctx.fill();}
+  ctx.restore();}
+
+/* ----- Ablauf ----- */
+let dirty=true,last=0,updTimer=null;
+function update(){clearTimeout(updTimer);updTimer=setTimeout(()=>{measure();setUgMax();dirty=true;},30);}
+function setUgMax(){const s=$('#ug');s.max=M.vmax;s.step=M.h;if(ug>M.vmax)ug=M.vmax;s.value=ug;showUg();}
+function showUg(){$('#ugOut').textContent=num(ug,ug%1?1:0)+' V';const k=Math.min(M.n-1,Math.round(ug/M.h));
+  const S=sags(ug),Ie=Iel(ug),b=M.C[0],ca=Math.cos(P.alpha*Math.PI/180),thr=ug+S.d[2];
+  $('#tm').textContent='I = '+num(M.I[k],2)+' µA';
+  let t=thr<P.up?'All ions reach the collector.':thr<b.mu*ca*ca-3*b.sig?'The slow ions are repelled; the <b>main beam</b> gets through.':ug<b.mu+3*b.sig?'The retarding field cuts into the <b>energy distribution of the main beam</b>.':'All ions are repelled.';
+  if(Ie>0.005)t+=' <b>Electrons</b> reach the collector.';
+  $('#ph').innerHTML=t;
+  const kz=[['Potential of G0',num(S.U[0],1)+' V'],['G1 at aperture centre',num(S.U[1]+S.d[1],1)+' V'],['G2 at aperture centre',num(ug+S.d[2],1)+' V'],
+    ['G3 at aperture centre',num(S.U[3]+S.d[3],1)+' V'],['Electron current from the beam',num(I0*vRatio(),0)+' µA'],['Electron current at the collector',Ie<1e-3?'< 0.001 µA':num(Ie,3)+' µA'],['Secondary electrons escaping',P.see?num(100*Pesc(ug),1)+' %':'off']];
+  $('#kz').innerHTML=kz.map(([a,b])=>`<dt>${a}</dt><dd>${b}</dd>`).join('');}
+function frame(t){const dt=Math.min(0.05,(t-last)/1000||0);last=t;
+  if(M){if(playing){const xr=xRange();ug+=(xr[1]-xr[0])/8*dt;if(ug<xr[0]||ug>xr[1])ug=xr[0];$('#ug').value=ug;showUg();dirty=true;}
+    frameState();stepParts(dt);drawCross();drawPot();if(dirty){drawPlots();dirty=false;}}
+  requestAnimationFrame(frame);}
+function legend(){const dot=c=>`<svg width="10" height="10"><circle cx="5" cy="5" r="4" fill="${c}"/></svg>`,ln=(c,d)=>`<svg width="20" height="10"><line x1="0" y1="5" x2="20" y2="5" stroke="${c}" stroke-width="2" ${d?'stroke-dasharray="4 3"':''}/></svg>`;
+  $('#legend1').innerHTML=`<span>${dot(COL['c-i'])}Beam ions</span><span>${dot(COL['c-rho'])}slow ions</span><span>${dot(COL['c-e'])}Electrons</span><span>${dot(COL['c-E'])}Secondary electrons (shown three times as often)</span><span>${ln(COL.ink)}Potential through the aperture centre</span><span>${ln(COL.muted,1)}at the grid bar</span><span>Cross-section to scale, trajectories simplified, lens deflection schematic. Bottom: ions plotted at the height of their energy per charge, electrons at the lowest potential they can reach</span>`;}
+
+buildControls();readCols();legend();
+$('#ug').addEventListener('input',e=>{ug=parseFloat(e.target.value);showUg();dirty=true;});
+$('#play').addEventListener('click',()=>{playing=!playing;$('#play').textContent=playing?'Stop sweep':'Start sweep';});
+$('#neu').addEventListener('click',()=>{seed=(seed*7919+13)%100000;update();});
+$('#defaults').addEventListener('click',()=>{P=Object.assign({},DEF);syncControls();update();});
+document.querySelectorAll('#g0seg button').forEach(b=>b.addEventListener('click',()=>{P.g0=b.dataset.v;syncControls();update();}));
+$('#lens').addEventListener('change',e=>{P.lens=e.target.checked;update();});
+$('#see').addEventListener('change',e=>{P.see=e.target.checked;update();});
+document.querySelectorAll('#alseg button').forEach(b=>b.addEventListener('click',()=>{P.al=b.dataset.v;syncControls();update();}));
+document.querySelectorAll('#viewseg button').forEach(b=>b.addEventListener('click',()=>{view=b.dataset.v;
+  document.querySelectorAll('#viewseg button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));
+  const xr=xRange();if(ug<xr[0]||ug>xr[1]){ug=view==='slow'?P.up:view==='beam'?M.ev.pk:600;$('#ug').value=ug;showUg();}dirty=true;}));
+window.addEventListener('resize',()=>{dirty=true;});
+measure();ug=Math.round(M.mu);setUgMax();frameState();requestAnimationFrame(frame);
+</script>
+</body>
+</html>

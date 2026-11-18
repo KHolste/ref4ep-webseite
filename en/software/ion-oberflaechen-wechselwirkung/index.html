@@ -1,0 +1,558 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description"
+        content="Ion–Surface Interaction: simulation program for ion reflection, sputtering, secondary ions and charge exchange at solid surfaces, based on the binary collision approximation (RustBCA).">
+  <title>Ion–Surface Interaction – Software – Ref4EP</title>
+  <link rel="stylesheet" href="/assets/style.css">
+  <link rel="alternate" hreflang="de" href="https://www.ref4ep.de/software/ion-oberflaechen-wechselwirkung/">
+  <link rel="alternate" hreflang="en" href="https://www.ref4ep.de/en/software/ion-oberflaechen-wechselwirkung/">
+</head>
+
+<body>
+  <a class="skip-link" href="#inhalt">Skip to content</a>
+
+  <header>
+    <div class="nav">
+      <a class="brand" href="/en/" aria-label="Ref4EP home page">
+        <span class="brand-mark">R4</span>
+        <span>Ref4EP</span>
+      </a>
+
+      <nav aria-label="Main navigation">
+        <ul>
+          <li><a href="/en/#projekt">Project</a></li>
+          <li><a href="/en/#ziele">Objectives</a></li>
+          <li><a href="/en/#partner">Partners</a></li>
+          <li><a href="/en/#arbeit">Work Areas</a></li>
+          <li><a href="/en/#daten">Data &amp; Standards</a></li>
+          <li><a href="/en/software/" aria-current="page">Software</a></li>
+          <li><a href="/en/tutorials/">Tutorials</a></li>
+          <li><a href="/en/#kontakt">Contact</a></li>
+          <li class="lang-item"><a class="lang" href="/software/ion-oberflaechen-wechselwirkung/" hreflang="de" lang="de" title="Deutsch">DE</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <section class="subhero">
+    <div class="subhero-inner">
+      <p class="breadcrumb">
+        <a href="/en/">Home</a>
+        <span aria-hidden="true">/</span>
+        <a href="/en/software/">Software</a>
+        <span aria-hidden="true">/</span>
+        Ion–Surface Interaction
+      </p>
+
+      <h1>Ion–Surface Interaction</h1>
+
+      <p class="lead">
+        The software computes what happens when ions strike a
+        solid surface: reflection and backscattering of the projectiles,
+        sputtering of the target, and the charge state of the returning and
+        the sputtered particles. The collision kinematics are computed with the
+        binary collision code RustBCA; charge exchange at the
+        surface is added on top by a dedicated three-channel model. The target range
+        is low-energy ion–surface interaction from about
+        1&nbsp;eV up into the keV range.
+      </p>
+
+      <div class="pills">
+        <span class="pill">Windows 10/11, 64-bit</span>
+        <span class="pill">Version 1.0.0</span>
+        <span class="pill">Graphical interface</span>
+        <span class="pill">Free download</span>
+      </div>
+    </div>
+  </section>
+
+  <main id="inhalt">
+
+    <section>
+      <div class="split">
+        <div class="panel">
+          <h2>What is this software for?</h2>
+
+          <p>
+            In electric space propulsion and in surface analysis,
+            ions of low and medium energy strike materials. This
+            interaction determines the quantities of practical importance: how
+            many ions are backscattered, and with what energy and
+            angular distribution? How strongly is the material eroded? And in
+            which charge state do the particles leave the surface &ndash;
+            a question that is crucial for any ion-optical or mass-spectrometric
+            diagnostic, because only charged particles are detected
+            there.
+          </p>
+
+          <p>
+            The program combines both aspects in a single interface. The
+            collision kinematics provide the energy and exit angle of every returning or sputtered
+            particle; from these follows the
+            normal velocity that governs charge exchange with the
+            surface. Reflection, sputtering and charge state are thus
+            determined consistently from a single simulation run and
+            can be assessed directly against each other.
+          </p>
+        </div>
+
+        <figure class="shot">
+          <img src="/software/ion-oberflaechen-wechselwirkung/bilder/verteilungen.jpg"
+               width="1600"
+               height="870"
+               alt="Program window with energy and angular distribution of the reflected particles and key figures for reflection and charge fractions.">
+
+          <figcaption>
+            <b>Distributions of the reflected particles</b>
+            Energy and angular distribution from a simulation run, above them the
+            key figures for particle and energy reflection and the split
+            into positive, neutral and negative particles.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-heading">
+        <h2>Physical models and features</h2>
+
+        <p>
+          The functionality is modular. Depending on the question at hand,
+          projectile, target, surface shape,
+          interaction potential and charge model can be combined freely.
+        </p>
+      </div>
+
+      <ul class="feature-list">
+        <li>
+          <b>Projectiles</b> &ndash; noble gases (He, Ne, Ar, Kr, Xe) and the
+          reactive elements H, N, O, plus molecular ions (O₂⁺, N₂⁺, NO⁺,
+          H₂⁺) via the dissociation approximation. Any further elements
+          can be defined freely by atomic number and mass.
+        </li>
+
+        <li>
+          <b>Target materials</b> &ndash; 18 element presets with
+          literature values for surface binding energy and number density,
+          compounds and alloys (TiO₂, Al₂O₃, SiO₂, TiN, brass,
+          stainless steel) and a builder for custom compounds with up to four
+          components and free stoichiometry.
+        </li>
+
+        <li>
+          <b>Surface geometry</b> &ndash; semi-infinite smooth surface,
+          sphere for nanoparticles, layer on substrate, rough surface with
+          adjustable amplitude and wavelength in two or three dimensions,
+          and import of custom triangle meshes in OBJ format.
+        </li>
+
+        <li>
+          <b>Interaction potentials</b> &ndash; screened
+          Coulomb potentials (KR_C, ZBL, Molière, TRIDYN, Lenz–Jensen) for the
+          standard case, and attractive potentials (Morse, Lennard-Jones, WW,
+          KRC-Morse, 4-8) with freely adjustable parameters for chemically
+          bound and very light species.
+        </li>
+
+        <li>
+          <b>Numerical methods</b> &ndash; selectable scattering integrals
+          (Mendenhall–Weller, MAGIC, Gaussian quadrature), root finders
+          (Newton, CPR, polynomial), models for electronic stopping and
+          for the mean free path. When the potential is changed, the
+          program automatically sets a valid combination.
+        </li>
+
+        <li>
+          <b>Surface binding model</b> &ndash; planar or isotropic
+          surface barrier and selectable assignment of the binding energy to
+          projectile, target or the average of both. This makes it possible to study
+          how the surface potential affects the exit energy of reflected
+          particles and, consequently, their charge state.
+        </li>
+
+        <li>
+          <b>Charge exchange as a three-channel model</b> &ndash; Auger neutralisation
+          after Hagstrum for the positive channel, resonant charge transfer after
+          Los and Geerlings for the negative channel, the neutral fraction as the
+          remainder. The work function of the target and the electron affinity of the
+          projectile enter explicitly; the characteristic
+          velocities can be calibrated against measurements.
+        </li>
+
+        <li>
+          <b>Sputtering</b> &ndash; yield, energy and angular distribution of the
+          sputtered atoms, resolved by element for compounds with
+          partial yields, so that preferential sputtering becomes visible.
+        </li>
+
+        <li>
+          <b>Secondary ions and SIMS spectrum</b> &ndash;
+          ionisation probability of the sputtered atoms from the
+          ionisation potential, electron affinity and work function;
+          from this a mass spectrum versus mass-to-charge ratio with
+          natural isotope distribution, either positive or negative.
+        </li>
+
+        <li>
+          <b>Particle trajectories</b> &ndash; display of the ion and recoil trajectories
+          in the target as a two-dimensional section and as a rotatable
+          three-dimensional view, coloured by energy or by
+          element.
+        </li>
+
+        <li>
+          <b>Parameter studies</b> &ndash; automated series over energy,
+          angle of incidence or material selection. All key figures are
+          computed for each grid point; the display fills progressively and
+          can be paused at any time.
+        </li>
+
+        <li>
+          <b>Analysis and export</b> &ndash; graphics export with selectable
+          background, label language, resolution and colour palette, and
+          export of all raw data as CSV with a self-describing metadata header
+          in line with the FAIR principles.
+        </li>
+      </ul>
+    </section>
+
+    <section>
+      <div class="section-heading">
+        <h2>Reflection, sputtering and charge state</h2>
+
+        <p>
+          A single simulation run yields several analyses, which the
+          program provides in separate tabs.
+        </p>
+      </div>
+
+      <ul class="feature-list">
+        <li>
+          <b>Energy–angle correlation</b> &ndash; a two-dimensional
+          histogram of the reflected particles shows the relationship between
+          exit energy and exit angle that is lost in separate
+          one-dimensional distributions. It can optionally be
+          displayed as a rotatable three-dimensional landscape.
+        </li>
+
+        <li>
+          <b>Energy spectrum of the sputtered atoms</b> &ndash; the spectrum
+          shows the characteristic Thompson maximum at about half the
+          surface binding energy. The effective surface binding energy is
+          recovered from the superimposed model curve.
+        </li>
+
+        <li>
+          <b>Secondary ion mass spectrum</b> &ndash; the sputtered
+          atoms and their ionisation probabilities yield a
+          mass spectrum with a natural isotope pattern. A low
+          work function markedly increases the yield of negative secondary ions.
+        </li>
+      </ul>
+    </section>
+
+    <section>
+      <div class="section-heading">
+        <h2>Particle trajectories and parameter studies</h2>
+
+        <p>
+          In addition to the integral key figures, individual collision cascades can be
+          followed and entire parameter ranges computed automatically.
+        </p>
+      </div>
+
+      <div class="figure-grid">
+        <figure class="shot">
+          <img src="/software/ion-oberflaechen-wechselwirkung/bilder/trajektorien-2d.jpg"
+               width="973"
+               height="1127"
+               alt="Two-dimensional section through the collision cascade: trajectories of the ions and of the recoiled target atoms versus depth and lateral displacement.">
+
+          <figcaption>
+            <b>Collision cascade in section</b>
+            Depth versus lateral displacement for a single point of impact.
+            The spread of the cascade, the range of the
+            recoiled target atoms and the particles that leave the material
+            again become visible.
+          </figcaption>
+        </figure>
+
+        <figure class="shot">
+          <img src="/software/ion-oberflaechen-wechselwirkung/bilder/trajektorien-3d.jpg"
+               width="1600"
+               height="771"
+               alt="Three-dimensional view of the ion and recoil trajectories below the target surface.">
+
+          <figcaption>
+            <b>Trajectories in the target</b>
+            Shown are the trajectories of the incident ions and of the
+            recoiled target atoms. Penetration depth,
+            cascade formation and the locations where particles leave the surface
+            again become visible.
+          </figcaption>
+        </figure>
+
+      </div>
+    </section>
+
+    <section>
+      <div class="section-heading">
+        <h2>Verification and comparison</h2>
+
+        <p>
+          The models are checked against established reference values, analytical
+          model curves and physical consistency conditions.
+        </p>
+      </div>
+
+      <ul class="feature-list">
+        <li>
+          <b>Reference case argon on tungsten</b> &ndash; at 1000&nbsp;eV and
+          normal incidence, the particle reflection is 0.34, the
+          energy reflection 0.10 and the sputter yield 1.05. These values
+          agree with the established RustBCA benchmarks, which in turn have been
+          validated against SDTrimSP and experiment.
+        </li>
+
+        <li>
+          <b>Mass ratio and backscattering</b> &ndash; the pronounced
+          difference between heavy and light targets is reproduced
+          correctly. Argon is strongly reflected from tungsten, whereas on titanium,
+          of almost the same mass, argon mostly penetrates and sputters
+          more strongly.
+        </li>
+
+        <li>
+          <b>Analytical model curves</b> &ndash; the Thompson distribution for the
+          sputter spectrum and yield and reflection formulae of the
+          Bohdansky–Yamamura and Eckstein type are fitted to the
+          simulated points. The derived parameters and the
+          coefficient of determination are reported.
+        </li>
+
+        <li>
+          <b>Consistency for compounds</b> &ndash; the reflection of an
+          alloy reproduces that of its main component; brass behaves
+          like copper, stainless steel like iron.
+        </li>
+
+        <li>
+          <b>Charge model</b> &ndash; the computed survival fraction of
+          argon on metals stays below one per cent over the entire energy range,
+          in line with experience from
+          low-energy ion scattering spectroscopy. For oxygen,
+          the negative channel yields high fractions as expected; for nitrogen,
+          almost none.
+        </li>
+      </ul>
+    </section>
+
+    <section>
+      <div class="section-heading">
+        <h2>Range of validity</h2>
+
+        <p>
+          The following limitations arise from the underlying
+          models and should be taken into account when interpreting results.
+        </p>
+      </div>
+
+      <ul class="feature-list">
+        <li>
+          <b>Lower energy limit</b> &ndash; the binary collision approximation
+          assumes that a particle essentially collides with one target atom
+          at a time. Below about 10 to 20&nbsp;eV,
+          many-body and binding effects become important; results in this
+          range should be read as trends.
+        </li>
+
+        <li>
+          <b>Calibration of the charge model</b> &ndash; the characteristic
+          velocities of the charge-exchange model are system-dependent. Without
+          calibration against measured data, the model provides reliable trends; for
+          quantitative absolute values, an adjustment is required. The
+          program includes a calibration function for this purpose.
+        </li>
+
+        <li>
+          <b>Reactive species</b> &ndash; for oxygen, nitrogen and
+          molecular ions, the collision kinematics are as reliable as for
+          noble gases, but charge exchange is only qualitative, since it proceeds via
+          different mechanisms.
+        </li>
+
+        <li>
+          <b>Static target</b> &ndash; the material is treated as homogeneous and
+          amorphous. Fluence-dependent effects such as roughening, implantation
+          or changes in composition during operation are not
+          tracked.
+        </li>
+
+        <li>
+          <b>Curved and rough geometries</b> &ndash; these modes use a
+          different geometry kernel and are suitable for comparing rough and
+          smooth surfaces within the same mode, not as a substitute for the
+          validated computation on the flat surface.
+        </li>
+
+        <li>
+          <b>Atomic secondary particles</b> &ndash; only single atoms are
+          sputtered. Molecular and cluster ions, as they occur in real
+          secondary ion mass spectra, are not modelled.
+        </li>
+      </ul>
+    </section>
+
+    <section id="download">
+      <div class="download">
+        <div>
+          <h2>Download</h2>
+
+          <p>
+            The software is provided as an installer for Windows
+            and includes all required components,
+            including the simulation kernel. A separate
+            installation of Python or other libraries is not
+            required. By default, the software is installed for the
+            current user account only, requires no administrator rights and
+            does not change any system-wide settings.
+          </p>
+
+          <dl>
+            <dt>Version</dt>
+            <dd>1.0.0</dd>
+
+            <dt>Released</dt>
+            <dd>21 August 2026, 11:41 (CEST)</dd>
+
+            <dt>Operating system</dt>
+            <dd>Windows 10/11, 64-bit</dd>
+
+            <dt>File</dt>
+            <dd>IonSurfaceInteraction-Setup-1.0.0.exe</dd>
+
+            <dt>Size</dt>
+            <dd>181 MB</dd>
+
+            <dt>SHA-256</dt>
+            <dd class="hash">
+              e2dc8654233d300dfe9f1d147c7815fe6c80f205e506effeb5637c3b91a667e4
+            </dd>
+
+            <dt>Simulation kernel</dt>
+            <dd>RustBCA (included in the package)</dd>
+
+            <dt>Development</dt>
+            <dd>Dr. Kristof Holste, Justus Liebig University Giessen</dd>
+          </dl>
+        </div>
+
+        <a class="button button-solid"
+           href="/software/ion-oberflaechen-wechselwirkung/download/IonSurfaceInteraction-Setup-1.0.0.exe"
+           download>
+          Download version 1.0.0
+        </a>
+      </div>
+
+      <h3 style="margin-top:1.5rem">What's new in version 1.0.0</h3>
+
+      <p>
+        First publicly released version. It comprises the complete
+        functionality developed so far:
+      </p>
+
+      <ul class="feature-list">
+        <li>
+          Reflection and sputtering with energy, angular and
+          depth distributions, and energy–angle correlation.
+        </li>
+        <li>
+          Charge exchange as a three-channel model with positive, neutral and negative
+          fractions, including a calibration function.
+        </li>
+        <li>
+          Secondary ions and the derived SIMS mass spectrum with
+          natural isotope distribution.
+        </li>
+        <li>
+          Compounds and alloys with element-resolved analysis of
+          preferential sputtering.
+        </li>
+        <li>
+          Five surface geometries, from the flat surface to an imported
+          triangle mesh.
+        </li>
+        <li>
+          Selectable interaction potentials, numerical methods and
+          surface binding models.
+        </li>
+        <li>
+          Automated parameter studies over energy, angle of incidence and
+          material selection with progressive display.
+        </li>
+        <li>
+          Graphics export with selectable background, language, resolution and
+          colour palette, and data export as CSV with a complete
+          metadata header.
+        </li>
+        <li>
+          Built-in guide with the physical background of all
+          input quantities.
+        </li>
+      </ul>
+
+      <p class="notice" style="margin-top:1rem">
+        <b>Use and licence.</b>
+        The package contains the simulation kernel RustBCA, which is licensed under the GNU General
+        Public License version 3; the licence terms are enclosed with the
+        installation package and are authoritative for redistribution.
+        Use for scientific purposes is free of charge. If the software is used
+        in publications, please cite this software and the
+        original RustBCA publication.
+      </p>
+
+      <p class="notice notice--info" style="margin-top:.75rem">
+        <b>Questions and feedback.</b>
+        Please send bug reports, requests for further materials or models, and
+        questions about calibrating the charge model to
+        <a href="mailto:Kristof.Holste@physik.jlug.de?subject=Ion-Oberflaechen-Wechselwirkung">Kristof.Holste@physik.jlug.de</a>.
+        A brief note on your institution and application helps us to
+        put your feedback in context.
+      </p>
+
+      <p class="notice" style="margin-top:.75rem">
+        <b>Note on Windows installation.</b>
+        The installer is currently not digitally signed. Windows
+        may therefore display a warning about an unknown or
+        unrecognised app when it is started. The installation can be continued via
+        &ldquo;More info&rdquo; and then &ldquo;Run anyway&rdquo;.
+        The SHA-256 checksum given above allows the
+        downloaded file to be verified beforehand.
+      </p>
+
+      <p class="notice" style="margin-top:.75rem">
+        <b>Note on where results are stored.</b>
+        Simulation results are not stored in the installation directory, but
+        in the user profile under
+        <code>%LOCALAPPDATA%\IonSurfaceInteraction\results\</code>.
+        Uninstalling via &ldquo;Apps &amp; features&rdquo; removes the
+        program; results already generated are retained and can be
+        deleted manually if required.
+      </p>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <span>&copy; Ref4EP consortium</span>
+      <span>Reference diagnostics for electric space propulsion</span>
+      <a href="/en/impressum.html">Legal notice</a>
+      <a href="/en/datenschutz.html">Privacy policy</a>
+    </div>
+  </footer>
+</body>
+</html>

@@ -28,6 +28,19 @@ steht jetzt in `assets/style.css`, damit alle Seiten dieselbe Grundlage
 nutzen. Der obere Teil der Datei ist unveraendert uebernommen;
 Ergaenzungen stehen am Dateiende ab dem Abschnitt `Bereich Software`.
 
+## Englische Fassung
+
+Jede Seite hat eine englische Entsprechung im Spiegelbaum unter `en/`,
+mit denselben (deutschen) Pfadnamen: `/tutorials/strompfade/` ↔
+`/en/tutorials/strompfade/`. Bilder, Videos, Downloads und
+`assets/style.css` liegen nur einmal; englische Seiten verweisen mit
+absoluten Pfaden darauf. Beide Fassungen tragen `hreflang`-Verweise im
+Kopf und einen Umschalter DE/EN (Hauptnavigation bzw. rechts in der
+Brotkrumenleiste der Tutorials). Impressum und Datenschutz sind auf
+Englisch nur Lesehilfe; verbindlich ist die deutsche Fassung.
+
+Wer eine deutsche Seite ändert, ändert die englische mit.
+
 ## Bilder
 
 Abbildungen werden vor dem Einchecken verkleinert (Breite 1400-1800 px,

@@ -1,0 +1,515 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Interactive visualisation: a density perturbation in a collisionless plasma is damped according to the linearised Vlasov equation. Phase-space picture, comparison with the dispersion relation, time reversal and collisions.">
+<title>Landau damping – Tutorials – Ref4EP</title>
+<link rel="alternate" hreflang="de" href="https://www.ref4ep.de/tutorials/landau-daempfung/">
+<link rel="alternate" hreflang="en" href="https://www.ref4ep.de/en/tutorials/landau-daempfung/">
+<style>
+html { color-scheme: light; }
+body { margin: 0; }
+[hidden] { display: none !important; }
+/* Layout: oben Amplitude über der Zeit, darunter Phasenraum mit g(v); rechts Regler */
+:root {
+  --bg: #f7f9fb; --panel: #ffffff; --fg: #16212b; --muted: #5b6b7a; --rule: #d5dee6;
+  --accent: #0069b3; --accent-soft: #e3eff8; --high: #d9680f; --neg: #0069b3; --pos: #d9680f; --theo: #5b6b7a;
+  --font-text: "Latin Modern Roman", "CMU Serif", "STIX Two Text", Cambria, "Times New Roman", serif;
+  --font-ui: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #10171e; --panel: #172029; --fg: #e3eaf0; --muted: #93a3b2; --rule: #2a3742;
+    --accent: #4fa3e0; --accent-soft: #1b3346; --high: #f08a3c; --neg: #4fa3e0; --pos: #f08a3c; --theo: #93a3b2;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #10171e; --panel: #172029; --fg: #e3eaf0; --muted: #93a3b2; --rule: #2a3742;
+  --accent: #4fa3e0; --accent-soft: #1b3346; --high: #f08a3c; --neg: #4fa3e0; --pos: #f08a3c; --theo: #93a3b2;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg); font-family: var(--font-text); font-size: 17px; line-height: 1.5;
+  padding-block: 24px 40px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 1120px; margin: 0 auto; display: grid; gap: 20px; }
+.r4bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-family: var(--font-ui); font-size: 0.8rem; color: var(--muted); }
+.r4bar a { color: var(--accent); text-decoration: none; } .r4bar a:hover { text-decoration: underline; }
+.eyebrow { font-family: var(--font-ui); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+header h1 { font-size: 1.9rem; font-weight: 600; margin: 0; color: var(--accent); text-wrap: balance; }
+header p { margin: 4px 0 0; color: var(--muted); max-width: 72ch; }
+header p.subline { margin: 0; font-size: 1.1rem; color: var(--fg); }
+.main { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 20px; align-items: start; }
+@media (max-width: 860px) { .main { grid-template-columns: minmax(0, 1fr); } }
+.plots { display: grid; gap: 12px; min-width: 0; }
+.stage { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 10px 10px; min-width: 0; }
+.stage h2 { font-family: var(--font-ui); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 0 0 4px; font-weight: 600; }
+.stage h2 .sym { text-transform: none; letter-spacing: 0; font-family: var(--font-text); font-style: italic; font-size: 0.95rem; font-weight: 400; }
+canvas { display: block; width: 100%; height: auto; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-family: var(--font-ui); font-size: 0.85rem; color: var(--muted); margin: 6px 4px 0; }
+.legend i { display: inline-block; width: 22px; height: 0; border-top: 3px solid; vertical-align: middle; margin-right: 6px; }
+.legend b { display: inline-block; width: 12px; height: 12px; vertical-align: middle; margin-right: 6px; border-radius: 2px; }
+.panel { display: grid; gap: 14px; font-family: var(--font-ui); font-size: 0.92rem; }
+fieldset { border: 1px solid var(--rule); border-radius: 6px; padding: 8px 12px 10px; margin: 0; background: var(--panel); }
+legend { padding: 0 6px; font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.choice { display: flex; gap: 8px; align-items: baseline; padding: 3px 0; cursor: pointer; }
+.choice small { display: block; color: var(--muted); font-size: 0.82rem; }
+input[type=radio], input[type=checkbox] { accent-color: var(--accent); }
+.ctl { display: grid; grid-template-columns: 1fr auto; gap: 0 8px; align-items: baseline; margin-top: 6px; }
+.ctl output { font-variant-numeric: tabular-nums; color: var(--accent); font-weight: 600; }
+.ctl input { grid-column: 1 / -1; width: 100%; accent-color: var(--accent); }
+.row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+button { font: inherit; font-weight: 600; border: 1px solid var(--accent); color: var(--accent); background: var(--panel); border-radius: 4px; padding: 6px 14px; cursor: pointer; }
+button.primary { background: var(--accent); color: var(--panel); }
+button:disabled { opacity: 0.45; cursor: default; }
+button:focus-visible, input:focus-visible { outline: 2px solid var(--high); outline-offset: 2px; }
+.tval { font-variant-numeric: tabular-nums; margin-left: auto; }
+dl.ro { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; margin: 0; font-variant-numeric: tabular-nums; }
+dl.ro dt { color: var(--muted); } dl.ro dd { margin: 0; text-align: right; font-weight: 600; }
+.hint { color: var(--muted); font-size: 0.82rem; margin: 6px 0 0; }
+.notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+.note { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 12px 16px; min-width: 0; }
+.note h2 { font-size: 1.05rem; margin: 0 0 4px; font-weight: 600; }
+.note p { margin: 0; }
+.note p + p { margin-top: 6px; }
+.note.merke { border-left: 4px solid var(--high); }
+.note.achtung { border-left: 4px solid var(--accent); }
+.m { font-style: italic; }
+.r4bar .lang{margin-left:auto}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav class="r4bar" aria-label="Ref4EP"><a href="/en/">Ref4EP</a><span aria-hidden="true">/</span><a href="/en/tutorials/">Tutorials</a><span aria-hidden="true">/</span><span>Landau damping</span><a class="lang" href="/tutorials/landau-daempfung/" hreflang="de" lang="de" title="Deutsch">DE</a></nav>
+  <header>
+    <div class="eyebrow">Plasma physics · Kinetic theory</div>
+    <h1>Landau damping</h1>
+    <p class="subline">Resonant particles, phase mixing and time reversal in the linearised Vlasov equation</p>
+    <p>A small perturbation of the electron density creates an electric field and oscillates as a
+      Langmuir wave. Although the Vlasov equation contains neither collisions nor dissipation, the
+      amplitude of the density decreases. The simulation shows how fast this happens, what it depends on and where the
+      information about the initial perturbation goes.</p>
+  </header>
+
+  <div class="main">
+    <div class="plots">
+      <div class="stage"><h2>Amplitude of the density perturbation <span class="sym">|n<sub>1</sub>|/α</span>, logarithmic</h2>
+        <canvas id="cvA" aria-label="Amplitude of the density perturbation over time"></canvas>
+        <div class="legend">
+          <span><i style="border-color: var(--accent)"></i>Simulation</span>
+          <span><i style="border-color: var(--high)"></i>Return after time reversal</span>
+          <span><i style="border-color: var(--theo); border-top-style: dashed"></i><span id="theoLabel">Theory: slope γ from ε(k, ω) = 0</span></span>
+        </div>
+      </div>
+      <div class="stage"><h2>Phase space: perturbation <span class="sym">f<sub>1</sub>(x, v)</span> and distribution <span class="sym">g(v)</span></h2>
+        <canvas id="cvP" aria-label="Perturbation of the distribution function in phase space and unperturbed distribution"></canvas>
+        <div class="legend">
+          <span><b style="background: var(--pos)"></b>f<sub>1</sub> &gt; 0</span>
+          <span><b style="background: var(--neg)"></b>f<sub>1</sub> &lt; 0</span>
+          <span><i style="border-color: var(--high); border-top-style: dashed"></i>±v<sub>φ</sub>: resonant particles</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <fieldset>
+        <legend>Unperturbed distribution g(v)</legend>
+        <label class="choice"><input type="radio" name="dist" id="d-max" value="max" checked>
+          <span>Maxwellian<small>g′(v) &lt; 0 for all v &gt; 0</small></span></label>
+        <label class="choice"><input type="radio" name="dist" id="d-beam" value="beam">
+          <span>Maxwellian with beam<small>3 % of electrons at 3 v<sub>th</sub>, width 0.4 v<sub>th</sub></small></span></label>
+      </fieldset>
+      <fieldset>
+        <legend>Wave</legend>
+        <div class="ctl"><label for="kk">Wavenumber <span class="m">k</span>λ<sub>D</sub></label><output id="kko"></output>
+          <input type="range" id="kk" min="0.2" max="0.6" step="0.01" value="0.4"></div>
+        <label class="choice" style="margin-top: 8px"><input type="checkbox" id="nofield">
+          <span>Switch off field<small>free streaming only: pure phase mixing</small></span></label>
+      </fieldset>
+      <fieldset>
+        <legend>Collisions</legend>
+        <div class="ctl"><label for="nu">Collision frequency ν/ω<sub>pe</sub></label><output id="nuo"></output>
+          <input type="range" id="nu" min="0" max="3" step="1" value="0"></div>
+        <p class="hint">Diffusion in velocity space (Lenard–Bernstein)</p>
+      </fieldset>
+      <fieldset>
+        <legend>Time</legend>
+        <div class="row">
+          <button class="primary" id="play" type="button">Play</button>
+          <button id="reverse" type="button">Reverse time</button>
+          <button id="reset" type="button">t = 0</button>
+        </div>
+        <div class="row" style="margin-top: 6px"><span class="tval" id="tlabel">ω<sub>pe</sub>t = 0.0</span></div>
+      </fieldset>
+      <fieldset>
+        <legend>Dispersion relation</legend>
+        <dl class="ro">
+          <dt>Phase velocity v<sub>φ</sub>/v<sub>th</sub></dt><dd id="rvph">–</dd>
+          <dt>Frequency ω<sub>r</sub>/ω<sub>pe</sub></dt><dd id="rom">–</dd>
+          <dt>γ/ω<sub>pe</sub> exact</dt><dd id="rgam">–</dd>
+          <dt>γ/ω<sub>pe</sub> approximation</dt><dd id="rgap">–</dd>
+          <dt id="rpert">Periods to 1/e</dt><dd id="rper">–</dd>
+        </dl>
+      </fieldset>
+    </div>
+  </div>
+
+  <div class="notes">
+    <div class="note">
+      <h2>What is computed?</h2>
+      <p>The linearised Vlasov equation for the electrons,
+        ∂<span class="m">f</span><sub>1</sub>/∂<span class="m">t</span> + <span class="m">v</span> ∂<span class="m">f</span><sub>1</sub>/∂<span class="m">x</span> − (<span class="m">e</span>/<span class="m">m</span><sub>e</sub>) <span class="m">E</span><sub>1</sub> ∂<span class="m">f</span><sub>0</sub>/∂<span class="m">v</span> = 0,
+        together with Poisson’s equation for <span class="m">E</span><sub>1</sub>. The ions form a stationary background.
+        At time <span class="m">t</span> = 0 only the density is perturbed: <span class="m">f</span><sub>1</sub> = α <span class="m">n</span><sub>0</sub> <span class="m">g</span>(<span class="m">v</span>) cos <span class="m">kx</span>.
+        This gives rise to two counter-propagating waves.</p>
+      <p>Velocities are given in units of <span class="m">v</span><sub>th</sub> = √(2<span class="m">k</span><sub>B</sub><span class="m">T</span><sub>e</sub>/<span class="m">m</span><sub>e</sub>),
+        times in 1/ω<sub>pe</sub>, the wavenumber in 1/λ<sub>D</sub>.</p>
+    </div>
+    <div class="note merke">
+      <h2>Where does the damping come from?</h2>
+      <p>Electrons with <span class="m">v</span> close to the phase velocity <span class="m">v</span><sub>φ</sub> = ω<sub>r</sub>/<span class="m">k</span>
+        exchange energy with the wave. Slightly slower ones are accelerated, slightly faster ones are decelerated.
+        For weak damping, γ ≈ (π/2) ω<sub>pe</sub> (ω<sub>pe</sub>²/<span class="m">k</span>²) <span class="m">g</span>′(<span class="m">v</span><sub>φ</sub>).</p>
+      <p>For the Maxwellian, <span class="m">g</span>′(<span class="m">v</span><sub>φ</sub>) &lt; 0: the wave is damped. For small
+        <span class="m">k</span>λ<sub>D</sub>, <span class="m">v</span><sub>φ</sub> lies far out in the tail, where there are hardly any electrons. With a beam there is
+        a region with <span class="m">g</span>′ &gt; 0; if <span class="m">v</span><sub>φ</sub> lies there, the wave grows.</p>
+    </div>
+    <div class="note achtung">
+      <h2>Where does the information go?</h2>
+      <p>In the phase-space picture, <span class="m">f</span><sub>1</sub> becomes ever more finely striped in <span class="m">v</span> over time, because
+        fast and slow electrons drift apart. The density is the integral over <span class="m">v</span>; in it
+        the stripes cancel out. The amplitude of <span class="m">f</span><sub>1</sub> itself is preserved.</p>
+      <p>Time reversal reverses all velocities. Without collisions the initial perturbation returns completely at
+        <span class="m">t</span> = 0: the Vlasov equation is reversible.</p>
+    </div>
+    <div class="note">
+      <h2>What do collisions change?</h2>
+      <p>The collision term ν ∂/∂<span class="m">v</span>[<span class="m">v f</span><sub>1</sub> + (<span class="m">k</span><sub>B</sub><span class="m">T</span><sub>e</sub>/<span class="m">m</span><sub>e</sub>) ∂<span class="m">f</span><sub>1</sub>/∂<span class="m">v</span>]
+        describes diffusion in velocity space. It smooths fine stripes fastest, even when ν is small.
+        After time reversal the perturbation then returns only partially. Only collisions make the damping irreversible.</p>
+    </div>
+    <div class="note">
+      <h2>What are the limits of the model?</h2>
+      <p>The calculation is linear: <span class="m">f</span><sub>0</sub> stays fixed. Particle trapping in the wave and the plateau
+        that a beam develops through the waves it excites are therefore missing. A single wavenumber is computed
+        on a grid in <span class="m">v</span>. The exact values of ω and γ come from the numerical solution of the
+        dispersion relation with the plasma dispersion function.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const cvA = $('cvA'), cvP = $('cvP');
+  // Intern: v in sigma = sqrt(kT/m) = v_th/sqrt(2), t in 1/wpe, k in 1/lambda_D
+  const S2 = Math.SQRT2, NV = 2000, VB = 9, DV = 2 * VB / NV, DT = 0.02, TMAX = 60, SPEED = 6;
+  const vc = Float64Array.from({ length: NV }, (_, i) => -VB + (i + 0.5) * DV);
+  const ve = Float64Array.from({ length: NV + 1 }, (_, i) => -VB + i * DV);
+  const NUS = [0, 1e-4, 5e-4, 2e-3], NULAB = ['0', '10⁻⁴', '5 · 10⁻⁴', '2 · 10⁻³'];
+  let comps, g, gp, fr, fi, cr, ci, k, t, dir, playing = false, lastTs = null, fwd, back, disp, scale0;
+  let tri = null;
+
+  // ---------- komplexe Zahlen und Plasmadispersionsfunktion ----------
+  const add = (a, b) => [a[0] + b[0], a[1] + b[1]], sub = (a, b) => [a[0] - b[0], a[1] - b[1]];
+  const mul = (a, b) => [a[0] * b[0] - a[1] * b[1], a[0] * b[1] + a[1] * b[0]];
+  const div = (a, b) => { const d = b[0] * b[0] + b[1] * b[1]; return [(a[0] * b[0] + a[1] * b[1]) / d, (a[1] * b[0] - a[0] * b[1]) / d]; };
+  const cexp = a => { const e = Math.exp(a[0]); return [e * Math.cos(a[1]), e * Math.sin(a[1])]; };
+  const sc = (s, a) => [s * a[0], s * a[1]], cabs = a => Math.hypot(a[0], a[1]);
+  // Faddeeva-Funktion w(z) nach Weideman (1994), N = 32; untere Halbebene über w(z) = 2 exp(-z²) - w(-z)
+  const WN = 32, WL = Math.sqrt(WN / S2), WA = (() => {
+    const M = 2 * WN, M2 = 2 * M, f = new Float64Array(M2);
+    for (let j = 1; j < M2; j++) { const tt = WL * Math.tan((j - M) * Math.PI / M / 2); f[j] = Math.exp(-tt * tt) * (WL * WL + tt * tt); }
+    const a = new Float64Array(WN);
+    for (let m = 1; m <= WN; m++) { let s = 0; for (let j = 0; j < M2; j++) s += f[(j + M) % M2] * Math.cos(2 * Math.PI * j * m / M2); a[m - 1] = s / M2; }
+    return a;
+  })();
+  function wUpper(z) {
+    const Lm = [WL + z[1], -z[0]], Z = div([WL - z[1], z[0]], Lm);
+    let p = [0, 0]; for (let m = WN - 1; m >= 0; m--) p = add(mul(p, Z), [WA[m], 0]);
+    return add(div(sc(2, p), mul(Lm, Lm)), div([1 / Math.sqrt(Math.PI), 0], Lm));
+  }
+  const faddeeva = z => z[1] >= 0 ? wUpper(z) : sub(sc(2, cexp(sc(-1, mul(z, z)))), wUpper([-z[0], -z[1]]));
+  const Zfun = z => mul([0, Math.sqrt(Math.PI)], faddeeva(z));
+  // Dielektrizitätsfunktion für eine Summe von Maxwell-Anteilen {n, u, s}
+  function eps(om) {
+    let e = [1, 0];
+    for (const c of comps) {
+      const zeta = sc(1 / (S2 * c.s), sub(sc(1 / k, om), [c.u, 0]));
+      e = add(e, sc(c.n / (k * k * c.s * c.s), add([1, 0], mul(zeta, Zfun(zeta)))));
+    }
+    return e;
+  }
+  function secant(w0) {
+    let w1 = add(sc(1.01, w0), [0, -0.01]), e0 = eps(w0), e1 = eps(w1);
+    for (let it = 0; it < 100; it++) {
+      const d = sub(e1, e0); if (!(cabs(d) > 0)) return null;
+      const w2 = sub(w1, mul(e1, div(sub(w1, w0), d))); w0 = w1; e0 = e1; w1 = w2; e1 = eps(w1);
+      if (!isFinite(e1[0]) || !isFinite(e1[1])) return null;
+      if (cabs(e1) < 1e-12) break;
+    }
+    return cabs(e1) < 1e-8 && w1[0] > 0 ? w1 : null;
+  }
+  // führende Wurzel: größtes Im(omega) aus mehreren Startwerten
+  function leadingRoot() {
+    const starts = [[Math.sqrt(1 + 3 * k * k), -0.001]];
+    for (let v = 1; v < 8; v += 0.25) starts.push([k * v, 0.001]);
+    let best = null;
+    for (const s of starts) { const r = secant(s); if (r && (!best || r[1] > best[1])) best = r; }
+    return best;
+  }
+
+  // ---------- Verteilung und Simulation ----------
+  const maxw = (v, c) => c.n * Math.exp(-((v - c.u) ** 2) / (2 * c.s * c.s)) / (Math.sqrt(2 * Math.PI) * c.s);
+  const gOf = v => comps.reduce((s, c) => s + maxw(v, c), 0);
+  const gpOf = v => comps.reduce((s, c) => s - (v - c.u) / (c.s * c.s) * maxw(v, c), 0);
+
+  function setupTri() {
+    const nu = NUS[+$('nu').value];
+    if (!nu) { tri = null; return; }
+    // Rückwärts-Euler für nu d/dv (v f + df/dv), Flüsse an den Zellgrenzen, kein Fluss am Rand
+    const a = new Float64Array(NV), b = new Float64Array(NV), c = new Float64Array(NV), q = nu * DT / DV;
+    for (let i = 0; i < NV; i++) {
+      b[i] = 1;
+      if (i + 1 < NV) { c[i] = -q * (ve[i + 1] / 2 + 1 / DV); b[i] -= q * (ve[i + 1] / 2 - 1 / DV); }
+      if (i > 0) { a[i] = -q * (-ve[i] / 2 + 1 / DV); b[i] += q * (ve[i] / 2 + 1 / DV); }
+    }
+    const cp = new Float64Array(NV), den = new Float64Array(NV);
+    den[0] = b[0]; cp[0] = c[0] / den[0];
+    for (let i = 1; i < NV; i++) { den[i] = b[i] - a[i] * cp[i - 1]; cp[i] = c[i] / den[i]; }
+    tri = { a, cp, den };
+  }
+  function solveTri(x) {
+    const { a, cp, den } = tri;
+    x[0] /= den[0];
+    for (let i = 1; i < NV; i++) x[i] = (x[i] - a[i] * x[i - 1]) / den[i];
+    for (let i = NV - 2; i >= 0; i--) x[i] -= cp[i] * x[i + 1];
+  }
+
+  function init() {
+    k = +$('kk').value;
+    comps = $('d-beam').checked
+      ? [{ n: 0.97, u: 0, s: 1 }, { n: 0.03, u: 3 * S2, s: 0.4 * S2 }]
+      : [{ n: 1, u: 0, s: 1 }];
+    g = vc.map(gOf); gp = vc.map(gpOf);
+    fr = Float64Array.from(g); fi = new Float64Array(NV);
+    cr = vc.map(v => Math.cos(k * v * DT / 2)); ci = vc.map(v => -Math.sin(k * v * DT / 2));
+    t = 0; dir = 1; fwd = [[0, 1]]; back = [];
+    scale0 = Math.max(...g);
+    setupTri();
+    const r = leadingRoot();
+    const vBG = Math.sqrt(1 + 3 * k * k) / k;
+    disp = { r, gapprox: Math.PI / 2 / (k * k) * gpOf(vBG) };
+    readouts(); draw();
+  }
+  const density = () => { let sr = 0, si = 0; for (let i = 0; i < NV; i++) { sr += fr[i]; si += fi[i]; } return [sr * DV, si * DV]; };
+
+  function step() {
+    const s = dir, field = !$('nofield').checked;
+    // halber Schritt freie Bewegung (exakt), Feldstoß, halber Schritt freie Bewegung; Strang-Aufteilung ist zeitsymmetrisch
+    for (let h = 0; h < 2; h++) {
+      for (let i = 0; i < NV; i++) { const c = cr[i], d = s * ci[i], x = fr[i], y = fi[i]; fr[i] = x * c - y * d; fi[i] = x * d + y * c; }
+      if (h === 0 && field) {
+        const n = density(), Er = -n[1] / k, Ei = n[0] / k;      // ik E = -n
+        for (let i = 0; i < NV; i++) { fr[i] += s * DT * Er * gp[i]; fi[i] += s * DT * Ei * gp[i]; }
+      }
+    }
+    if (tri) { solveTri(fr); solveTri(fi); }                      // Stöße wirken in beiden Zeitrichtungen dissipativ
+    t += s * DT;
+    const a = cabs(density());
+    (dir > 0 ? fwd : back).push([t, a]);
+  }
+
+  // ---------- Darstellung ----------
+  const fmt = (v, d) => v.toFixed(d).replace('-', '−');
+  function fmtSig(x) {
+    if (!isFinite(x)) return '–';
+    const ax = Math.abs(x);
+    if (ax === 0) return '0';
+    if (ax >= 0.01) return fmt(x, ax >= 0.1 ? 3 : 4);
+    const e = Math.floor(Math.log10(ax)), m = x / 10 ** e;
+    return fmt(m, 1) + ' · 10' + String(e).replace('-', '⁻').replace(/\d/g, d => '⁰¹²³⁴⁵⁶⁷⁸⁹'[d]);
+  }
+  function readouts() {
+    $('kko').textContent = fmt(k, 2); $('nuo').textContent = NULAB[+$('nu').value];
+    const r = disp.r;
+    if (r) {
+      $('rvph').textContent = fmt(r[0] / k / S2, 2); $('rom').textContent = fmt(r[0], 3);
+      $('rgam').textContent = fmtSig(r[1]); $('rgap').textContent = fmtSig(disp.gapprox);
+      const per = r[0] / (2 * Math.PI * Math.abs(r[1]));
+      $('rpert').textContent = r[1] > 0 ? 'Periods to e-fold growth' : 'Periods to 1/e';
+      $('rper').textContent = per > 1e5 ? '> 10⁵' : per >= 100 ? Math.round(per).toLocaleString('en-GB',{useGrouping:false}) : fmt(per, 1);
+    } else ['rvph', 'rom', 'rgam', 'rgap', 'rper'].forEach(id => $(id).textContent = '–');
+    $('theoLabel').textContent = $('nofield').checked ? 'Theory: free streaming, ∫ g(v) e^(−ikvt) dv'
+      : 'Theory: slope γ from ε(k, ω) = 0';
+  }
+  function css(v) { return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
+  function rgb(hex) { const h = hex.replace('#', ''); return [0, 2, 4].map(i => parseInt(h.slice(i, i + 2), 16)); }
+  function setup(cv, ratio) { const dpr = window.devicePixelRatio || 1; const w = cv.clientWidth, h = Math.round(w * ratio);
+    cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); cv.style.height = h + 'px';
+    const c = cv.getContext('2d'); c.setTransform(dpr, 0, 0, dpr, 0, 0); return { c, w, h }; }
+  const pad = { l: 46, r: 12, t: 10, b: 32 };
+  const sup = n => String(n).replace('-', '⁻').replace(/\d/g, d => '⁰¹²³⁴⁵⁶⁷⁸⁹'[d]);
+
+  function theoryAt(tt) {
+    if ($('nofield').checked) {   // n1/alpha = sum n_s exp(-i k u_s t) exp(-k² s² t²/2)
+      let re = 0, im = 0;
+      for (const c of comps) { const a = c.n * Math.exp(-k * k * c.s * c.s * tt * tt / 2); re += a * Math.cos(k * c.u * tt); im -= a * Math.sin(k * c.u * tt); }
+      return Math.hypot(re, im);
+    }
+    return null;
+  }
+  function anchor() {   // Maximum von |n1| während der letzten Periode als Bezugspunkt der Geraden e^(gamma t)
+    if (!disp.r || fwd.length < 2) return null;
+    const T = 2 * Math.PI / disp.r[0], tn = fwd[fwd.length - 1][0];
+    if (tn < T) return null;
+    let best = null;
+    for (let i = fwd.length - 1; i >= 0 && fwd[i][0] >= tn - T; i--) if (!best || fwd[i][1] > best[1]) best = fwd[i];
+    return best;
+  }
+
+  function drawAmp() {
+    const { c, w, h } = setup(cvA, 0.36);
+    const muted = css('--muted'), rule = css('--rule'), fg = css('--fg');
+    let top = 1;
+    for (const p of fwd) top = Math.max(top, p[1]);
+    const LMAX = Math.max(1, Math.ceil(Math.log10(top) + 0.05)), LMIN = -6;
+    const X = tt => pad.l + tt / TMAX * (w - pad.l - pad.r);
+    const Y = a => { const l = Math.log10(Math.max(a, 1e-30)); return h - pad.b - (Math.max(Math.min(l, LMAX), LMIN) - LMIN) / (LMAX - LMIN) * (h - pad.t - pad.b); };
+    c.clearRect(0, 0, w, h);
+    c.save(); c.beginPath(); c.rect(pad.l, pad.t, w - pad.l - pad.r, h - pad.t - pad.b); c.clip();
+    c.strokeStyle = rule; c.lineWidth = 1;
+    for (let l = LMIN; l <= LMAX; l++) { c.beginPath(); c.moveTo(pad.l, Y(10 ** l)); c.lineTo(w - pad.r, Y(10 ** l)); c.stroke(); }
+    // Theorie
+    c.strokeStyle = css('--theo'); c.lineWidth = 1.6; c.setLineDash([6, 4]); c.beginPath();
+    if ($('nofield').checked) {
+      for (let i = 0; i <= 400; i++) { const tt = i / 400 * TMAX, a = theoryAt(tt); i ? c.lineTo(X(tt), Y(a)) : c.moveTo(X(tt), Y(a)); }
+      c.stroke();
+    } else {
+      const an = anchor();
+      if (an) { const gm = disp.r[1]; c.moveTo(X(0), Y(an[1] * Math.exp(gm * (0 - an[0])))); c.lineTo(X(TMAX), Y(an[1] * Math.exp(gm * (TMAX - an[0])))); c.stroke(); }
+    }
+    c.setLineDash([]);
+    const plot = (arr, col) => { if (arr.length < 2) return; c.beginPath(); arr.forEach((p, i) => i ? c.lineTo(X(p[0]), Y(p[1])) : c.moveTo(X(p[0]), Y(p[1])));
+      c.strokeStyle = col; c.lineWidth = 2; c.stroke(); };
+    plot(fwd, css('--accent')); plot(back, css('--high'));
+    c.restore();
+    c.strokeStyle = rule; c.strokeRect(pad.l, pad.t, w - pad.l - pad.r, h - pad.t - pad.b);
+    c.fillStyle = muted; c.font = '12px ' + css('--font-ui'); c.textAlign = 'center'; c.textBaseline = 'top';
+    for (let tt = 0; tt <= TMAX; tt += 10) c.fillText(String(tt), X(tt), h - pad.b + 4);
+    c.textAlign = 'right'; c.textBaseline = 'middle';
+    const stepL = LMAX - LMIN > 8 ? 2 : 1;
+    for (let l = LMIN; l <= LMAX; l += stepL) c.fillText(l === 0 ? '1' : '10' + sup(l), pad.l - 5, Y(10 ** l));
+    c.fillStyle = fg; c.font = 'italic 15px ' + css('--font-text'); c.textAlign = 'right'; c.textBaseline = 'bottom';
+    c.fillText('ωₚₑ t', w - pad.r, h - 2);
+  }
+
+  const off = document.createElement('canvas');
+  function drawPhase() {
+    const { c, w, h } = setup(cvP, 0.42);
+    const muted = css('--muted'), rule = css('--rule'), fg = css('--fg');
+    const gw = Math.min(150, Math.round(0.22 * w)), gap = 14;
+    const x0 = pad.l, x1 = w - pad.r - gw - gap, y0 = pad.t, y1 = h - pad.b;
+    const VD = 4 * S2;                                   // Darstellung bis 4 v_th
+    const Yv = v => y1 - (v + VD) / (2 * VD) * (y1 - y0);
+    c.clearRect(0, 0, w, h);
+    // Heatmap: Zeilenmittel von f1 über die Gitterzellen (grobe Auflösung mittelt feine Streifen weg)
+    const PW = Math.max(60, Math.round((x1 - x0) / 2)), PH = Math.max(60, Math.round((y1 - y0) / 2));
+    off.width = PW; off.height = PH;
+    const oc = off.getContext('2d'), img = oc.createImageData(PW, PH);
+    const rowR = new Float64Array(PH), rowI = new Float64Array(PH);
+    let mx = 0;
+    for (let j = 0; j < PH; j++) {
+      const va = VD - (j + 1) / PH * 2 * VD, vb = VD - j / PH * 2 * VD;
+      const ia = Math.max(0, Math.floor((va + VB) / DV)), ib = Math.min(NV - 1, Math.floor((vb + VB) / DV));
+      let sr = 0, si = 0; for (let i = ia; i <= ib; i++) { sr += fr[i]; si += fi[i]; }
+      const n = ib - ia + 1; rowR[j] = sr / n; rowI[j] = si / n; mx = Math.max(mx, Math.hypot(rowR[j], rowI[j]));
+    }
+    const scale = Math.max(scale0, mx);
+    const bg = rgb(css('--panel')), pc = rgb(css('--pos')), nc = rgb(css('--neg'));
+    const L = 2 * 2 * Math.PI / k;                       // zwei Wellenlängen
+    const cosx = new Float64Array(PW), sinx = new Float64Array(PW);
+    for (let i = 0; i < PW; i++) { const x = (i + 0.5) / PW * L; cosx[i] = Math.cos(k * x); sinx[i] = Math.sin(k * x); }
+    for (let j = 0; j < PH; j++) for (let i = 0; i < PW; i++) {
+      const val = (rowR[j] * cosx[i] - rowI[j] * sinx[i]) / scale, a = Math.min(1, Math.abs(val)), col = val > 0 ? pc : nc, o = 4 * (j * PW + i);
+      img.data[o] = bg[0] + (col[0] - bg[0]) * a; img.data[o + 1] = bg[1] + (col[1] - bg[1]) * a; img.data[o + 2] = bg[2] + (col[2] - bg[2]) * a; img.data[o + 3] = 255;
+    }
+    oc.putImageData(img, 0, 0);
+    c.imageSmoothingEnabled = true; c.drawImage(off, x0, y0, x1 - x0, y1 - y0);
+    c.strokeStyle = rule; c.lineWidth = 1; c.strokeRect(x0, y0, x1 - x0, y1 - y0);
+    // g(v) rechts, gleiche v-Achse
+    const gx0 = x1 + gap, gx1 = w - pad.r, gmax = Math.max(...g) * 1.08;
+    c.strokeRect(gx0, y0, gx1 - gx0, y1 - y0);
+    c.save(); c.beginPath(); c.rect(gx0, y0, gx1 - gx0, y1 - y0); c.clip();
+    // Bereich mit g' > 0 (v > 0) einfärben
+    c.fillStyle = css('--pos'); c.globalAlpha = 0.25;
+    for (let i = 0; i < NV; i++) if (vc[i] > 0 && gp[i] > 0 && Math.abs(vc[i]) < VD) c.fillRect(gx0, Yv(vc[i] + DV / 2), (g[i] / gmax) * (gx1 - gx0), Math.max(1, Yv(vc[i]) - Yv(vc[i] + DV)));
+    c.globalAlpha = 1;
+    c.beginPath(); let st = 0;
+    for (let i = 0; i < NV; i++) { if (Math.abs(vc[i]) > VD) continue; const p = [gx0 + g[i] / gmax * (gx1 - gx0), Yv(vc[i])]; st++ ? c.lineTo(...p) : c.moveTo(...p); }
+    c.strokeStyle = fg; c.lineWidth = 1.6; c.stroke();
+    c.restore();
+    // Resonanz bei +-v_phi
+    if (disp.r && !$('nofield').checked) {
+      const vp = disp.r[0] / k;
+      c.strokeStyle = css('--high'); c.lineWidth = 1.4; c.setLineDash([5, 4]);
+      [vp, -vp].forEach(v => { if (Math.abs(v) < VD) { c.beginPath(); c.moveTo(x0, Yv(v)); c.lineTo(gx1, Yv(v)); c.stroke(); } });
+      c.setLineDash([]);
+      if (vp < VD) { c.fillStyle = css('--high'); c.font = 'italic 14px ' + css('--font-text'); c.textAlign = 'right'; c.textBaseline = 'bottom';
+        c.fillText('vφ', gx1 - 4, Yv(vp) - 2); }
+    }
+    // Achsen
+    c.fillStyle = muted; c.font = '12px ' + css('--font-ui'); c.textAlign = 'right'; c.textBaseline = 'middle';
+    for (let v = -4; v <= 4; v += 2) c.fillText(String(v).replace('-', '−'), x0 - 5, Yv(v * S2));
+    c.textAlign = 'center'; c.textBaseline = 'top';
+    for (let q = 0; q <= 2; q += 0.5) c.fillText(fmt(q, q % 1 ? 1 : 0), x0 + q / 2 * (x1 - x0), y1 + 4);
+    c.fillStyle = fg; c.font = 'italic 15px ' + css('--font-text');
+    c.textAlign = 'right'; c.textBaseline = 'bottom'; c.fillText('x / λ', x1, h - 2);
+    c.textAlign = 'center'; c.fillText('g(v)', (gx0 + gx1) / 2, h - 2);
+    c.save(); c.translate(13, (y0 + y1) / 2); c.rotate(-Math.PI / 2); c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('v / vₜₕ', 0, 0); c.restore();
+  }
+
+  function draw() {
+    $('tlabel').innerHTML = 'ω<sub>pe</sub>t = ' + fmt(Math.max(0, t), 1);
+    $('reverse').disabled = !(dir > 0 && t > 0.5);
+    drawAmp(); drawPhase();
+  }
+
+  function frame(ts) {
+    if (!playing) return;
+    if (lastTs !== null) {
+      const n = Math.max(1, Math.round(Math.min(0.05, (ts - lastTs) / 1000) * SPEED / DT));
+      for (let i = 0; i < n; i++) {
+        if (dir > 0 && t >= TMAX - 1e-9) { stop(); break; }
+        if (dir < 0 && t <= 1e-9) { t = 0; stop(); break; }
+        step();
+      }
+      draw();
+    }
+    lastTs = ts; if (playing) requestAnimationFrame(frame);
+  }
+  function stop() { playing = false; lastTs = null; $('play').textContent = 'Play'; draw(); }
+  function start() { playing = true; $('play').textContent = 'Pause'; requestAnimationFrame(frame); }
+  $('play').addEventListener('click', () => {
+    if (playing) { stop(); return; }
+    if ((dir > 0 && t >= TMAX - 1e-9) || (dir < 0 && t <= 1e-9)) init();
+    start();
+  });
+  $('reverse').addEventListener('click', () => { dir = -1; back = [[t, fwd[fwd.length - 1][1]]]; if (!playing) start(); else draw(); });
+  $('reset').addEventListener('click', () => { stop(); init(); });
+  $('kk').addEventListener('input', () => { stop(); init(); });
+  $('nu').addEventListener('input', () => { stop(); init(); });
+  $('nofield').addEventListener('change', () => { stop(); init(); });
+  document.querySelectorAll('input[name=dist]').forEach(el => el.addEventListener('change', () => { stop(); init(); }));
+  window.addEventListener('resize', draw);
+  new MutationObserver(draw).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  if (window.matchMedia) window.matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', draw);
+  init();
+})();
+</script>
+</body>
+</html>

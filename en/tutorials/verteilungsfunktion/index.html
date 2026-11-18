@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Interactive visualisation: how the distribution function f(x, v) emerges from many particles in phase space, and how cell size and particle number determine its noise.">
+<title>From particles to the distribution function – Tutorials – Ref4EP</title>
+<link rel="alternate" hreflang="de" href="https://www.ref4ep.de/tutorials/verteilungsfunktion/">
+<link rel="alternate" hreflang="en" href="https://www.ref4ep.de/en/tutorials/verteilungsfunktion/">
+<style>
+html { color-scheme: light; }
+body { margin: 0; }
+[hidden] { display: none !important; }
+/* Layout: oben Teilchen und gezählte Verteilung nebeneinander, darunter f(v); rechts Regler */
+:root {
+  --bg: #f7f9fb; --panel: #ffffff; --fg: #16212b; --muted: #5b6b7a; --rule: #d5dee6;
+  --accent: #0069b3; --accent-soft: #e3eff8; --high: #d9680f; --dot: #6f8293;
+  --heat0: #ffffff; --heat1: #0069b3;
+  --font-text: "Latin Modern Roman", "CMU Serif", "STIX Two Text", Cambria, "Times New Roman", serif;
+  --font-ui: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #10171e; --panel: #172029; --fg: #e3eaf0; --muted: #93a3b2; --rule: #2a3742;
+    --accent: #4fa3e0; --accent-soft: #1b3346; --high: #f08a3c; --dot: #8ea0b0;
+    --heat0: #172029; --heat1: #6fb8ef; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #10171e; --panel: #172029; --fg: #e3eaf0; --muted: #93a3b2; --rule: #2a3742;
+  --accent: #4fa3e0; --accent-soft: #1b3346; --high: #f08a3c; --dot: #8ea0b0;
+  --heat0: #172029; --heat1: #6fb8ef; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg); font-family: var(--font-text); font-size: 17px; line-height: 1.5;
+  padding-block: 24px 40px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 1180px; margin: 0 auto; display: grid; gap: 20px; }
+.r4bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-family: var(--font-ui); font-size: 0.8rem; color: var(--muted); }
+.r4bar a { color: var(--accent); text-decoration: none; } .r4bar a:hover { text-decoration: underline; }
+.eyebrow { font-family: var(--font-ui); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+header h1 { font-size: 1.9rem; font-weight: 600; margin: 0; color: var(--accent); text-wrap: balance; }
+header p { margin: 4px 0 0; color: var(--muted); max-width: 72ch; }
+header p.subline { margin: 0; font-size: 1.1rem; color: var(--fg); }
+.main { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 20px; align-items: start; }
+@media (max-width: 880px) { .main { grid-template-columns: minmax(0, 1fr); } }
+.plots { display: grid; gap: 12px; min-width: 0; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 560px) { .row2 { grid-template-columns: 1fr; } }
+.stage { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 10px 10px; min-width: 0; }
+.stage h2 { font-family: var(--font-ui); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 0 0 4px; font-weight: 600; }
+canvas { display: block; width: 100%; height: auto; }
+.panel { display: grid; gap: 14px; font-family: var(--font-ui); font-size: 0.92rem; }
+fieldset { border: 1px solid var(--rule); border-radius: 6px; padding: 8px 12px 10px; margin: 0; background: var(--panel); }
+legend { padding: 0 6px; font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+select { font: inherit; width: 100%; padding: 5px 6px; border: 1px solid var(--rule); border-radius: 4px; background: var(--panel); color: var(--fg); }
+.ctl { display: grid; grid-template-columns: 1fr auto; gap: 0 8px; align-items: baseline; margin-top: 6px; }
+.ctl output { font-variant-numeric: tabular-nums; color: var(--accent); font-weight: 600; }
+.ctl input { grid-column: 1 / -1; width: 100%; accent-color: var(--accent); }
+button { font: inherit; font-weight: 600; border: 1px solid var(--accent); color: var(--accent); background: var(--panel); border-radius: 4px; padding: 6px 14px; cursor: pointer; margin-top: 8px; }
+button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--high); outline-offset: 2px; }
+dl.ro { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; margin: 0; font-variant-numeric: tabular-nums; }
+dl.ro dt { color: var(--muted); } dl.ro dd { margin: 0; text-align: right; font-weight: 600; }
+.notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+.note { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 12px 16px; min-width: 0; }
+.note h2 { font-size: 1.05rem; margin: 0 0 4px; font-weight: 600; }
+.note p { margin: 0; }
+.note.merke { border-left: 4px solid var(--high); }
+.note.achtung { border-left: 4px solid var(--accent); }
+.m { font-style: italic; }
+.r4bar .lang{margin-left:auto}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav class="r4bar" aria-label="Ref4EP"><a href="/en/">Ref4EP</a><span aria-hidden="true">/</span><a href="/en/tutorials/">Tutorials</a><span aria-hidden="true">/</span><span>From particles to the distribution function</span><a class="lang" href="/tutorials/verteilungsfunktion/" hreflang="de" lang="de" title="Deutsch">DE</a></nav>
+  <header>
+    <div class="eyebrow">Plasma physics · Kinetic theory</div>
+    <h1>From particles to the distribution function</h1>
+    <p class="subline">Counting in phase space: f(x, v) as a smoothed particle density</p>
+    <p>On the left, the state of each particle is a point in phase space (<span class="m">x</span>, <span class="m">v</span>).
+      On the right, phase space is divided into cells and counted: the number of particles per cell, divided by
+      the cell volume Δ<span class="m">x</span> Δ<span class="m">v</span>, gives <span class="m">f</span>(<span class="m">x</span>, <span class="m">v</span>).
+      Below is <span class="m">f</span>(<span class="m">v</span>), counted over all positions and compared with the distribution from which the particles were drawn.</p>
+  </header>
+
+  <div class="main">
+    <div class="plots">
+      <div class="row2">
+        <div class="stage"><h2>Particles in phase space</h2>
+          <canvas id="cvP" width="400" height="300" aria-label="Particles as points in phase space"></canvas></div>
+        <div class="stage"><h2>Counted: f(x, v)</h2>
+          <canvas id="cvH" width="400" height="300" aria-label="Distribution function from cell counts"></canvas></div>
+      </div>
+      <div class="stage"><h2>Counted over all positions: f(v)</h2>
+        <canvas id="cvV" width="800" height="260" aria-label="Velocity distribution, counted and exact"></canvas></div>
+    </div>
+
+    <div class="panel">
+      <fieldset>
+        <legend>Plasma</legend>
+        <select id="kind" aria-label="Particle distribution">
+          <option value="homogen">Maxwellian, uniform</option>
+          <option value="gradient">Maxwellian, density rising to the right</option>
+          <option value="strahlen">Two counter-streaming beams</option>
+          <option value="strahl">Beam on background</option>
+        </select>
+        <div class="ctl"><label for="np">Particle number <span class="m">N</span></label><output id="npo"></output>
+          <input type="range" id="np" min="2" max="5" step="0.05" value="3.7"></div>
+        <button id="roll" type="button">Redraw sample</button>
+      </fieldset>
+      <fieldset>
+        <legend>Cells</legend>
+        <div class="ctl"><label for="nx">Cells in <span class="m">x</span></label><output id="nxo"></output>
+          <input type="range" id="nx" min="2" max="64" step="1" value="16"></div>
+        <div class="ctl"><label for="nv">Cells in <span class="m">v</span></label><output id="nvo"></output>
+          <input type="range" id="nv" min="4" max="96" step="1" value="32"></div>
+      </fieldset>
+      <fieldset>
+        <legend>Statistics</legend>
+        <dl class="ro">
+          <dt>Particles per occupied cell (mean)</dt><dd id="ncell">–</dd>
+          <dt>expected relative fluctuation 1/√(cell count)</dt><dd id="noise">–</dd>
+        </dl>
+      </fieldset>
+    </div>
+  </div>
+
+  <div class="notes">
+    <div class="note merke">
+      <h2>What f is</h2>
+      <p><span class="m">f</span>(<span class="m">x</span>, <span class="m">v</span>) Δ<span class="m">x</span> Δ<span class="m">v</span>
+        is the mean number of particles in the cell. The distribution function is a density in
+        phase space, not a property of individual particles.</p>
+    </div>
+    <div class="note achtung">
+      <h2>Choosing the cell size</h2>
+      <p>Small cells contain few particles: the counted <span class="m">f</span> is noisy, roughly as
+        1/√(cell count). Large cells smooth, but blur structures such as narrow beams.
+        A smooth <span class="m">f</span> requires every cell to contain many particles while
+        still being small compared with the structures.</p>
+    </div>
+    <div class="note">
+      <h2>Units</h2>
+      <p>Position <span class="m">x</span> in units of the system length, velocity in units of the
+        thermal velocity. Real plasmas contain far more particles than this illustration,
+        around 10¹³ in one litre of low-pressure plasma.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const cvP = $('cvP'), cvH = $('cvH'), cvV = $('cvV');
+  const VMAX = 4.5;
+  let pts = [];
+  function gauss() { let u = 0; while (u === 0) u = Math.random(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * Math.random()); }
+  // exakte Verteilungen: Dichte in x (normiert auf [0,1]) und f(v) (normiert)
+  const KIND = {
+    homogen:  { nx: x => 1, fv: v => Math.exp(-v * v / 2) / Math.sqrt(2 * Math.PI),
+                sample: () => [Math.random(), gauss()] },
+    gradient: { nx: x => (0.25 + 1.5 * x) / 1.0, fv: v => Math.exp(-v * v / 2) / Math.sqrt(2 * Math.PI),
+                // Dichte ∝ 0,25 + 1,5 x auf [0,1], Integral 1; Inversion der Verteilungsfunktion
+                sample: () => { const r = Math.random(); const x = (-0.25 + Math.sqrt(0.0625 + 3 * r)) / 1.5; return [x, gauss()]; } },
+    strahlen: { nx: x => 1, fv: v => 0.5 * (g(v, -2, 0.4) + g(v, 2, 0.4)),
+                sample: () => [Math.random(), (Math.random() < 0.5 ? -2 : 2) + 0.4 * gauss()] },
+    strahl:   { nx: x => 1, fv: v => 0.9 * g(v, 0, 1) + 0.1 * g(v, 3, 0.25),
+                sample: () => [Math.random(), Math.random() < 0.9 ? gauss() : 3 + 0.25 * gauss()] },
+  };
+  function g(v, u, s) { return Math.exp(-(v - u) * (v - u) / (2 * s * s)) / (s * Math.sqrt(2 * Math.PI)); }
+  function roll() { const k = KIND[$('kind').value], N = Math.round(10 ** +$('np').value);
+    pts = []; for (let i = 0; i < N; i++) pts.push(k.sample()); draw(); }
+
+  function css(v) { return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
+  function hexToRgb(h) { h = h.replace('#', ''); if (h.length === 3) h = h.split('').map(c => c + c).join('');
+    const n = parseInt(h, 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
+  function setup(cv, ratio) { const dpr = window.devicePixelRatio || 1; const w = cv.clientWidth, h = Math.round(w * ratio);
+    cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); cv.style.height = h + 'px';
+    const c = cv.getContext('2d'); c.setTransform(dpr, 0, 0, dpr, 0, 0); return { c, w, h }; }
+  const pad = { l: 38, r: 10, t: 8, b: 30 };
+
+  function axes(c, w, h, xlab, ylab, xt, yt, X, Y) {
+    const muted = css('--muted'), rule = css('--rule'), fg = css('--fg');
+    c.strokeStyle = rule; c.lineWidth = 1; c.strokeRect(pad.l, pad.t, w - pad.l - pad.r, h - pad.t - pad.b);
+    c.fillStyle = muted; c.font = '12px ' + css('--font-ui'); c.textAlign = 'center'; c.textBaseline = 'top';
+    xt.forEach(([v, s]) => c.fillText(s, X(v), h - pad.b + 4));
+    c.textAlign = 'right'; c.textBaseline = 'middle'; yt.forEach(([v, s]) => c.fillText(s, pad.l - 5, Y(v)));
+    c.fillStyle = fg; c.font = 'italic 15px ' + css('--font-text'); c.textAlign = 'right'; c.textBaseline = 'bottom';
+    c.fillText(xlab, w - pad.r, h - 2); c.textAlign = 'left'; c.textBaseline = 'top'; c.fillText(ylab, 4, 2);
+  }
+
+  function draw() {
+    const nxC = +$('nx').value, nvC = +$('nv').value, N = pts.length;
+    $('npo').textContent = N.toLocaleString('en-GB',{useGrouping:false}); $('nxo').textContent = nxC; $('nvo').textContent = nvC;
+    const vt = [[-4, '−4'], [-2, '−2'], [0, '0'], [2, '2'], [4, '4']];
+    // --- Teilchen ---
+    { const { c, w, h } = setup(cvP, 0.75);
+      const X = x => pad.l + x * (w - pad.l - pad.r), Y = v => h - pad.b - (v + VMAX) / (2 * VMAX) * (h - pad.t - pad.b);
+      c.clearRect(0, 0, w, h);
+      c.fillStyle = css('--dot'); const step = Math.max(1, Math.floor(N / 6000)); const r = N > 3000 ? 1 : 1.6;
+      for (let i = 0; i < N; i += step) { const [x, v] = pts[i]; if (Math.abs(v) < VMAX) c.fillRect(X(x) - r / 2, Y(v) - r / 2, r, r); }
+      // Zellgitter
+      c.strokeStyle = css('--rule'); c.lineWidth = 0.6; c.beginPath();
+      for (let i = 1; i < nxC; i++) { const x = X(i / nxC); c.moveTo(x, pad.t); c.lineTo(x, h - pad.b); }
+      for (let j = 1; j < nvC; j++) { const y = Y(-VMAX + 2 * VMAX * j / nvC); c.moveTo(pad.l, y); c.lineTo(w - pad.r, y); }
+      if (nxC * nvC <= 2500) c.stroke();
+      axes(c, w, h, 'x', 'v', [[0, '0'], [0.5, '0.5'], [1, '1']], vt, X, Y);
+      if (step > 1) { c.fillStyle = css('--muted'); c.font = '11px ' + css('--font-ui'); c.textAlign = 'right'; c.textBaseline = 'top';
+        c.fillText('every ' + step + (step % 10 === 2 && step % 100 !== 12 ? 'nd' : step % 10 === 3 && step % 100 !== 13 ? 'rd' : 'th') + ' particle shown', w - pad.r - 4, pad.t + 4); }
+    }
+    // --- Zählen ---
+    const cnt = new Float64Array(nxC * nvC); const cntV = new Float64Array(nvC);
+    for (const [x, v] of pts) { if (Math.abs(v) >= VMAX) continue;
+      const i = Math.min(nxC - 1, Math.floor(x * nxC)), j = Math.min(nvC - 1, Math.floor((v + VMAX) / (2 * VMAX) * nvC));
+      cnt[j * nxC + i]++; cntV[j]++; }
+    let occ = 0, sum = 0, mx = 0; for (const n of cnt) { if (n > 0) { occ++; sum += n; } if (n > mx) mx = n; }
+    const mean = occ ? sum / occ : 0;
+    $('ncell').textContent = mean.toLocaleString('en-GB', {useGrouping:false, maximumFractionDigits: 1 });
+    $('noise').textContent = mean > 0 ? Math.round(100 / Math.sqrt(mean)) + ' %' : '–';
+    { const { c, w, h } = setup(cvH, 0.75);
+      const X = x => pad.l + x * (w - pad.l - pad.r), Y = v => h - pad.b - (v + VMAX) / (2 * VMAX) * (h - pad.t - pad.b);
+      c.clearRect(0, 0, w, h);
+      const a = hexToRgb(css('--heat0')), b = hexToRgb(css('--heat1'));
+      const cw = (w - pad.l - pad.r) / nxC, ch = (h - pad.t - pad.b) / nvC;
+      for (let j = 0; j < nvC; j++) for (let i = 0; i < nxC; i++) {
+        const s = mx ? Math.sqrt(cnt[j * nxC + i] / mx) : 0;
+        c.fillStyle = `rgb(${a.map((q, k) => Math.round(q + (b[k] - q) * s)).join(',')})`;
+        c.fillRect(pad.l + i * cw, h - pad.b - (j + 1) * ch, Math.ceil(cw), Math.ceil(ch)); }
+      axes(c, w, h, 'x', 'v', [[0, '0'], [0.5, '0.5'], [1, '1']], vt, X, Y);
+    }
+    // --- f(v) ---
+    { const { c, w, h } = setup(cvV, 0.3);
+      const k = KIND[$('kind').value], dv = 2 * VMAX / nvC;
+      const hist = Array.from(cntV, n => N ? n / (N * dv) : 0);
+      let ym = 0; hist.forEach(y => ym = Math.max(ym, y)); for (let v = -VMAX; v <= VMAX; v += 0.02) ym = Math.max(ym, k.fv(v)); ym *= 1.1;
+      const X = v => pad.l + (v + VMAX) / (2 * VMAX) * (w - pad.l - pad.r), Y = y => h - pad.b - y / ym * (h - pad.t - pad.b);
+      c.clearRect(0, 0, w, h);
+      c.fillStyle = css('--accent-soft'); c.strokeStyle = css('--accent'); c.lineWidth = 1;
+      for (let j = 0; j < nvC; j++) { const x0 = X(-VMAX + j * dv), x1 = X(-VMAX + (j + 1) * dv);
+        c.fillRect(x0, Y(hist[j]), x1 - x0, Y(0) - Y(hist[j])); c.strokeRect(x0, Y(hist[j]), x1 - x0, Y(0) - Y(hist[j])); }
+      c.beginPath(); for (let v = -VMAX, s = 0; v <= VMAX; v += 0.02, s++) { const p = [X(v), Y(k.fv(v))]; s ? c.lineTo(...p) : c.moveTo(...p); }
+      c.strokeStyle = css('--high'); c.lineWidth = 2; c.stroke();
+      axes(c, w, h, 'v', 'f(v)', vt, [], X, Y);
+      c.fillStyle = css('--muted'); c.font = '12px ' + css('--font-ui'); c.textAlign = 'right'; c.textBaseline = 'top';
+      c.fillStyle = css('--high'); c.fillText('exact distribution', w - pad.r - 6, pad.t + 4);
+      c.fillStyle = css('--accent'); c.fillText('counted', w - pad.r - 6, pad.t + 20);
+    }
+  }
+  $('kind').addEventListener('change', roll);
+  $('np').addEventListener('input', roll);
+  $('roll').addEventListener('click', roll);
+  $('nx').addEventListener('input', draw); $('nv').addEventListener('input', draw);
+  window.addEventListener('resize', draw);
+  new MutationObserver(draw).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  if (window.matchMedia) window.matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', draw);
+  roll();
+})();
+</script>
+</body>
+</html>

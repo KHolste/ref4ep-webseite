@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description"
+        content="FORCETRACE: simulation program for the effect of keV ion beams on bodies and vacuum facilities – force and torque, heat load, sputtering, measurement planning on the thrust balance, neutral gas density, charge exchange and Faraday cups.">
+  <title>FORCETRACE – Software – Ref4EP</title>
+  <link rel="stylesheet" href="/assets/style.css">
+  <link rel="alternate" hreflang="de" href="https://www.ref4ep.de/software/forcetrace/">
+  <link rel="alternate" hreflang="en" href="https://www.ref4ep.de/en/software/forcetrace/">
+</head>
+
+<body>
+  <a class="skip-link" href="#inhalt">Skip to content</a>
+
+  <header>
+    <div class="nav">
+      <a class="brand" href="/en/" aria-label="Ref4EP home page">
+        <span class="brand-mark">R4</span>
+        <span>Ref4EP</span>
+      </a>
+
+      <nav aria-label="Main navigation">
+        <ul>
+          <li><a href="/en/#projekt">Project</a></li>
+          <li><a href="/en/#ziele">Objectives</a></li>
+          <li><a href="/en/#partner">Partners</a></li>
+          <li><a href="/en/#arbeit">Work Areas</a></li>
+          <li><a href="/en/#daten">Data &amp; Standards</a></li>
+          <li><a href="/en/software/" aria-current="page">Software</a></li>
+          <li><a href="/en/tutorials/">Tutorials</a></li>
+          <li><a href="/en/#kontakt">Contact</a></li>
+          <li class="lang-item"><a class="lang" href="/software/forcetrace/" hreflang="de" lang="de" title="Deutsch">DE</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <section class="subhero">
+    <div class="subhero-inner">
+      <p class="breadcrumb">
+        <a href="/en/">Home</a>
+        <span aria-hidden="true">/</span>
+        <a href="/en/software/">Software</a>
+        <span aria-hidden="true">/</span>
+        FORCETRACE
+      </p>
+
+      <h1>FORCETRACE</h1>
+
+      <p class="lead">
+        FORCETRACE computes what a divergent noble-gas ion beam in the
+        keV range does to solid bodies and inside a vacuum facility: force
+        and torque on a body at arbitrary inclination, heat load,
+        sputtering and deposition, the expected reading of a
+        thrust balance, the neutral gas density in the facility, and charge
+        exchange and scattering of the beam up to the Faraday cups.
+      </p>
+
+      <div class="pills">
+        <span class="pill">Windows 10/11, 64-bit</span>
+        <span class="pill">Version 0.9</span>
+        <span class="pill">German and English</span>
+        <span class="pill">Graphical interface</span>
+        <span class="pill">Built-in manual and tutorial</span>
+        <span class="pill">Installation without administrator rights</span>
+        <span class="pill">Access on request</span>
+      </div>
+    </div>
+  </section>
+
+  <main id="inhalt">
+
+    <section>
+      <div class="split">
+        <div class="panel">
+          <h2>What is FORCETRACE for?</h2>
+
+          <p>
+            The program was created for laboratory experiments on the
+            Ion Beam Shepherd principle: an ion beam is to push an object in
+            orbit – such as a piece of space debris – without contact.
+            The force transferred depends on the shape, attitude and
+            material of the body, on the energy and divergence of the
+            beam, and on which parts of the body shadow others.
+            In the laboratory this force is measured with a thrust balance, whose
+            reading additionally contains the torque, noise and
+            thermal drift.
+          </p>
+
+          <p>
+            The second field of application is beam diagnostics in large
+            vacuum facilities such as JUMBO at Justus Liebig University Giessen:
+            how high is the pressure with the thruster running, what do the
+            gauges read, and how much current do the Faraday cups lose to
+            charge exchange and scattering in the residual gas? Other facilities
+            can be imported as surface meshes.
+          </p>
+        </div>
+
+        <figure class="shot">
+          <img src="/software/forcetrace/bilder/kraft-3d.jpg"
+               width="1600"
+               height="960"
+               alt="FORCETRACE main window: beam and body settings on the left, on the right a 3D view of a cylinder with plate in the ion beam, showing current density on the surface and force and torque arrows.">
+
+          <figcaption>
+            <b>Force and torque on a body</b>
+            Aluminium cylinder with plate in a Xe⁺ beam (50 mA, 1500 eV),
+            inclined by 25°. Colour shows the current density on the surface;
+            at the top are force, torque, intercepted current and the expected
+            reading of the thrust balance.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-heading">
+        <h2>Physical models and features</h2>
+
+        <p>
+          The collision physics at the surface comes from precomputed
+          tables of the binary collision code RustBCA. FORCETRACE itself computes
+          beam, geometry, shadowing, gas transport and charge exchange.
+        </p>
+      </div>
+
+      <ul class="feature-list">
+        <li>
+          <b>Momentum transfer from RustBCA</b> – for every combination of ion,
+          material, energy and angle of incidence, the momentum balance of
+          backscattered ions and sputtered atoms, plus
+          sputter yield and heat fraction. Values are interpolated between the
+          tabulated points, but not extrapolated outside the computed range.
+        </li>
+
+        <li>
+          <b>Beam model</b> – source diameter, current, divergence and
+          profile (Gaussian, uniform or measured from file); the
+          distribution at the target is the convolution of the source profile and
+          angular distribution, with curved trajectories for laboratory distances.
+        </li>
+
+        <li>
+          <b>Force, torque, heat and erosion</b> – balance at each sampling point
+          of a triangle mesh; primitives (plate, cube, cylinder, cone,
+          sphere, sheet) can be combined, and mass, centre of mass and
+          inertia tensor are computed as well.
+        </li>
+
+        <li>
+          <b>Shadowing</b> – for non-convex and multi-part bodies,
+          each sampling point is traced back along its beam path to the
+          source. Without shadowing, the intercepted current for
+          complex bodies would be overestimated by 20 to 30 %.
+        </li>
+
+        <li>
+          <b>Deposition</b> – flight of the sputtered material with the
+          emission distributions from RustBCA, sticking probability and
+          diffuse re-emission; the result is the film growth rate per surface.
+        </li>
+
+        <li>
+          <b>Parameter studies</b> – sweep distance, offset, angle of inclination, current,
+          divergence or source diameter, with plots and
+          CSV export.
+        </li>
+
+        <li>
+          <b>Measurement planning on the thrust balance</b> – simulated measurement cycle with
+          control loop, noise, zero drift and thermal drift,
+          analysed as in the laboratory; error budget by varying the
+          uncertain input quantities, and search for the optimum cycle.
+        </li>
+
+        <li>
+          <b>Ion Beam Shepherd in orbit</b> – free motion of a body
+          in the beam and orbit lowering over weeks,
+          either orbit-averaged or step by step including Earth's oblateness,
+          atmospheric drag and Earth's shadow.
+        </li>
+
+        <li>
+          <b>Neutral gas in the facility</b> – test-particle Monte Carlo in
+          free molecular flow with thruster, turbopumps and
+          cryosurfaces; optionally outgassing and leaks. Gas collisions can be
+          enabled in the chamber simulation.
+        </li>
+
+        <li>
+          <b>Gauges and residual gas</b> – true pressure and the readings of
+          cold-cathode and Bayard–Alpert gauges per gas; mass spectrum with
+          isotopes, double ionisation and fragments.
+        </li>
+
+        <li>
+          <b>Charge exchange, scattering and Faraday cups</b> – charge exchange along the
+          beam path from the computed gas density, elastic scattering in the
+          ZBL potential and the geometric acceptance of the cup apertures;
+          the result is the current per cup with and without these losses.
+        </li>
+
+        <li>
+          <b>Custom facilities</b> – import as a surface mesh (gmsh, STL)
+          with a description of pumps, cryosurfaces, gauges and source;
+          the enclosure is checked for gaps using test particles.
+        </li>
+      </ul>
+    </section>
+
+    <section>
+      <div class="section-heading">
+        <h2>Force measurement in the laboratory</h2>
+
+        <p>
+          Both figures refer to the setup from the first
+          image: cylinder with plate, 750 mm in front of the source, Xe⁺ beam with
+          50 mA and 1500 eV.
+        </p>
+      </div>
+
+      <div class="figure-grid">
+        <figure class="shot">
+          <img src="/software/forcetrace/bilder/parameterstudie.jpg"
+               width="1600"
+               height="960"
+               alt="Sweep tab: force in the measuring direction, balance reading and intercepted fraction of the beam versus angle of inclination from minus 60 to plus 60 degrees.">
+
+          <figcaption>
+            <b>Parameter study</b>
+            Force in the measuring direction, balance reading including the
+            torque contribution, and intercepted fraction of the beam versus the
+            angle of inclination from −60° to +60°.
+          </figcaption>
+        </figure>
+
+        <figure class="shot">
+          <img src="/software/forcetrace/bilder/messplanung.jpg"
+               width="1600"
+               height="960"
+               alt="Measurement planning tab: simulated measurement cycle of a thrust balance with 60 seconds beam on and 60 seconds off over ten cycles, alongside the analysis with uncertainty.">
+
+          <figcaption>
+            <b>Measurement planning on the thrust balance</b>
+            Simulated measurement cycle with noise and zero drift,
+            analysed as in the laboratory. The program reports the uncertainty of the
+            force and the maximum permissible heating of the balance.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-heading">
+        <h2>Beam and gas in the vacuum facility</h2>
+
+        <p>
+          The JUMBO facility is taken from the design data: chamber,
+          beam dump, cup tower, cryopanels and turbopumps. The numbers in
+          the figures are computed, not measured.
+        </p>
+      </div>
+
+      <div class="figure-grid">
+        <figure class="shot">
+          <img src="/software/forcetrace/bilder/anlage-jumbo.jpg"
+               width="1600"
+               height="960"
+               alt="3D view of the JUMBO vacuum facility in longitudinal section with ion beam, beam dump and cup tower; colour shows the current density on the surfaces hit.">
+
+          <figcaption>
+            <b>Beam in the facility</b>
+            Longitudinal section through JUMBO with beam, cup tower and beam dump;
+            colour shows the current density on the surfaces hit. Each component
+            can be hidden.
+          </figcaption>
+        </figure>
+
+        <figure class="shot">
+          <img src="/software/forcetrace/bilder/gasdruck-schnitt.jpg"
+               width="1600"
+               height="960"
+               alt="Gas density tab: pressure in a longitudinal section through the facility with the thruster running, above it the gauge readings and the charge-exchange fraction.">
+
+          <figcaption>
+            <b>Pressure with the thruster running</b>
+            Pressure distribution in longitudinal section at 10 sccm xenon, with the true
+            pressure at the chamber centre and the gauge readings.
+          </figcaption>
+        </figure>
+
+        <figure class="shot">
+          <img src="/software/forcetrace/bilder/faraday-cups.jpg"
+               width="1600"
+               height="960"
+               alt="Predicted current density at the cup tower versus position, without charge exchange, with charge exchange and additionally with elastic scattering.">
+
+          <figcaption>
+            <b>Prediction for the Faraday cups</b>
+            Current density at the cup tower without charge exchange, with charge exchange and
+            additionally with elastic scattering. In the run shown,
+            1.6 to 3.3 % of the current undergoes charge exchange.
+          </figcaption>
+        </figure>
+
+        <figure class="shot">
+          <img src="/software/forcetrace/bilder/kammersimulation.jpg"
+               width="1400"
+               height="860"
+               alt="Chamber simulation window: pressure distribution in an example chamber with a dosing valve, gas source settings on the right.">
+
+          <figcaption>
+            <b>Chamber simulation</b>
+            A custom chamber with pumps, gas inlet and gauge. A
+            guided tour in the program leads step by step through
+            this example.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-heading">
+        <h2>Ion Beam Shepherd</h2>
+
+        <p>
+          In the Ion Beam Shepherd concept, a shepherd satellite points its
+          thruster at an object and pushes it with the ion beam; a
+          second thruster compensates for the recoil. FORCETRACE computes how
+          the object moves and rotates, whether the shepherd can keep its distance,
+          and how long it takes to lower the orbit.
+        </p>
+      </div>
+
+      <figure class="shot">
+        <video controls muted loop playsinline preload="metadata"
+               width="1280" height="768"
+               poster="/software/forcetrace/bilder/ibs-film-standbild.jpg"
+               style="width:100%; height:auto; display:block">
+          <source src="/software/forcetrace/bilder/ibs-film.mp4" type="video/mp4">
+          <img src="/software/forcetrace/bilder/ibs-film-standbild.jpg" width="1280" height="768"
+               alt="Still from the simulation: inclined rocket upper stage in the ion beam with force and torque arrows.">
+        </video>
+
+        <figcaption>
+          <b>Simulation as a film: rocket upper stage in the shepherd's beam</b>
+          Spent upper stage (aluminium cylinder, 1440 kg, Ø 2.4 m,
+          6.5 m long), inclined by 35°, 0.6 m off the beam axis and slowly
+          tumbling, 15 m in front of the shepherd. Xe⁺ beam with 3 A and 5 keV. On the left
+          the close-up with the current density on the surface, on the right the
+          side view with the beam outline, below distance, force, rotation rate
+          and compensation thrust. The shepherd holds the distance at 15 m; the
+          beam pushes the object back towards the axis. 20 minutes of simulation in
+          20 seconds.
+        </figcaption>
+      </figure>
+
+      <div class="figure-grid" style="margin-top:1.5rem">
+        <figure class="shot">
+          <img src="/software/forcetrace/bilder/ibs-verlaeufe.jpg"
+               width="1600"
+               height="960"
+               alt="Free motion window, time series tab: distance, lateral offset, velocity, rotation rate, rotation angle, force, torque, intercepted current fraction and shepherd thrust versus time.">
+
+          <figcaption>
+            <b>Free motion in the beam</b>
+            The same run in the program window: distance and lateral offset,
+            velocity and rotation rate, force and torque, the
+            intercepted fraction of the beam and the shepherd's thrust versus
+            time.
+          </figcaption>
+        </figure>
+
+        <figure class="shot">
+          <img src="/software/forcetrace/bilder/bahnabsenkung.jpg"
+               width="1300"
+               height="820"
+               alt="Orbit lowering window: orbital altitude and shepherd propellant consumption versus time for a descent from 800 to 300 kilometres.">
+
+          <figcaption>
+            <b>Orbit lowering</b>
+            An object of 1440 kg is lowered from 800 to 300 km with 256 mN;
+            the shepherd needs 18 days and 15.6 kg of
+            propellant. The computation is either averaged over many
+            orbits or step by step including Earth's oblateness,
+            co-rotating atmosphere and Earth's shadow.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-heading">
+        <h2>Verification</h2>
+
+        <p>
+          A built-in self-test checks more than 300 cases with known
+          results. The collision physics itself is not tested here;
+          it comes from RustBCA.
+        </p>
+      </div>
+
+      <ul class="feature-list">
+        <li>
+          <b>Closed-form solutions</b> – force on a plate in the full
+          beam to six digits, torque against a lever arm computed
+          by hand, volume, centre of mass and inertia of the
+          primitives.
+        </li>
+
+        <li>
+          <b>Conserved quantities</b> – the beam loses no current, the
+          heat load stays below the incident power, and eroded
+          and deposited material agree to within 0.01 % in a closed chamber.
+        </li>
+
+        <li>
+          <b>Gas computation</b> – in an example chamber with known
+          pumping speed, the computed pressure lies within 3 % of the
+          expected value Q/S; the charge-exchange fraction in homogeneous gas follows σ·n·L.
+        </li>
+
+        <li>
+          <b>Comparison with SPARTA</b> – cross-check of the gas computation with the
+          DSMC code SPARTA on test geometries, including gas collisions.
+        </li>
+      </ul>
+    </section>
+
+    <section id="zugang">
+      <div class="download">
+        <div>
+          <h2>Access</h2>
+
+          <p>
+            FORCETRACE is currently not offered as a public download,
+            but is passed on to cooperation partners. If you are interested in the
+            program, in a joint computation or in a
+            collaboration, we look forward to hearing from you.
+          </p>
+
+          <dl>
+            <dt>Version</dt>
+            <dd>0.9.0</dd>
+
+            <dt>Operating system</dt>
+            <dd>Windows 10/11, 64-bit</dd>
+
+            <dt>Language</dt>
+            <dd>German and English, switchable</dd>
+
+            <dt>Package contents</dt>
+            <dd>Installer with collision data, example setups,
+                manual, guided tours and diagnostics</dd>
+
+            <dt>Development</dt>
+            <dd>Dr. Kristof Holste, Justus Liebig University Giessen</dd>
+
+            <dt>Contact</dt>
+            <dd><a href="mailto:Kristof.Holste@physik.jlug.de?subject=FORCETRACE">Kristof.Holste@physik.jlug.de</a></dd>
+          </dl>
+        </div>
+
+        <a class="button button-solid"
+           href="mailto:Kristof.Holste@physik.jlug.de?subject=FORCETRACE%20-%20Request">
+          Request by email
+        </a>
+      </div>
+
+      <p class="notice" style="margin-top:1rem">
+        <b>Use and licence.</b>
+        FORCETRACE is intended for research, teaching and training; any
+        other use requires prior agreement. The licence terms
+        enclosed with the installation package are authoritative.
+      </p>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <span>&copy; Ref4EP consortium</span>
+      <span>Reference diagnostics for electric space propulsion</span>
+      <a href="/en/impressum.html">Legal notice</a>
+      <a href="/en/datenschutz.html">Privacy policy</a>
+    </div>
+  </footer>
+</body>
+</html>

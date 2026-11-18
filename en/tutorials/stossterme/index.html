@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Interactive visualisation: an electron beam relaxes in the Krook model and with a Fokker–Planck collision term. With Coulomb-like collisions, fast particles survive for a long time.">
+<title>Collision terms compared – Tutorials – Ref4EP</title>
+<link rel="alternate" hreflang="de" href="https://www.ref4ep.de/tutorials/stossterme/">
+<link rel="alternate" hreflang="en" href="https://www.ref4ep.de/en/tutorials/stossterme/">
+<style>
+html { color-scheme: light; }
+body { margin: 0; }
+[hidden] { display: none !important; }
+/* Layout: oben f(v) für beide Modelle, darunter Strahlanteil über der Zeit; rechts Regler */
+:root {
+  --bg: #f7f9fb; --panel: #ffffff; --fg: #16212b; --muted: #5b6b7a; --rule: #d5dee6;
+  --accent: #0069b3; --accent-soft: #e3eff8; --high: #d9680f; --krook: #d9680f; --fp: #0069b3; --init: #9aa8b5;
+  --font-text: "Latin Modern Roman", "CMU Serif", "STIX Two Text", Cambria, "Times New Roman", serif;
+  --font-ui: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #10171e; --panel: #172029; --fg: #e3eaf0; --muted: #93a3b2; --rule: #2a3742;
+    --accent: #4fa3e0; --accent-soft: #1b3346; --high: #f08a3c; --krook: #f08a3c; --fp: #4fa3e0; --init: #5d6c7a;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #10171e; --panel: #172029; --fg: #e3eaf0; --muted: #93a3b2; --rule: #2a3742;
+  --accent: #4fa3e0; --accent-soft: #1b3346; --high: #f08a3c; --krook: #f08a3c; --fp: #4fa3e0; --init: #5d6c7a;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg); font-family: var(--font-text); font-size: 17px; line-height: 1.5;
+  padding-block: 24px 40px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 1120px; margin: 0 auto; display: grid; gap: 20px; }
+.r4bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-family: var(--font-ui); font-size: 0.8rem; color: var(--muted); }
+.r4bar a { color: var(--accent); text-decoration: none; } .r4bar a:hover { text-decoration: underline; }
+.eyebrow { font-family: var(--font-ui); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+header h1 { font-size: 1.9rem; font-weight: 600; margin: 0; color: var(--accent); text-wrap: balance; }
+header p { margin: 4px 0 0; color: var(--muted); max-width: 72ch; }
+header p.subline { margin: 0; font-size: 1.1rem; color: var(--fg); }
+.main { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 20px; align-items: start; }
+@media (max-width: 860px) { .main { grid-template-columns: minmax(0, 1fr); } }
+.plots { display: grid; gap: 12px; min-width: 0; }
+.stage { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 10px 10px; min-width: 0; }
+.stage h2 { font-family: var(--font-ui); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 0 0 4px; font-weight: 600; }
+canvas { display: block; width: 100%; height: auto; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-family: var(--font-ui); font-size: 0.85rem; color: var(--muted); margin: 6px 4px 0; }
+.legend i { display: inline-block; width: 22px; height: 0; border-top: 3px solid; vertical-align: middle; margin-right: 6px; }
+.panel { display: grid; gap: 14px; font-family: var(--font-ui); font-size: 0.92rem; }
+fieldset { border: 1px solid var(--rule); border-radius: 6px; padding: 8px 12px 10px; margin: 0; background: var(--panel); }
+legend { padding: 0 6px; font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.choice { display: flex; gap: 8px; align-items: baseline; padding: 3px 0; cursor: pointer; }
+.choice small { display: block; color: var(--muted); font-size: 0.82rem; }
+input[type=radio] { accent-color: var(--accent); }
+.ctl { display: grid; grid-template-columns: 1fr auto; gap: 0 8px; align-items: baseline; margin-top: 6px; }
+.ctl output { font-variant-numeric: tabular-nums; color: var(--accent); font-weight: 600; }
+.ctl input { grid-column: 1 / -1; width: 100%; accent-color: var(--accent); }
+.row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+button { font: inherit; font-weight: 600; border: 1px solid var(--accent); color: var(--accent); background: var(--panel); border-radius: 4px; padding: 6px 14px; cursor: pointer; }
+button.primary { background: var(--accent); color: var(--panel); }
+button:focus-visible, input:focus-visible { outline: 2px solid var(--high); outline-offset: 2px; }
+.tval { font-variant-numeric: tabular-nums; margin-left: auto; }
+dl.ro { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; margin: 0; font-variant-numeric: tabular-nums; }
+dl.ro dt { color: var(--muted); } dl.ro dd { margin: 0; text-align: right; font-weight: 600; }
+dd.k { color: var(--krook); } dd.f { color: var(--fp); }
+.notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+.note { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 12px 16px; min-width: 0; }
+.note h2 { font-size: 1.05rem; margin: 0 0 4px; font-weight: 600; }
+.note p { margin: 0; }
+.note.merke { border-left: 4px solid var(--high); }
+.note.achtung { border-left: 4px solid var(--accent); }
+.m { font-style: italic; }
+.r4bar .lang{margin-left:auto}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav class="r4bar" aria-label="Ref4EP"><a href="/en/">Ref4EP</a><span aria-hidden="true">/</span><a href="/en/tutorials/">Tutorials</a><span aria-hidden="true">/</span><span>Collision terms compared</span><a class="lang" href="/tutorials/stossterme/" hreflang="de" lang="de" title="Deutsch">DE</a></nav>
+  <header>
+    <div class="eyebrow">Plasma physics · Kinetic theory</div>
+    <h1>Collision terms compared</h1>
+    <p class="subline">Krook model and Fokker–Planck equation applied to an electron beam</p>
+    <p>A fast beam sits on a thermal background. Both collision models drive the
+      distribution towards the Maxwellian of the background. The Krook model does so with a single
+      time τ for all velocities. The Fokker–Planck collision term describes many small
+      velocity changes as friction and diffusion; for Coulomb collisions the collision frequency
+      decreases with velocity.</p>
+  </header>
+
+  <div class="main">
+    <div class="plots">
+      <div class="stage"><h2>Velocity distribution f(v)</h2>
+        <canvas id="cvF" width="800" height="380" aria-label="Distribution in the Krook model and with the Fokker–Planck collision term"></canvas>
+        <div class="legend">
+          <span><i style="border-color: var(--init); border-top-style: dashed"></i>Initial</span>
+          <span><i style="border-color: var(--krook)"></i>Krook</span>
+          <span><i style="border-color: var(--fp)"></i>Fokker–Planck</span>
+        </div>
+      </div>
+      <div class="stage"><h2>Particles above v = 2 v<sub>th</sub> (in excess of the equilibrium value)</h2>
+        <canvas id="cvT" width="800" height="220" aria-label="Beam fraction over time"></canvas></div>
+    </div>
+
+    <div class="panel">
+      <fieldset>
+        <legend>Fokker–Planck collision frequency</legend>
+        <label class="choice"><input type="radio" name="nu" id="nu-coul" value="coul" checked>
+          <span>Coulomb-like<small>ν(v) = ν₀ / (1 + |v/v<sub>th</sub>|³), i.e. ν ∝ v⁻³ for v ≫ v<sub>th</sub></small></span></label>
+        <label class="choice"><input type="radio" name="nu" id="nu-const" value="const">
+          <span>Constant<small>ν(v) = ν₀ as in the Krook model</small></span></label>
+      </fieldset>
+      <fieldset>
+        <legend>Beam</legend>
+        <div class="ctl"><label for="vb">Velocity <span class="m">v</span><sub>b</sub>/<span class="m">v</span><sub>th</sub></label><output id="vbo"></output>
+          <input type="range" id="vb" min="2.5" max="6" step="0.1" value="4"></div>
+        <div class="ctl"><label for="fb">Fraction of particles in the beam</label><output id="fbo"></output>
+          <input type="range" id="fb" min="0.02" max="0.3" step="0.01" value="0.1"></div>
+      </fieldset>
+      <fieldset>
+        <legend>Time</legend>
+        <div class="row">
+          <button class="primary" id="play" type="button">Play</button>
+          <button id="reset" type="button">t = 0</button>
+          <span class="tval" id="tlabel">ν₀t = 0.0</span>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Beam fraction remaining</legend>
+        <dl class="ro"><dt>Krook</dt><dd class="k" id="rk">–</dd><dt>Fokker–Planck</dt><dd class="f" id="rf">–</dd></dl>
+      </fieldset>
+    </div>
+  </div>
+
+  <div class="notes">
+    <div class="note merke">
+      <h2>Krook: one time for all</h2>
+      <p>(∂<span class="m">f</span>/∂<span class="m">t</span>)<sub>coll</sub> = −(<span class="m">f</span> − <span class="m">f</span><sub>0</sub>)/τ.
+        Every deviation from <span class="m">f</span><sub>0</sub> decays with the same time τ = 1/ν₀,
+        regardless of velocity. The beam vanishes in place; it is not slowed down.</p>
+    </div>
+    <div class="note achtung">
+      <h2>Fokker–Planck: friction and diffusion</h2>
+      <p>(∂<span class="m">f</span>/∂<span class="m">t</span>)<sub>coll</sub> = ∂/∂<span class="m">v</span>[ν(<span class="m">v</span>)(<span class="m">v f</span> + <span class="m">v</span><sub>th</sub>² ∂<span class="m">f</span>/∂<span class="m">v</span>)].
+        The beam is slowed down and broadened. With a Coulomb-like ν(<span class="m">v</span>), fast
+        particles rarely collide: a beam at 5 <span class="m">v</span><sub>th</sub> survives many collision times 1/ν₀.</p>
+    </div>
+    <div class="note">
+      <h2>Limits of the model</h2>
+      <p>One-dimensional model of a test particle in a background of fixed temperature. The
+        diffusion is chosen such that the Maxwellian is stationary (<span class="m">D</span><sub>v</sub> = ν <span class="m">k</span><sub>B</sub><span class="m">T</span>/<span class="m">m</span>).
+        Real Coulomb collisions are three-dimensional; their coefficients follow from the Rosenbluth potentials.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const cvF = $('cvF'), cvT = $('cvT');
+  const VMIN = -8, VMAX = 9, NV = 425, DV = (VMAX - VMIN) / NV, TMAX = 12;
+  const vc = Array.from({ length: NV }, (_, i) => VMIN + (i + 0.5) * DV);       // Zellmitten
+  const ve = Array.from({ length: NV + 1 }, (_, i) => VMIN + i * DV);           // Zellgrenzen
+  let fK, fF, f0, finit, t = 0, hist = [], playing = false, lastTs = null, excess0 = 1;
+
+  function maxw(v, u = 0, s = 1) { return Math.exp(-(v - u) * (v - u) / (2 * s * s)) / (s * Math.sqrt(2 * Math.PI)); }
+  function nuOf(v) { return $('nu-coul').checked ? 1 / (1 + Math.abs(v) ** 3) : 1; }
+
+  function init() {
+    const vb = +$('vb').value, fb = +$('fb').value;
+    f0 = vc.map(v => maxw(v));
+    finit = vc.map(v => (1 - fb) * maxw(v) + fb * maxw(v, vb, 0.3));
+    fK = finit.slice(); fF = finit.slice(); t = 0; hist = [];
+    excess0 = excess(finit); record(); draw();
+  }
+  // Anteil oberhalb 2 v_th, abzüglich des Gleichgewichtswerts
+  function excess(f) { let s = 0, s0 = 0; for (let i = 0; i < NV; i++) if (vc[i] > 2) { s += f[i] * DV; s0 += f0[i] * DV; } return s - s0; }
+  function record() { hist.push([t, excess(fK) / excess0, excess(fF) / excess0]); }
+
+  // Fokker-Planck, finite Volumen: Fluss J = -nu (v f + df/dv) an den Zellgrenzen, explizit
+  const DT = 0.2 * DV * DV;
+  function stepFP(n) {
+    const nuE = ve.map(nuOf);
+    const J = new Float64Array(NV + 1);
+    for (let k = 0; k < n; k++) {
+      for (let i = 1; i < NV; i++) {
+        const fm = 0.5 * (fF[i - 1] + fF[i]), df = (fF[i] - fF[i - 1]) / DV;
+        J[i] = -nuE[i] * (ve[i] * fm + df);
+      }
+      J[0] = 0; J[NV] = 0;
+      for (let i = 0; i < NV; i++) fF[i] -= DT * (J[i + 1] - J[i]) / DV;
+    }
+  }
+  function advance(dt) {
+    const n = Math.max(1, Math.round(dt / DT));
+    stepFP(n);
+    const tn = t + n * DT, e = Math.exp(-(tn - t));                          // Krook exakt, tau = 1/nu0
+    for (let i = 0; i < NV; i++) fK[i] = f0[i] + (fK[i] - f0[i]) * e;
+    t = tn; record();
+  }
+
+  function css(v) { return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
+  function setup(cv, ratio) { const dpr = window.devicePixelRatio || 1; const w = cv.clientWidth, h = Math.round(w * ratio);
+    cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); cv.style.height = h + 'px';
+    const c = cv.getContext('2d'); c.setTransform(dpr, 0, 0, dpr, 0, 0); return { c, w, h }; }
+  const pad = { l: 46, r: 12, t: 10, b: 32 };
+  const fmt = (v, d) => v.toFixed(d);
+
+  function draw() {
+    $('vbo').textContent = fmt(+$('vb').value, 1); $('fbo').textContent = Math.round(100 * +$('fb').value) + ' %';
+    $('tlabel').textContent = 'ν₀t = ' + fmt(t, 1);
+    const last = hist[hist.length - 1];
+    $('rk').textContent = Math.round(100 * Math.max(0, last[1])) + ' %'; $('rf').textContent = Math.round(100 * Math.max(0, last[2])) + ' %';
+    const muted = css('--muted'), rule = css('--rule'), fg = css('--fg');
+    // f(v), logarithmisch, damit der Strahl sichtbar bleibt
+    { const { c, w, h } = setup(cvF, 0.46);
+      const LMIN = -5, LMAX = 0;
+      const X = v => pad.l + (v - (-5)) / (8.5 - (-5)) * (w - pad.l - pad.r);
+      const Y = f => { const l = Math.log10(Math.max(f, 1e-9)); return h - pad.b - (Math.max(l, LMIN) - LMIN) / (LMAX - LMIN) * (h - pad.t - pad.b); };
+      c.clearRect(0, 0, w, h);
+      c.strokeStyle = rule; c.lineWidth = 1; c.strokeRect(pad.l, pad.t, w - pad.l - pad.r, h - pad.t - pad.b);
+      c.fillStyle = muted; c.font = '12px ' + css('--font-ui'); c.textAlign = 'center'; c.textBaseline = 'top';
+      for (let v = -4; v <= 8; v += 2) c.fillText(String(v).replace('-', '−'), X(v), h - pad.b + 4);
+      c.textAlign = 'right'; c.textBaseline = 'middle';
+      for (let l = LMIN; l <= LMAX; l++) { c.fillText('10' + (l === 0 ? '⁰' : '⁻' + '¹²³⁴⁵'[-l - 1]), pad.l - 5, Y(10 ** l));
+        c.beginPath(); c.moveTo(pad.l, Y(10 ** l)); c.lineTo(w - pad.r, Y(10 ** l)); c.stroke(); }
+      c.fillStyle = fg; c.font = 'italic 15px ' + css('--font-text'); c.textAlign = 'right'; c.textBaseline = 'bottom';
+      c.fillText('v / vₜₕ', w - pad.r, h - 2); c.textAlign = 'left'; c.textBaseline = 'bottom'; c.fillText('f(v)', pad.l + 4, pad.t + 16);
+      const line = (f, col, dash, lw) => { c.beginPath(); let s = 0;
+        for (let i = 0; i < NV; i++) { if (vc[i] < -5 || vc[i] > 8.5) continue; const p = [X(vc[i]), Y(f[i])]; s++ ? c.lineTo(...p) : c.moveTo(...p); }
+        c.strokeStyle = col; c.lineWidth = lw; c.setLineDash(dash); c.stroke(); c.setLineDash([]); };
+      line(finit, css('--init'), [6, 4], 1.5); line(fK, css('--krook'), [], 2.2); line(fF, css('--fp'), [], 2.2);
+    }
+    // Zeitverlauf
+    { const { c, w, h } = setup(cvT, 0.26);
+      const X = tt => pad.l + tt / TMAX * (w - pad.l - pad.r), Y = r => h - pad.b - r * (h - pad.t - pad.b);
+      c.clearRect(0, 0, w, h);
+      c.strokeStyle = rule; c.lineWidth = 1; c.strokeRect(pad.l, pad.t, w - pad.l - pad.r, h - pad.t - pad.b);
+      c.fillStyle = muted; c.font = '12px ' + css('--font-ui'); c.textAlign = 'center'; c.textBaseline = 'top';
+      for (let tt = 0; tt <= TMAX; tt += 2) c.fillText(String(tt), X(tt), h - pad.b + 4);
+      c.textAlign = 'right'; c.textBaseline = 'middle'; [0, 0.5, 1].forEach(r => c.fillText(String(r), pad.l - 5, Y(r)));
+      c.fillStyle = fg; c.font = 'italic 15px ' + css('--font-text'); c.textAlign = 'right'; c.textBaseline = 'bottom'; c.fillText('ν₀ t', w - pad.r, h - 2);
+      const plot = (k, col) => { c.beginPath(); hist.forEach((p, i) => { const q = [X(p[0]), Y(Math.max(0, Math.min(1.05, p[k])))]; i ? c.lineTo(...q) : c.moveTo(...q); });
+        c.strokeStyle = col; c.lineWidth = 2.2; c.stroke(); };
+      plot(1, css('--krook')); plot(2, css('--fp'));
+    }
+  }
+
+  function step(ts) {
+    if (!playing) return;
+    if (lastTs !== null) { const dt = Math.min(0.05, (ts - lastTs) / 1000) * (TMAX / 12);
+      if (t >= TMAX) { stop(); return; } advance(dt); draw(); }
+    lastTs = ts; requestAnimationFrame(step);
+  }
+  function stop() { playing = false; lastTs = null; $('play').textContent = 'Play'; }
+  $('play').addEventListener('click', () => { if (playing) { stop(); return; } if (t >= TMAX) init();
+    playing = true; $('play').textContent = 'Pause'; requestAnimationFrame(step); });
+  $('reset').addEventListener('click', () => { stop(); init(); });
+  ['vb', 'fb'].forEach(id => $(id).addEventListener('input', () => { stop(); init(); }));
+  document.querySelectorAll('input[name=nu]').forEach(el => el.addEventListener('change', () => { stop(); init(); }));
+  window.addEventListener('resize', draw);
+  new MutationObserver(draw).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  if (window.matchMedia) window.matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', draw);
+  init();
+})();
+</script>
+</body>
+</html>

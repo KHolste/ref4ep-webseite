@@ -626,3 +626,28 @@ main.page p, main.page li { color: var(--text); }
 }
 .notice--info b { color: #0a3563; }
 .notice--info a { color: #0a3563; }
+
+/* Sprachumschalter DE/EN (letzter Eintrag der Hauptnavigation; auf
+ * Impressum/Datenschutz ohne Kopfzeile als Absatz oben in main.page).
+ * Bewusst zurueckhaltend: kleine Kapitaelchen-Pille mit feinem Rand. */
+nav li.lang-item { display: flex; align-items: center; }
+a.lang {
+  display: inline-block;
+  margin-left: .35rem;
+  padding: .2rem .6rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-size: .76rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  line-height: 1.5;
+  text-decoration: none;
+  color: var(--muted);
+}
+a.lang:hover, a.lang:focus-visible {
+  color: var(--blue-800);
+  border-color: var(--blue-500);
+  background: var(--blue-100);
+  outline: none;
+}
+main.page .lang-switch { margin: 0; text-align: right; }
