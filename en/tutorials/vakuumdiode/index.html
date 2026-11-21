@@ -109,6 +109,7 @@ canvas.full{position:absolute;inset:0;width:100%;height:100%}
 .info h3{font-family:var(--f-head);font-weight:600;font-size:22px;line-height:1.2;margin:0 0 10px;text-wrap:balance}
 .info p{margin:0 0 10px;max-width:65ch}
 .info b{font-weight:600}
+.info a{color:var(--accent)}
 .formula{font-family:var(--f-math);font-size:17px;line-height:1.55;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:10px 2px;margin:4px 0 12px;display:flex;flex-direction:column;gap:8px;overflow-x:auto}
 .formula i{font-style:italic}
 .formula small{font-family:var(--f-ui);font-size:12px;color:var(--muted)}
@@ -253,7 +254,7 @@ h2.lab .nm{text-transform:none;font-family:var(--f-math);font-style:italic;font-
     <h4>Two limits</h4>
     <p>Roughly the smaller of the two currents <i class="m">j</i><sub>s</sub>(<i class="m">T</i>) and <i class="m">j</i><sub>CL</sub>(<i class="m">U</i>) flows. The characteristic <i class="m">I</i>(<i class="m">U</i>) first shows the slope 3/2, then saturation; <i class="m">I</i>(<i class="m">T</i>) first shows the steep Richardson rise, then a plateau that depends on the voltage. This is how Langmuir demonstrated space charge in 1913: his measured thermionic currents versus temperature show exactly these plateaus.</p>
     <h4>Electrons and ions</h4>
-    <p>The same law limits the ion current extracted through the grids of an ion thruster. Because of √(<i class="m">e</i>/<i class="m">m</i>) it is about 490 times smaller for xenon with the same geometry. The maximum thrust density <i class="m">T</i>/<i class="m">A</i> = (8/9)<i class="m">ε</i><sub>0</sub>(<i class="m">U</i>/<i class="m">d</i>)<sup>2</sup>, on the other hand, does not depend on the mass.</p>
+    <p>The same law limits the ion current extracted through the grids of an ion thruster. Because of √(<i class="m">e</i>/<i class="m">m</i>) it is about 490 times smaller for xenon with the same geometry. The maximum thrust density <i class="m">T</i>/<i class="m">A</i> = (8/9)<i class="m">ε</i><sub>0</sub>(<i class="m">U</i>/<i class="m">d</i>)<sup>2</sup>, on the other hand, does not depend on the mass; see the tutorial <a href="/en/tutorials/ionenextraktion/">Ion extraction in a gridded ion thruster</a>.</p>
   </article>
 </div>
 <p class="foot">Model: planar diode with infinitely extended plates, cathode at <i class="m">x</i> = 0 at 0 V, anode at <i class="m">x</i> = <i class="m">d</i> at <i class="m">U</i>, area <i class="m">A</i> = 1 cm² (the current in mA therefore equals the current density in mA/cm²). Electrons are emitted with a half-Maxwellian at the cathode temperature (Langmuir, Phys. Rev. 21, 419 (1923)); collisions, ions, the Schottky effect and the magnetic field of the current are neglected. Emission data (Richardson–Dushman): tungsten <i class="m">W</i><sub>A</sub> = 4.55 eV, <i class="m">D</i> = 70 A/(cm² K²); LaB₆ <i class="m">W</i><sub>A</sub> = 2.66 eV, <i class="m">D</i> = 29 A/(cm² K²). Reference curves: cold Child–Langmuir law (start at rest). The animation runs in strong slow motion; the number of dots is not to scale, but the fraction of returning electrons is.</p>
