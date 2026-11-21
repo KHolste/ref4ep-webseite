@@ -1,0 +1,669 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Raumladung in der Vakuumdiode – Tutorials – Ref4EP</title>
+<link rel="alternate" hreflang="de" href="https://www.ref4ep.de/tutorials/vakuumdiode/">
+<link rel="alternate" hreflang="en" href="https://www.ref4ep.de/en/tutorials/vakuumdiode/">
+<style>
+html{color-scheme:light}
+body{margin:0}
+[hidden]{display:none!important}
+:root{
+  /* Layout wie die anderen Labore: links Parameter, Mitte Diode + Diagramme, rechts Physik */
+  --bg:#e9edf1; --panel:#fbfcfd; --ink:#14202b; --muted:#566573; --line:#d2dae1; --stage:#ffffff; --grid:#e8edf1;
+  --accent:#0b6767; --accent-soft:#d9eeec; --on-accent:#ffffff;
+  --c-ion:#c96a12; --c-el:#1f5fc2; --c-ret:#7b3aa6; --c-phi:#0b6767; --c-th:#b4291f; --c-cmp:#7a8794; --c-warn:#b4291f; --c-plate:#5d6b78;
+  --f-ui:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-head:"IBM Plex Sans Condensed","IBM Plex Sans",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+  --f-math:"Source Serif 4",Cambria,"Times New Roman",serif;
+  --r:7px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0b1115; --panel:#121a20; --ink:#e1e8ed; --muted:#8d9eab; --line:#25323c; --stage:#0a0f13; --grid:#18222b;
+    --accent:#47b6ae; --accent-soft:#15302e; --on-accent:#06110f;
+    --c-ion:#ffae52; --c-el:#62a1ff; --c-ret:#c48cf0; --c-phi:#47b6ae; --c-th:#ff715f; --c-cmp:#8d9eab; --c-warn:#ff715f; --c-plate:#9aa9b5; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0b1115; --panel:#121a20; --ink:#e1e8ed; --muted:#8d9eab; --line:#25323c; --stage:#0a0f13; --grid:#18222b;
+  --accent:#47b6ae; --accent-soft:#15302e; --on-accent:#06110f;
+  --c-ion:#ffae52; --c-el:#62a1ff; --c-ret:#c48cf0; --c-phi:#47b6ae; --c-th:#ff715f; --c-cmp:#8d9eab; --c-warn:#ff715f; --c-plate:#9aa9b5; color-scheme:dark;
+}
+.r4bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding-top:10px;font-size:12.5px;color:var(--muted)}
+.r4bar a{color:var(--accent);text-decoration:none}.r4bar a:hover{text-decoration:underline}
+.r4bar .lang{margin-left:auto}
+*{box-sizing:border-box}
+html,body{background:var(--bg)}
+body{color:var(--ink);font-family:var(--f-ui);font-size:14px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 28px}
+.wrap{max-width:1720px;margin:0 auto}
+header.top{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 18px;padding-block:16px 12px}
+header.top h1{font-family:var(--f-head);font-weight:600;font-size:26px;letter-spacing:.01em;margin:0}
+header.top .sub{color:var(--muted);margin:0}
+header.top .units{margin-left:auto;font-size:12px;color:var(--muted);font-family:var(--f-mono)}
+.app{display:grid;gap:14px;grid-template-columns:286px minmax(0,1fr) 300px;grid-template-areas:"params stage kz";align-items:start}
+.lower{display:flex;flex-direction:column;gap:14px;margin-top:14px}
+.kzp{grid-area:kz;padding:12px 14px 14px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r)}
+.params{grid-area:params;padding:12px 14px 14px}
+.stage{grid-area:stage;min-width:0;display:flex;flex-direction:column;gap:10px}
+.info{padding:16px 20px 8px;min-width:0;columns:3 340px;column-gap:32px;column-rule:1px solid var(--line)}
+.info>*{break-inside:avoid}
+.info h4{break-after:avoid}
+.info h3{column-span:all}
+h2.lab{font-family:var(--f-head);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);margin:0 0 8px}
+.seg{display:grid;grid-template-columns:repeat(var(--n,3),1fr);border:1px solid var(--line);border-radius:6px;overflow:hidden;margin-bottom:12px}
+.seg button{all:unset;text-align:center;padding:6px 2px;cursor:pointer;font-size:12.5px;font-weight:500;line-height:1.2}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent)}
+.seg button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.ctl{display:flex;flex-direction:column;gap:2px;margin-bottom:11px}
+.ctl .row{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.ctl label{font-weight:500}
+.ctl label i,.m i,dl.kz dt i{font-family:var(--f-math);font-style:italic;font-size:1.08em}
+.ctl output{white-space:nowrap;font-family:var(--f-mono);font-size:12.5px;font-variant-numeric:tabular-nums;color:var(--accent);min-width:44px;text-align:center}
+.ctl .hint{font-size:11.5px;color:var(--muted);line-height:1.35}
+input[type=range]{width:100%;accent-color:var(--accent);margin:2px 0}
+input[type=range]:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+.ctl .val{display:flex;align-items:center;gap:4px}
+.stp{all:unset;box-sizing:border-box;width:22px;height:22px;display:grid;place-items:center;border:1px solid var(--line);border-radius:5px;cursor:pointer;font-family:var(--f-mono);font-size:14px;line-height:1;color:var(--ink);user-select:none;touch-action:manipulation}
+.stp:hover{border-color:var(--accent);color:var(--accent)}
+.stp:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.chkrow{display:flex;gap:7px;align-items:flex-start;font-size:13px;margin-bottom:8px;cursor:pointer}
+.chkrow input{accent-color:var(--accent);margin-top:3px}
+.chkrow small{display:block;color:var(--muted);font-size:11.5px;line-height:1.35}
+.ctl-tip{font-size:11.5px;color:var(--muted);margin:2px 0 10px;line-height:1.4}
+.ctl-tip kbd{font-family:var(--f-mono);font-size:11px;border:1px solid var(--line);border-bottom-width:2px;border-radius:3px;padding:0 4px;background:var(--panel)}
+.sep{border:0;border-top:1px solid var(--line);margin:14px 0 12px}
+.btn{font:inherit;font-weight:500;font-size:13px;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:6px;padding:5px 10px;cursor:pointer}
+.btn:hover{border-color:var(--accent)}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+dl.kz{display:grid;grid-template-columns:1fr auto;gap:3px 10px;margin:0;font-size:13px}
+dl.kz dt{color:var(--muted)}
+dl.kz dd{margin:0;font-family:var(--f-mono);font-size:12.5px;font-variant-numeric:tabular-nums;text-align:right}
+dl.kz dd.hi{font-weight:600;color:var(--accent)}
+dl.kz dd.wr{font-weight:600;color:var(--c-warn)}
+dl.kz .gh{grid-column:1/-1;font-family:var(--f-head);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-top:8px;padding-top:6px;border-top:1px solid var(--line)}
+dl.kz .gh:first-child{margin-top:0;padding-top:0;border-top:0}
+.plotbox{border:1px solid var(--line);border-radius:var(--r);background:var(--stage);padding:10px 10px 8px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.vhead{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;justify-content:space-between}
+.vhead .tctl{display:flex;align-items:center;gap:8px;font-family:var(--f-mono);font-size:12.5px;color:var(--muted)}
+.status{font-size:13px;color:var(--muted);min-height:2.9em}
+.status b{color:var(--ink);font-weight:600}
+.status .warn{color:var(--c-warn);font-weight:600}
+.mapwrap{position:relative;height:clamp(380px,58vh,620px)}
+canvas.full{position:absolute;inset:0;width:100%;height:100%}
+#view:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--muted)}
+.legend span{display:flex;align-items:center;gap:5px}
+.legend svg{flex:none}
+.six{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.boxp{padding:10px 12px;min-width:0}
+.cwrap{position:relative;height:220px}
+.note{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.4}
+.note b{color:var(--ink);font-weight:600}
+.info h3{font-family:var(--f-head);font-weight:600;font-size:22px;line-height:1.2;margin:0 0 10px;text-wrap:balance}
+.info p{margin:0 0 10px;max-width:65ch}
+.info b{font-weight:600}
+.formula{font-family:var(--f-math);font-size:17px;line-height:1.55;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:10px 2px;margin:4px 0 12px;display:flex;flex-direction:column;gap:8px;overflow-x:auto}
+.formula i{font-style:italic}
+.formula small{font-family:var(--f-ui);font-size:12px;color:var(--muted)}
+.frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;font-size:.92em;line-height:1.15;margin:0 2px}
+.frac>span:first-child{border-bottom:1px solid currentColor;padding:0 3px}
+.frac>span:last-child{padding:0 3px}
+.info h4{font-family:var(--f-head);font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:16px 0 6px}
+.m{font-family:var(--f-math)}
+h2.lab .nm{text-transform:none;font-family:var(--f-math);font-style:italic;font-size:13px;letter-spacing:0}
+.foot{font-size:12px;color:var(--muted);margin-top:14px;max-width:110ch}
+.law{padding:14px 18px 16px}
+.lawgrid{display:grid;grid-template-columns:minmax(300px,1fr) minmax(0,2fr);gap:22px;align-items:start}
+.lawp .row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-top:6px}
+.lawp .row .note{margin-top:0}
+.cwrap.big{height:330px}
+.lawf .big{font-family:var(--f-math);font-size:30px;line-height:1.3;margin:2px 0 4px}
+.lawf .big i,.lawf .eq i{font-style:italic}
+.lawf .eq{font-family:var(--f-math);font-size:18px;line-height:1.5;margin:0 0 4px;overflow-x:auto;white-space:nowrap}
+.lawf .num{font-family:var(--f-mono);font-size:13px;font-variant-numeric:tabular-nums;color:var(--muted);margin:0 0 14px;line-height:1.7}
+.lawf .num b{color:var(--accent);font-weight:600}
+.fac{display:inline-block;padding:0 4px;border-radius:4px;transition:background-color .25s}
+.fac.flash{background:var(--accent-soft);box-shadow:0 0 0 1px var(--accent) inset}
+.facs{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font-size:13px;margin:0 0 12px}
+.facs dt{font-family:var(--f-math);font-size:15px}
+.facs dt i{font-style:italic}
+.facs dd{margin:0;font-family:var(--f-mono);font-size:12.5px;text-align:right;font-variant-numeric:tabular-nums}
+.facs dd small{display:block;font-family:var(--f-ui);color:var(--muted);font-size:11px;text-align:right}
+.lawf .cmp{font-size:12.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:8px;line-height:1.45}
+.lawf .cmp b{color:var(--ink)}
+.scbtn{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px}
+.scbtn .btn{font-size:12.5px;padding:6px 6px}
+.scbtn .xe{grid-column:1/-1}
+.off{opacity:.4;pointer-events:none}
+.scbtn .btn:disabled{opacity:.45;cursor:not-allowed}
+.scout{font-size:13px;line-height:1.45;min-height:7em}
+.scout .fac2{font-family:var(--f-mono);font-size:22px;color:var(--accent);font-weight:600;margin:4px 0}
+.scout .row{display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:12.5px;color:var(--muted)}
+.scout p{margin:6px 0 0}
+@media (max-width:1500px){.six{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:1180px){.lawgrid{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:1280px){
+  .app{grid-template-columns:286px minmax(0,1fr);grid-template-areas:"params stage" "kz kz"}
+}
+@media (max-width:860px){
+  .app{grid-template-columns:minmax(0,1fr);grid-template-areas:"stage" "params" "kz"}
+  dl.kz{grid-template-columns:1fr auto}
+  .six,.lawgrid{grid-template-columns:minmax(0,1fr)}
+  header.top .units{margin-left:0}
+  .mapwrap{height:clamp(300px,58vh,440px)}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<nav class="r4bar" aria-label="Ref4EP"><a href="/">Ref4EP</a><span aria-hidden="true">/</span><a href="/tutorials/">Tutorials</a><span aria-hidden="true">/</span><span>Raumladung in der Vakuumdiode</span><a class="lang" href="/en/tutorials/vakuumdiode/" hreflang="en" lang="en" title="English">EN</a></nav>
+<header class="top">
+  <h1>Diodenlabor</h1>
+  <p class="sub">Raumladung in der Vakuumdiode: Glühkathode, Child-Langmuir-Gesetz und virtuelle Kathode</p>
+  <span class="units">ebene Diode · Poisson-Gleichung · SI-Einheiten</span>
+</header>
+
+<div class="app">
+  <section class="panel params" aria-label="Parameter">
+    <h2 class="lab">Kathode</h2>
+    <div class="seg" style="--n:2" id="segMat" role="group" aria-label="Kathodenmaterial">
+      <button type="button" data-k="W">Wolfram</button><button type="button" data-k="LaB6">LaB₆</button>
+    </div>
+    <label class="chkrow"><input type="checkbox" id="o-ideal"><span>Ideale Kathode<small>unbegrenzte Emission, alle Elektronen starten aus der Ruhe: das Child-Langmuir-Gesetz exakt, ohne Temperatur</small></span></label>
+    <div id="ctl-T"></div>
+    <h2 class="lab">Diode</h2>
+    <div id="ctl-U"></div>
+    <div id="ctl-d"></div>
+    <h2 class="lab">Darstellung</h2>
+    <label class="chkrow"><input type="checkbox" id="o-cmp" checked><span>Vergleichskurven<small>Vakuum (Gerade) und kaltes Child-Langmuir-Profil gestrichelt</small></span></label>
+    <div id="ctl-dur"></div>
+    <p class="ctl-tip">Ansicht anklicken, dann <kbd>Leertaste</kbd> = Pause, <kbd>←</kbd> <kbd>→</kbd> = Temperatur.</p>
+    <button class="btn" type="button" id="defaults">Standardwerte</button>
+  </section>
+
+  <main class="stage">
+    <div class="plotbox">
+      <div class="vhead">
+        <div class="status" id="status" aria-live="polite"></div>
+        <div class="tctl"><button class="btn" type="button" id="play" aria-label="Animation anhalten">❚❚ Pause</button></div>
+      </div>
+      <div class="mapwrap"><canvas class="full" id="view" tabindex="0" aria-label="Diode mit Glühkathode links und Anode rechts, Elektronen im Spalt und Potentialverlauf. Leertaste hält an, Pfeiltasten ändern die Temperatur."></canvas></div>
+      <div class="legend" id="legend"></div>
+    </div>
+  </main>
+
+  <aside class="panel kzp" aria-label="Kennzahlen">
+    <h2 class="lab">Kennzahlen</h2>
+    <dl class="kz" id="kz"></dl>
+  </aside>
+</div>
+
+<div class="lower">
+  <section class="panel law" aria-label="Das Child-Langmuir-Gesetz">
+    <h2 class="lab">Das <span class="nm">U</span><sup>3/2</sup>-Gesetz: <span class="nm">I = K·U</span><sup>3/2</sup> – Messreihe über die Regler</h2>
+    <div class="lawgrid">
+      <div class="lawf" id="lawF"></div>
+      <div class="lawp"><div class="cwrap big"><canvas class="full" id="pLin" aria-label="Messpunkte des Anodenstroms über U hoch 3/2 mit Ausgleichsgerade"></canvas></div><div class="row"><div class="note" id="nLin"></div><button class="btn" type="button" id="clearPts">Messreihen löschen</button></div></div>
+    </div>
+  </section>
+    <div class="six">
+    <div class="panel boxp"><h2 class="lab">Potential <span class="nm">φ(x)</span></h2><div class="cwrap"><canvas class="full" id="pPhi" aria-label="Potential über dem Ort im Spalt"></canvas></div><div class="note" id="nPhi"></div></div>
+    <div class="panel boxp"><h2 class="lab">Elektrisches Feld <span class="nm">E(x)</span></h2><div class="cwrap"><canvas class="full" id="pE" aria-label="Elektrisches Feld über dem Ort im Spalt"></canvas></div><div class="note" id="nE"></div></div>
+    <div class="panel boxp"><h2 class="lab">Elektronendichte <span class="nm">n(x)</span></h2><div class="cwrap"><canvas class="full" id="pN" aria-label="Elektronendichte über dem Ort, logarithmisch"></canvas></div><div class="note" id="nN"></div></div>
+    <div class="panel boxp"><h2 class="lab">Kennlinie <span class="nm">I(U)</span></h2><div class="cwrap"><canvas class="full" id="pIU" aria-label="Anodenstrom über der Spannung, doppelt logarithmisch"></canvas></div><div class="note" id="nIU"></div></div>
+    <div class="panel boxp"><h2 class="lab">Strom und Temperatur <span class="nm">I(T)</span></h2><div class="cwrap"><canvas class="full" id="pIT" aria-label="Anodenstrom über der Kathodentemperatur für drei Spannungen"></canvas></div><div class="note" id="nIT"></div></div>
+    <div class="panel boxp"><h2 class="lab">Elektronen und Ionen <span class="nm">j<sub>CL</sub>(U)</span></h2><div class="cwrap"><canvas class="full" id="pIon" aria-label="Child-Langmuir-Stromdichte für Elektronen und Xenonionen"></canvas></div><div class="note" id="nIon"></div></div>
+  </div>
+
+  <article class="panel info" id="info">
+    <h3>Warum sättigt der Strom einer Glühkathode?</h3>
+    <p>Eine geheizte Kathode setzt Elektronen frei (<b>thermionische Emission</b>). Die Stromdichte, die sie höchstens liefern kann, folgt der Richardson-Dushman-Gleichung und steigt mit der Temperatur steil an:</p>
+    <div class="formula">
+      <div><i>j</i><sub>s</sub> = <i>D</i> <i>T</i><sup>2</sup> exp(−<i>W</i><sub>A</sub>/<i>k</i><sub>B</sub><i>T</i>)</div>
+    </div>
+    <p>Ohne Raumladung wäre das Feld zwischen den Platten homogen, das Potential eine Gerade, und jedes Elektron erreichte die Anode: <i class="m">j</i> = <i class="m">j</i><sub>s</sub>, unabhängig von der Spannung (<b>temperaturbegrenzt</b>). Die Elektronen im Spalt sind aber selbst geladen und schirmen das Feld ab.</p>
+    <h4>Raumladung</h4>
+    <p>Die Poisson-Gleichung, die Energieerhaltung und die Ladungserhaltung (<i class="m">j</i> = <i class="m">ρv</i> ist überall gleich) ergeben zusammen eine Differentialgleichung für das Potential:</p>
+    <div class="formula">
+      <div><span class="frac"><span>d<sup>2</sup><i>φ</i></span><span>d<i>x</i><sup>2</sup></span></span> = −<span class="frac"><span><i>ρ</i></span><span><i>ε</i><sub>0</sub></span></span>, &nbsp; <i>v</i> = √(2<i>eφ</i>/<i>m</i>), &nbsp; <i>ρ</i> = −<span class="frac"><span><i>j</i></span><span><i>v</i></span></span></div>
+      <div><span class="frac"><span>d<sup>2</sup><i>φ</i></span><span>d<i>x</i><sup>2</sup></span></span> = <i>β</i> <i>φ</i><sup>−1/2</sup>, &nbsp; <i>β</i> = <span class="frac"><span><i>j</i></span><span><i>ε</i><sub>0</sub></span></span>√(<i>m</i>/2<i>e</i>)</div>
+    </div>
+    <h4>Child-Langmuir-Gesetz</h4>
+    <p>Mehr Strom bedeutet mehr Raumladung und ein schwächeres Feld an der Kathode. Bei <i class="m">E</i>(0) = 0 ist die Grenze erreicht. Mit <i class="m">φ</i>(0) = 0 und <i class="m">φ</i>(<i class="m">d</i>) = <i class="m">U</i>:</p>
+    <div class="formula">
+      <div><i>φ</i> = <i>U</i> (<i>x</i>/<i>d</i>)<sup>4/3</sup>, &nbsp; <i>ρ</i> ∝ <i>x</i><sup>−2/3</sup>, &nbsp; <i>v</i> ∝ <i>x</i><sup>2/3</sup></div>
+      <div><i>j</i><sub>CL</sub> = <span class="frac"><span>4<i>ε</i><sub>0</sub></span><span>9</span></span>√(2<i>e</i>/<i>m</i>) <span class="frac"><span><i>U</i><sup>3/2</sup></span><span><i>d</i><sup>2</sup></span></span>, &nbsp; <i>I</i> = <i>K</i><i>U</i><sup>3/2</sup></div>
+    </div>
+    <p>Die <b>Perveanz</b> <i class="m">K</i> = 4<i class="m">ε</i><sub>0</sub><i class="m">A</i>√(2<i class="m">e</i>/<i class="m">m</i>)/(9<i class="m">d</i><sup>2</sup>) enthält nur Geometrie und Teilchensorte. Die Diode ist nicht ohmsch: Die Leistung <i class="m">UI</i> geht in kinetische Energie der Elektronen und wird erst an der Anode zu Wärme.</p>
+    <h4>Die virtuelle Kathode</h4>
+    <p>Die Elektronen verlassen die Kathode nicht in Ruhe, sondern mit thermischer Energie (einige Zehntel eV). Liefert die Kathode mehr, als der Spalt aufnehmen kann, bildet sich vor ihr ein <b>Potentialminimum</b> <i class="m">φ</i><sub>m</sub> &lt; 0. Nur Elektronen mit genügend Energie kommen darüber, die übrigen kehren um:</p>
+    <div class="formula">
+      <div><i>j</i> = <i>j</i><sub>s</sub> exp(<i>eφ</i><sub>m</sub>/<i>k</i><sub>B</sub><i>T</i>)</div>
+      <div><i>n</i> = <i>n</i><sub>m</sub> e<sup><i>η</i></sup>(1 ∓ erf√<i>η</i>), &nbsp; <i>η</i> = <i>e</i>(<i>φ</i> − <i>φ</i><sub>m</sub>)/<i>k</i><sub>B</sub><i>T</i> &nbsp; <small>(− Anodenseite, + Kathodenseite)</small></div>
+    </div>
+    <p>Das Minimum regelt den Strom selbst: Mehr Emission vertieft es, bis gerade wieder so viele Elektronen durchkommen, wie der Spalt verträgt. Das Minimum wirkt wie eine Kathode am Ort <i class="m">x</i><sub>m</sub>, an der das Feld verschwindet; der Strom hängt fast nur noch von <i class="m">U</i> und <i class="m">d</i> ab. Die App löst dieses Modell (Langmuir 1923) numerisch; das kalte Child-Langmuir-Gesetz ist sein Grenzfall für <i class="m">eU</i> ≫ <i class="m">k</i><sub>B</sub><i class="m">T</i>.</p>
+    <h4>Zwei Grenzen</h4>
+    <p>Es fließt ungefähr der kleinere der beiden Ströme <i class="m">j</i><sub>s</sub>(<i class="m">T</i>) und <i class="m">j</i><sub>CL</sub>(<i class="m">U</i>). In der Kennlinie <i class="m">I</i>(<i class="m">U</i>) sieht man erst die Steigung 3/2, dann die Sättigung; in <i class="m">I</i>(<i class="m">T</i>) erst den steilen Anstieg nach Richardson, dann ein Plateau, das von der Spannung abhängt. So hat Langmuir 1913 die Raumladung nachgewiesen: Seine Messkurven des Glühstroms über der Temperatur zeigen genau diese Plateaus.</p>
+    <h4>Elektronen und Ionen</h4>
+    <p>Dasselbe Gesetz begrenzt den Ionenstrom aus dem Gitter eines Ionentriebwerks. Wegen √(<i class="m">e</i>/<i class="m">m</i>) ist er für Xenon bei gleicher Geometrie etwa 490-mal kleiner. Die maximale Schubdichte <i class="m">T</i>/<i class="m">A</i> = (8/9)<i class="m">ε</i><sub>0</sub>(<i class="m">U</i>/<i class="m">d</i>)<sup>2</sup> hängt dagegen nicht von der Masse ab.</p>
+  </article>
+</div>
+<p class="foot">Modell: ebene Diode mit unendlich ausgedehnten Platten, Kathode bei <i class="m">x</i> = 0 auf 0 V, Anode bei <i class="m">x</i> = <i class="m">d</i> auf <i class="m">U</i>, Fläche <i class="m">A</i> = 1 cm² (der Strom in mA entspricht damit der Stromdichte in mA/cm²). Die Elektronen werden mit einer halben Maxwell-Verteilung der Kathodentemperatur emittiert (Langmuir, Phys. Rev. 21, 419 (1923)); Stöße, Ionen, Schottky-Effekt und Magnetfeld des Stroms werden vernachlässigt. Emissionsdaten (Richardson-Dushman): Wolfram <i class="m">W</i><sub>A</sub> = 4,55 eV, <i class="m">D</i> = 70 A/(cm² K²); LaB₆ <i class="m">W</i><sub>A</sub> = 2,66 eV, <i class="m">D</i> = 29 A/(cm² K²). Vergleichskurven: kaltes Child-Langmuir-Gesetz (Start aus der Ruhe). Die Animation zeigt die Bewegung in starker Zeitlupe; die Zahl der Punkte ist nicht maßstäblich, wohl aber der Anteil der umkehrenden Elektronen.</p>
+</div>
+
+<script>
+/*CORE-START*/
+const QE=1.602176634e-19,EPS0=8.8541878128e-12,ME=9.1093837e-31,KB=1.380649e-23,MXE=131.293*1.66053907e-27;
+const MAT={W:{name:'Wolfram',W:4.55,D:70},LaB6:{name:'LaB₆',W:2.66,D:29}};
+const jRD=(T,k)=>MAT[k].D*1e4*T*T*Math.exp(-MAT[k].W*QE/(KB*T));
+const jCL=(U,d,m)=>U>0?4*EPS0/9*Math.sqrt(2*QE/m)*Math.pow(U,1.5)/(d*d):0;
+// e^{x²}·erfc(x) für x ≥ 0 (Numerical Recipes, rel. Fehler < 1,2·10⁻⁷), läuft nicht über
+function erfcx(x){const t=1/(1+0.5*x);
+  return t*Math.exp(-1.26551223+t*(1.00002368+t*(0.37409196+t*(0.09678418+t*(-0.18628806+t*(0.27886807+t*(-1.13520398+t*(1.48851587+t*(-0.82215223+t*0.17087277)))))))));}
+const SPI=Math.sqrt(Math.PI);
+// G(η) = ∫₀^η e^η'(1 − erf√η') dη'  (Anodenseite),  H(η) = ∫₀^η e^η'(1 + erf√η') dη'  (Kathodenseite)
+function Gf(e){const y=Math.sqrt(e);return y<0.05?y*y-4*y*y*y/(3*SPI)+y*y*y*y/2:erfcx(y)-1+2*y/SPI;}
+function Hf(e){const y=Math.sqrt(e);return y<0.05?y*y+4*y*y*y/(3*SPI)+1.5*y*y*y*y:2*Math.exp(e)-1-erfcx(y)-2*y/SPI;}
+// ξ(η) = ∫₀^η dη'/√(g0² + 2F(η'))  mit η' = s², Simpson-Regel
+function X(eta,g2,F,N){if(eta<=0)return 0;const sE=Math.sqrt(eta),h=sE/N;let sum=0;
+  for(let k=0;k<=N;k++){const s=k*h;let f;
+    if(k===0)f=g2>0?0:Math.SQRT2;else f=2*s/Math.sqrt(g2+2*F(s*s));
+    sum+=f*(k===0||k===N?1:(k%2?4:2));}
+  return sum*h/3;}
+// Lösung der ebenen Diode: Temperatur T [K], Material k, Spannung U [V], Abstand d [m]
+function solve(T,k,U,d,quick){
+  const N=quick?60:200,it=quick?40:60;
+  const th=KB*T/QE,js=jRD(T,k),vth=Math.sqrt(2*KB*T/(Math.PI*ME)),nc=js/(QE*vth),lc=Math.sqrt(EPS0*th/(QE*nc)),eA=Math.max(U,0)/th;
+  const R={T,k,U,d,th,js,vth,nc,jcl:jCL(U,d,ME)};
+  const x0=lc*X(eA,0,Gf,N);
+  if(x0>=d){ // temperaturbegrenzt: Feld an der Kathode beschleunigt, alle Elektronen erreichen die Anode
+    let lo=0,hi=1;while(lc*X(eA,hi*hi,Gf,N)>d)hi*=2;
+    for(let i=0;i<it;i++){const g=0.5*(lo+hi);if(lc*X(eA,g*g,Gf,N)>d)lo=g;else hi=g;}
+    Object.assign(R,{regime:'T',g0:0.5*(lo+hi),ec:0,j:js,lam:lc,nm:nc,xm:0,phim:0});
+    R.E0=-th*R.g0/lc;
+  }else{ // raumladungsbegrenzt: Potentialminimum (virtuelle Kathode) vor der Kathode
+    const f=e=>lc*Math.exp(e/2)*(X(e,0,Hf,N)+X(e+eA,0,Gf,N))-d;
+    let lo=0,hi=80;for(let i=0;i<it;i++){const e=0.5*(lo+hi);if(f(e)>0)hi=e;else lo=e;}
+    const ec=0.5*(lo+hi),lam=lc*Math.exp(ec/2);
+    Object.assign(R,{regime:'S',g0:0,ec,j:js*Math.exp(-ec),lam,nm:nc*Math.exp(-ec),xm:lam*X(ec,0,Hf,N),phim:-th*ec});
+    R.E0=th*Math.sqrt(2*Hf(ec))/lam;
+  }
+  const eD=R.ec+eA;R.Ed=-th*Math.sqrt(R.g0*R.g0+2*Gf(eD))/R.lam;
+  R.fret=1-R.j/js;
+  return R;}
+// Profile φ(x), E(x), n(x) zur Lösung R
+function profile(R){
+  const P={x:[],phi:[],E:[],n:[]},th=R.th,eA=Math.max(R.U,0)/th,N=200;
+  if(R.regime==='S'){
+    const sc=Math.sqrt(R.ec);
+    for(let i=0;i<=40;i++){const s=sc*(1-i/40),e=s*s;
+      P.x.push(R.xm-R.lam*X(e,0,Hf,N));P.phi.push(R.phim+th*e);P.E.push(th*Math.sqrt(2*Hf(e))/R.lam);P.n.push(R.nm*(2*Math.exp(e)-erfcx(s)));}
+  }
+  const s1=Math.sqrt(R.ec+eA),g2=R.g0*R.g0;
+  for(let i=(R.regime==='S'?1:0);i<=200;i++){const s=s1*i/200,e=s*s;
+    P.x.push(R.xm+R.lam*X(e,g2,Gf,N));P.phi.push(R.phim+th*e);P.E.push(-th*Math.sqrt(g2+2*Gf(e))/R.lam);P.n.push(R.nm*erfcx(s));}
+  const sc=R.d/P.x[P.x.length-1];for(let i=0;i<P.x.length;i++)P.x[i]*=sc; // Rundung auf exakt d
+  return P;}
+// Ideale Kathode: unbegrenzte Emission, Start aus der Ruhe (kaltes Child-Langmuir-Gesetz)
+function solveIdeal(T,U,d){const j=jCL(U,d,ME);
+  return {T,U,d,th:0,js:Infinity,jcl:j,j,regime:'C',g0:0,ec:0,lam:NaN,nm:NaN,xm:0,phim:0,E0:0,Ed:-4/3*U/d,fret:0};}
+function profileIdeal(R){const P={x:[],phi:[],E:[],n:[]},n0=4/9*EPS0*R.U/(R.d*R.d)/QE;
+  for(let i=0;i<=240;i++){const u=Math.pow(i/240,3),x=R.d*u;
+    P.x.push(x);P.phi.push(R.U*Math.pow(u,4/3));P.E.push(-4/3*R.U/R.d*Math.cbrt(u));P.n.push(u>0?n0*Math.pow(u,-2/3):NaN);}
+  return P;}
+/*CORE-END*/
+</script>
+<script>
+const $=s=>document.querySelector(s);
+const NF=(d)=>new Intl.NumberFormat('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d});
+const SUP={'-':'⁻','0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+const sup=k=>String(k).split('').map(c=>SUP[c]).join('');
+function sci(x,d=1){if(!isFinite(x))return '—';if(x===0)return '0';let e=Math.floor(Math.log10(Math.abs(x))+1e-9);let m=x/Math.pow(10,e);if(Math.abs(+m.toFixed(d))>=10){m/=10;e++;}return (NF(d).format(m)+'·10'+sup(e)).replace('-','−');}
+function num(x,sig=3){if(x===null||x===undefined||!isFinite(x))return '—';return new Intl.NumberFormat('de-DE',{maximumSignificantDigits:sig}).format(x).replace('-','−');}
+function fmt(x,sig=3){if(x===null||!isFinite(x))return '—';const ax=Math.abs(x);return (ax>=0.01&&ax<1e5)||x===0?num(x,sig):sci(x,sig>2?2:1);}
+const fx=(x,dg)=>NF(dg).format(x).replace('-','−');
+function fI(I){const a=Math.abs(I);if(a>=1)return fmt(I,3)+' A';if(a>=1e-3)return fmt(I*1e3,3)+' mA';if(a>=1e-6)return fmt(I*1e6,3)+' µA';return sci(I,2)+' A';}
+const fJ=j=>fmt(j*1e-4,3)+' A/cm²';
+function fL(x){const a=Math.abs(x);if(a>=1e-3)return fmt(x*1e3,3)+' mm';return fmt(x*1e6,3)+' µm';}
+
+/* ----- Zustand und Regler ----- */
+const DEF={mat:'W',T:2500,U:100,d:5,A:1,dur:3,cmp:true,ideal:false};
+let st={},R=null,P=null,playing=true,curvesDirty=true,curveTimer=0,CU=null;
+const PDEF={
+  T:{box:'#ctl-T',lab:'Temperatur <i>T</i>',min:1000,max:3200,step:10,fmt:v=>fx(v,0)+' K',hint:'Wolfram schmilzt bei 3695 K, LaB₆ wird meist bei 1700–2000 K betrieben'},
+  U:{box:'#ctl-U',lab:'Anodenspannung <i>U</i>',min:1,max:1000,step:1,fmt:v=>fx(v,0)+' V',hint:''},
+  d:{box:'#ctl-d',lab:'Abstand <i>d</i>',min:0.5,max:20,step:0.1,fmt:v=>fx(v,1)+' mm',hint:''},
+  dur:{box:'#ctl-dur',lab:'Zeitlupe: Flugzeit im Spalt',min:1,max:8,step:0.5,fmt:v=>fx(v,1)+' s',hint:''}
+};
+function buildControls(){
+  for(const [k,d] of Object.entries(PDEF)){
+    const w=document.createElement('div');w.className='ctl';
+    w.innerHTML=`<div class="row"><label for="r-${k}">${d.lab}</label><span class="val"><button type="button" class="stp" data-d="-1" aria-label="verringern">−</button><output id="o-${k}"></output><button type="button" class="stp" data-d="1" aria-label="erhöhen">+</button></span></div><input type="range" id="r-${k}" min="${d.min}" max="${d.max}" step="${d.step}">${d.hint?`<div class="hint">${d.hint}</div>`:''}`;
+    $(d.box).appendChild(w);const inp=w.querySelector('input');
+    inp.addEventListener('input',()=>{st[k]=+inp.value;changed(k);});
+    w.querySelectorAll('.stp').forEach(b=>b.addEventListener('click',()=>{const v=Math.min(d.max,Math.max(d.min,st[k]+(+b.dataset.d)*d.step));st[k]=+v.toFixed(6);changed(k);}));
+  }
+}
+function syncUI(){
+  for(const [k,d] of Object.entries(PDEF)){$('#r-'+k).value=st[k];$('#o-'+k).textContent=d.fmt(st[k]);}
+  document.querySelectorAll('#segMat button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.k===st.mat));
+  $('#o-cmp').checked=st.cmp;$('#o-ideal').checked=st.ideal;
+  $('#ctl-T').classList.toggle('off',st.ideal);$('#segMat').classList.toggle('off',st.ideal);
+}
+function setState(s){st=Object.assign({},DEF,s);lastKey=null;syncUI();recompute();}
+let lastKey=null;
+function changed(k){syncUI();if(k==='dur')return;lastKey=k;recompute();}
+document.querySelectorAll('#segMat button').forEach(b=>b.addEventListener('click',()=>{st.mat=b.dataset.k;lastKey='mat';syncUI();recompute();}));
+$('#o-cmp').addEventListener('change',e=>{st.cmp=e.target.checked;drawPlots();});
+$('#o-ideal').addEventListener('change',e=>{st.ideal=e.target.checked;lastKey=null;parts=[];syncUI();recompute();});
+$('#defaults').addEventListener('click',()=>setState({}));
+
+/* ----- Rechnen ----- */
+function recompute(){
+  R=st.ideal?solveIdeal(st.T,st.U,st.d*1e-3):solve(st.T,st.mat,st.U,st.d*1e-3,false);P=st.ideal?profileIdeal(R):profile(R);
+  recordPoint();updateText();updateLaw();drawPlots();
+  clearTimeout(curveTimer);curveTimer=setTimeout(()=>{computeCurves();drawCurves();},120);
+}
+const logspace=(a,b,n)=>Array.from({length:n},(_,i)=>a*Math.pow(b/a,i/(n-1)));
+function Trange(){return st.mat==='W'?[1600,3200]:[1000,2200];}
+function computeCurves(){
+  const A=st.A*1e-4,d=st.d*1e-3,solve=st.ideal?((T,k,U,dd)=>solveIdeal(T,U,dd)):window.solve;
+  const Us=logspace(1,1000,46);
+  const Ts=st.ideal?[st.T]:[st.T-150,st.T,st.T+150].filter(T=>T>=800);
+  const iu=Ts.map(T=>({T,I:Us.map(U=>solve(T,st.mat,U,d,true).j*A)}));
+  const [ta,tb]=Trange(),Tg=Array.from({length:46},(_,i)=>ta+(tb-ta)*i/45);
+  const UU=[st.U/2,st.U,Math.min(2*st.U,2000)];
+  const it=UU.map(U=>({U,I:Tg.map(T=>solve(T,st.mat,U,d,true).j*A)}));
+  CU={Us,iu,Tg,it,UU,A,d,js:Tg.map(T=>jRD(T,st.mat)*A)};
+}
+
+/* ----- Texte und Kennzahlen ----- */
+function updateText(){
+  const A=st.A*1e-4,I=R.j*A,K=4*EPS0*A/(9*R.d*R.d)*Math.sqrt(2*QE/ME);
+  let s;
+  if(R.regime==='C'){
+    $('#status').innerHTML=`<b>Ideale Kathode.</b> Sie liefert beliebig viele Elektronen, und alle starten aus der Ruhe. Das Feld an der Kathode ist genau null, das Potential folgt <i class="m">U</i>(<i class="m">x</i>/<i class="m">d</i>)<sup>4/3</sup>, und es fließt exakt <i class="m">I</i> = <i class="m">KU</i><sup>3/2</sup> = <b>${fI(I)}</b>.`;
+    const rows=[['gh','Kathode'],['Modell','ideal','hi'],['Emission','unbegrenzt'],['Startenergie','0'],
+      ['gh','Diode'],['Anodenstrom <i>I</i>',fI(I),'hi'],['<i>j</i> an der Anode',fJ(R.j)],['<i>j</i>/<i>j</i><sub>CL</sub>',fx(1,3)],
+      ['Perveanz <i>K</i>',sci(K,2)+' A/V<sup>3/2</sup>'],['Leistung an der Anode',fmt(I*R.U,3)+' W'],
+      ['gh','Feld'],['<i>E</i> an der Kathode','0 V/m'],['<i>E</i> an der Anode',sci(R.Ed,2)+' V/m'],['Vakuum <i>U</i>/<i>d</i>',sci(-R.U/R.d,2)+' V/m']];
+    $('#kz').innerHTML=rows.map(r=>r[0]==='gh'?`<div class="gh">${r[1]}</div>`:`<dt>${r[0]}</dt><dd class="${r[2]||''}">${r[1]}</dd>`).join('');
+    return;
+  }
+  if(R.regime==='S'){
+    s=R.fret>0.02?`<b>Raumladungsbegrenzt.</b> Die Kathode liefert ${fJ(R.js)}, doch vor ihr liegt ein Potentialminimum von <b>${fx(R.phim,2)} V</b> (virtuelle Kathode). <b>${fx(R.fret*100,R.fret>0.999?2:1)} %</b> der Elektronen kehren um, an der Anode kommen ${fJ(R.j)} an.`
+      :`<b>Übergangsbereich.</b> Ein flaches Minimum von ${fx(R.phim*1e3,1)} mV bildet sich gerade; ${fx(R.fret*100,1)} % der Elektronen kehren um.`;
+  }else{
+    s=`<b>Temperaturbegrenzt.</b> Alle emittierten Elektronen erreichen die Anode, <i class="m">j</i> = <i class="m">j</i><sub>s</sub> = ${fJ(R.js)}. Das Feld an der Kathode ist noch nicht abgeschirmt; mehr Spannung bringt keinen Strom mehr, nur höhere Temperatur.`;
+  }
+  $('#status').innerHTML=s;
+  const rows=[['gh','Emission ('+MAT[st.mat].name+')'],
+    ['Austrittsarbeit <i>W</i><sub>A</sub>',fx(MAT[st.mat].W,2)+' eV'],
+    ['<i>k</i><sub>B</sub><i>T</i>',fx(R.th*1e3,0)+' meV'],
+    ['Emission <i>j</i><sub>s</sub>',fJ(R.js)],
+    ['Emissionsstrom <i>I</i><sub>s</sub>',fI(R.js*A)],
+    ['gh','Diode'],
+    ['Bereich',R.regime==='S'?'raumladungsbegr.':'temperaturbegr.','hi'],
+    ['Anodenstrom <i>I</i>',fI(I),'hi'],
+    ['<i>j</i> an der Anode',fJ(R.j)],
+    ['Child-Langmuir kalt <i>j</i><sub>CL</sub>',fJ(R.jcl)],
+    ['<i>j</i>/<i>j</i><sub>CL</sub>',fx(R.j/R.jcl,3)],
+    ['<i>j</i>/<i>j</i><sub>CL</sub>(<i>U</i> − <i>φ</i><sub>m</sub>, <i>d</i> − <i>x</i><sub>m</sub>)',R.regime==='S'?fx(R.j/jCL(R.U-R.phim,R.d-R.xm,ME),3):'—'],
+    ['<i>j</i>/<i>j</i><sub>s</sub>',fx(R.j/R.js,3)],
+    ['Perveanz <i>K</i>',sci(K,2)+' A/V<sup>3/2</sup>'],
+    ['Leistung an der Anode',fmt(I*R.U,3)+' W'],
+    ['gh','Potentialminimum'],
+    ['Tiefe <i>φ</i><sub>m</sub>',R.regime==='S'?fx(R.phim,3)+' V':'—'],
+    ['Lage <i>x</i><sub>m</sub>',R.regime==='S'?fL(R.xm):'—'],
+    ['Elektronen kehren um',fx(R.fret*100,1)+' %',R.fret>0.5?'wr':''],
+    ['gh','Feld'],
+    ['<i>E</i> an der Kathode',sci(R.E0,2)+' V/m'],
+    ['<i>E</i> an der Anode',sci(R.Ed,2)+' V/m'],
+    ['Vakuum <i>U</i>/<i>d</i>',sci(-R.U/R.d,2)+' V/m'],
+  ];
+  $('#kz').innerHTML=rows.map(r=>r[0]==='gh'?`<div class="gh">${r[1]}</div>`:`<dt>${r[0]}</dt><dd class="${r[2]||''}">${r[1]}</dd>`).join('');
+}
+
+/* ----- Farben, Zeichenhilfen ----- */
+let C={};
+function readColors(){const cs=getComputedStyle(document.documentElement);
+  for(const k of ['ink','muted','line','stage','grid','accent','c-el','c-ret','c-phi','c-th','c-cmp','c-warn','c-plate','c-ion','panel'])C[k]=cs.getPropertyValue('--'+k).trim();}
+function fit(cv){const r=cv.getBoundingClientRect(),dpr=window.devicePixelRatio||1,w=Math.max(10,r.width),h=Math.max(10,r.height);
+  if(cv.width!==Math.round(w*dpr)||cv.height!==Math.round(h*dpr)){cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);}
+  const g=cv.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);return {g,w,h};}
+function niceTicks(a,b,n=5){const sp=(b-a)/n,p=Math.pow(10,Math.floor(Math.log10(sp))),m=sp/p,st=(m<1.5?1:m<3?2:m<7?5:10)*p,out=[];
+  for(let v=Math.ceil(a/st-1e-9)*st;v<=b+st*1e-6;v+=st)out.push(Math.abs(v)<st*1e-9?0:v);return {t:out,st};}
+function tickLab(v,st){const dg=Math.max(0,-Math.floor(Math.log10(st)+1e-9));return fx(v,Math.min(dg,3));}
+// Allgemeines Liniendiagramm: cfg = {xr,yr,xlog,ylog,xl,yl,series:[{x,y,c,dash,w}],hl:[{y,c,dash,t}],vl:[{x,c,dash,t}],pts:[{x,y,c}]}
+function plot(cv,cfg){
+  const {g,w,h}=fit(cv);g.clearRect(0,0,w,h);
+  const L=52,Rm=10,T=8,B=34,pw=w-L-Rm,ph=h-T-B;
+  const tx=v=>cfg.xlog?Math.log10(v):v,ty=v=>cfg.ylog?Math.log10(v):v;
+  const [xa,xb]=cfg.xr.map(tx),[ya,yb]=cfg.yr.map(ty);
+  const X=v=>L+(tx(v)-xa)/(xb-xa)*pw,Y=v=>T+ph-(ty(v)-ya)/(yb-ya)*ph;
+  g.font='11px '+getComputedStyle(document.body).fontFamily;g.lineWidth=1;
+  // Gitter und Achsen
+  const xt=cfg.xlog?{t:decades(cfg.xr),log:true}:niceTicks(cfg.xr[0],cfg.xr[1],5),yt=cfg.ylog?{t:decades(cfg.yr),log:true}:niceTicks(cfg.yr[0],cfg.yr[1],4);
+  g.strokeStyle=C.grid;g.fillStyle=C.muted;g.textAlign='center';g.textBaseline='top';
+  for(const v of xt.t){const px=X(v);g.beginPath();g.moveTo(px,T);g.lineTo(px,T+ph);g.stroke();g.fillText(xt.log?decLab(v):tickLab(v,xt.st),px,T+ph+4);}
+  g.textAlign='right';g.textBaseline='middle';
+  for(const v of yt.t){const py=Y(v);g.beginPath();g.moveTo(L,py);g.lineTo(L+pw,py);g.stroke();g.fillText(yt.log?decLab(v):tickLab(v,yt.st),L-5,py);}
+  g.strokeStyle=C.line;g.strokeRect(L,T,pw,ph);
+  if(!cfg.ylog&&cfg.yr[0]<0&&cfg.yr[1]>0){g.strokeStyle=C.muted;g.globalAlpha=.5;g.beginPath();g.moveTo(L,Y(0));g.lineTo(L+pw,Y(0));g.stroke();g.globalAlpha=1;}
+  g.fillStyle=C.muted;g.textAlign='center';g.textBaseline='bottom';g.fillText(cfg.xl,L+pw/2,h-1);
+  g.save();g.translate(11,T+ph/2);g.rotate(-Math.PI/2);g.textBaseline='middle';g.fillText(cfg.yl,0,0);g.restore();
+  g.save();g.beginPath();g.rect(L,T,pw,ph);g.clip();
+  for(const l of cfg.hl||[]){if(cfg.ylog&&l.y<=0)continue;g.strokeStyle=l.c;g.setLineDash(l.dash||[]);g.beginPath();g.moveTo(L,Y(l.y));g.lineTo(L+pw,Y(l.y));g.stroke();g.setLineDash([]);
+    if(l.t){g.fillStyle=l.c;g.textAlign='left';g.textBaseline='bottom';g.fillText(l.t,L+4,Y(l.y)-2);}}
+  for(const l of cfg.vl||[]){g.strokeStyle=l.c;g.setLineDash(l.dash||[]);g.beginPath();g.moveTo(X(l.x),T);g.lineTo(X(l.x),T+ph);g.stroke();g.setLineDash([]);
+    if(l.t){g.fillStyle=l.c;g.textAlign='left';g.textBaseline='top';g.fillText(l.t,X(l.x)+3,T+3);}}
+  for(const s of cfg.series){g.strokeStyle=s.c;g.lineWidth=s.w||2;g.setLineDash(s.dash||[]);g.beginPath();let pen=false;
+    for(let i=0;i<s.x.length;i++){const xv=s.x[i],yv=s.y[i];if(!isFinite(yv)||(cfg.ylog&&yv<=0)||(cfg.xlog&&xv<=0)){pen=false;continue;}
+      const px=X(xv),py=Math.max(-1e4,Math.min(1e4,Y(yv)));if(pen)g.lineTo(px,py);else{g.moveTo(px,py);pen=true;}}
+    g.stroke();g.setLineDash([]);
+    if(s.t){g.fillStyle=s.c;g.textAlign='right';g.textBaseline='bottom';const i=s.tAt??s.x.length-1;if(isFinite(s.y[i]))g.fillText(s.t,Math.min(L+pw-3,X(s.x[i])),Y(s.y[i])-3);}}
+  for(const p of cfg.pts||[]){if(!isFinite(p.y)||(cfg.ylog&&p.y<=0))continue;g.beginPath();g.arc(X(p.x),Y(p.y),4,0,7);if(p.hollow){g.strokeStyle=p.c;g.lineWidth=1.6;g.stroke();g.lineWidth=1;}else{g.fillStyle=p.c;g.fill();}}
+  g.restore();g.lineWidth=1;
+  if(cfg.draw)cfg.draw(g,X,Y,{L,T,pw,ph});
+}
+function decades(r){const out=[];for(let e=Math.ceil(Math.log10(r[0])-1e-9);e<=Math.floor(Math.log10(r[1])+1e-9);e++)out.push(Math.pow(10,e));
+  if(out.length>7){return out.filter((v,i)=>i%2===0);}return out;}
+function decLab(v){const e=Math.round(Math.log10(v));if(e>=0&&e<=3)return String(Math.pow(10,e));if(e===-1)return '0,1';if(e===-2)return '0,01';return ('10'+sup(e)).replace('-','−');}
+const yRange=(arrs,pad=0.08)=>{let a=Infinity,b=-Infinity;for(const ar of arrs)for(const v of ar)if(isFinite(v)){a=Math.min(a,v);b=Math.max(b,v);}const s=(b-a)||1;return [a-pad*s,b+pad*s];};
+const logRange=(arrs)=>{let a=Infinity,b=-Infinity;for(const ar of arrs)for(const v of ar)if(isFinite(v)&&v>0){a=Math.min(a,v);b=Math.max(b,v);}return [Math.pow(10,Math.floor(Math.log10(a))),Math.pow(10,Math.ceil(Math.log10(b)))];};
+
+/* ----- Diagramme ----- */
+function drawPlots(){
+  if(!R)return;readColors();
+  const xmm=P.x.map(v=>v*1e3),dmm=st.d,cmp=st.cmp;
+  const xs=Array.from({length:101},(_,i)=>dmm*i/100);
+  const vac=xs.map(x=>st.U*x/dmm),cl=xs.map(x=>st.U*Math.pow(x/dmm,4/3));
+  const sPhi=[{x:xmm,y:P.phi,c:C['c-phi'],w:2.4}];
+  if(cmp)sPhi.unshift({x:xs,y:vac,c:C['c-cmp'],dash:[5,4],w:1.4},{x:xs,y:cl,c:C['c-el'],dash:[2,3],w:1.4});
+  plot($('#pPhi'),{xr:[0,dmm],yr:yRange([P.phi,[0,st.U]],0.06),xl:'x in mm',yl:'φ in V',series:sPhi,vl:R.regime==='S'?[{x:R.xm*1e3,c:C['c-ret'],dash:[3,3]}]:[]});
+  $('#nPhi').innerHTML=(cmp?'Grau: Vakuum, blau gestrichelt: kaltes Child-Langmuir-Profil <i class="m">U</i>(<i class="m">x</i>/<i class="m">d</i>)<sup>4/3</sup>. ':'')+(R.regime==='S'?`Minimum ${fx(R.phim,3)} V bei ${fL(R.xm)}.`:R.regime==='C'?'Ideale Kathode: Die Kurve fällt mit dem kalten Profil zusammen.':'Kein Minimum: Das Feld an der Kathode beschleunigt.');
+  const Ek=P.E.map(v=>v*1e-3);
+  const sE=[{x:xmm,y:Ek,c:C['c-th'],w:2.4}];
+  if(cmp)sE.unshift({x:xs,y:xs.map(()=>-st.U/(st.d*1e-3)*1e-3),c:C['c-cmp'],dash:[5,4],w:1.4},{x:xs,y:xs.map(x=>-4/3*st.U/(st.d*1e-3)*Math.cbrt(x/dmm)*1e-3),c:C['c-el'],dash:[2,3],w:1.4});
+  plot($('#pE'),{xr:[0,dmm],yr:yRange([Ek,[0]],0.08),xl:'x in mm',yl:'E in kV/m',series:sE});
+  $('#nE').innerHTML=`<i class="m">E</i> &lt; 0 zieht Elektronen zur Anode. An der Kathode: <b>${sci(R.E0,2)} V/m</b>`+(R.regime==='S'?' (bremst, bis zum Minimum).':R.regime==='C'?' – die Bedingung des Child-Langmuir-Gesetzes.':' (beschleunigt).');
+  const nCL=xs.map(x=>x>0?4/9*EPS0*st.U/Math.pow(st.d*1e-3,2)*Math.pow(x/dmm,-2/3)/QE:NaN);
+  const sN=[{x:xmm,y:P.n,c:C['c-el'],w:2.4}];
+  if(cmp)sN.unshift({x:xs,y:nCL,c:C['c-el'],dash:[2,3],w:1.4});
+  plot($('#pN'),{xr:[0,dmm],yr:logRange([P.n,cmp?nCL.filter(v=>v<P.n[0]*10):[]]),ylog:true,xl:'x in mm',yl:'n in m⁻³',series:sN,vl:R.regime==='S'?[{x:R.xm*1e3,c:C['c-ret'],dash:[3,3]}]:[]});
+  $('#nN').innerHTML=R.regime==='C'?'Die Dichte divergiert an der Kathode wie <i class="m">x</i><sup>−2/3</sup>, weil die Elektronen dort ruhen; die Ladung bis zu jedem Ort bleibt trotzdem endlich.':`An der Kathode ${sci(P.n[0],2)} m⁻³`+(R.regime==='S'?`, davon kehrt der Großteil vor dem Minimum um. Das kalte Profil (∝ <i class="m">x</i><sup>−2/3</sup>) divergiert an der Kathode.`:'. Ohne Minimum fällt die Dichte, weil die Elektronen schneller werden.');
+  drawCurves();
+}
+function drawCurves(){
+  if(!R)return;readColors();drawLaw();
+  const A=st.A*1e-4,d=st.d*1e-3,I=R.j*A;
+  if(CU){
+    const cols=[C['c-cmp'],C['c-el'],C['c-ret']];
+    const ser=CU.iu.map((c,i)=>({x:CU.Us,y:c.I,c:cols[CU.iu.length===3?i:i+1],w:c.T===st.T?2.4:1.6,t:st.ideal?'':fx(c.T,0)+' K'}));
+    const clI=CU.Us.map(U=>jCL(U,d,ME)*A);
+    ser.unshift({x:CU.Us,y:clI,c:C['c-cmp'],dash:[5,4],w:1.2});
+    plot($('#pIU'),{xr:[1,1000],yr:logRange([clI.slice(0,1),...CU.iu.map(c=>c.I)]),xlog:true,ylog:true,xl:'U in V',yl:'I in A',series:ser,pts:[{x:st.U,y:I,c:C.accent}]});
+    $('#nIU').innerHTML='Gestrichelt: <i class="m">KU</i><sup>3/2</sup> (Steigung 3/2 im doppelt logarithmischen Diagramm). Bei hoher Spannung sättigt der Strom bei <i class="m">I</i><sub>s</sub>(<i class="m">T</i>).';
+    const cols2=[C['c-cmp'],C['c-el'],C['c-ret']];
+    const ser2=CU.it.map((c,i)=>({x:CU.Tg,y:c.I,c:cols2[i],w:i===1?2.4:1.6,t:fx(c.U,0)+' V',tAt:Math.round(CU.Tg.length*0.97)-1}));
+    if(!st.ideal)ser2.unshift({x:CU.Tg,y:CU.js,c:C['c-th'],dash:[5,4],w:1.2});
+    const top=Math.max(...CU.it[2].I)*3;
+    plot($('#pIT'),{xr:Trange(),yr:[top/1e4,top],ylog:true,xl:'T in K',yl:'I in A',series:ser2,pts:[{x:st.T,y:I,c:C.accent}]});
+    $('#nIT').innerHTML=st.ideal?'Ideale Kathode: Der Strom hängt nicht von der Temperatur ab, nur von der Spannung (∝ <i class="m">U</i><sup>3/2</sup>).':'Rot gestrichelt: Emission nach Richardson-Dushman. Die Kurven folgen ihr, bis die Raumladung den Strom auf ein Plateau ∝ <i class="m">U</i><sup>3/2</sup> begrenzt – wie in Langmuirs Messung.';
+  }
+  const Ui=logspace(10,10000,40),je=Ui.map(U=>jCL(U,d,ME)*1e-4),jx=Ui.map(U=>jCL(U,d,MXE)*1e-4);
+  plot($('#pIon'),{xr:[10,10000],yr:logRange([je,jx]),xlog:true,ylog:true,xl:'U in V',yl:'j_CL in A/cm²',
+    series:[{x:Ui,y:je,c:C['c-el'],w:2,t:'Elektronen',tAt:28},{x:Ui,y:jx,c:C['c-ion'],w:2,t:'Xe⁺',tAt:34}],
+    pts:[{x:st.U,y:jCL(st.U,d,ME)*1e-4,c:C['c-el']},{x:st.U,y:jCL(st.U,d,MXE)*1e-4,c:C['c-ion']}]});
+  $('#nIon').innerHTML=`Gleiche Geometrie (${fx(st.d,1)} mm): Für Xenon ist <i class="m">j</i><sub>CL</sub> um √(<i class="m">m</i><sub>Xe</sub>/<i class="m">m</i><sub>e</sub>) = <b>${fx(Math.sqrt(MXE/ME),0)}</b> kleiner. Bei ${fx(st.U,0)} V: ${fJ(jCL(st.U,d,MXE))} für Xe⁺.`;
+}
+
+/* ----- Das U^(3/2)-Gesetz ----- */
+const linUmax=()=>Math.min(1000,Math.max(20,2*st.U));
+function perveance(A,d,m){return 4*EPS0/9*Math.sqrt(2*QE/m)*A/(d*d);}
+function updateLaw(){
+  const A=st.A*1e-4,d=st.d*1e-3,K=perveance(A,d,ME),U32=Math.pow(st.U,1.5),Icl=K*U32,Imod=R.j*A;
+  const f1=4*EPS0/9,f2=Math.sqrt(2*QE/ME),f3=A/(d*d);
+  const fl=k=>(lastKey==='d'||lastKey==='A')&&k==='geo'||lastKey==='U'&&k==='U'?' flash':'';
+  $('#lawF').innerHTML=`
+    <div class="big"><span class="fac${fl('I')}"><i>I</i></span> = <span class="fac${fl('geo')}"><i>K</i></span> · <span class="fac${fl('U')}"><i>U</i><sup>3/2</sup></span></div>
+    <div class="num"><b>${fI(Icl)}</b> = ${sci(K,3)} A/V<sup>3/2</sup> · ${fmt(U32,4)} V<sup>3/2</sup></div>
+    <div class="eq"><i>K</i> = <span class="fac">4<i>ε</i><sub>0</sub>/9</span> · <span class="fac">√(2<i>e</i>/<i>m</i>)</span> · <span class="fac${fl('geo')}"><i>A</i>/<i>d</i><sup>2</sup></span></div>
+    <dl class="facs">
+      <dt>4<i>ε</i><sub>0</sub>/9</dt><dd>${sci(f1,3)} F/m<small>Naturkonstante</small></dd>
+      <dt>√(2<i>e</i>/<i>m</i>)</dt><dd>${sci(f2,3)} (C/kg)<sup>1/2</sup><small>Teilchensorte: Elektronen</small></dd>
+      <dt><i>A</i>/<i>d</i><sup>2</sup></dt><dd>${fmt(f3,4)}<small>Geometrie: <i>A</i> = 1 cm² (fest), <i>d</i> = ${fx(st.d,1)} mm</small></dd>
+      <dt><i>U</i><sup>3/2</sup></dt><dd>${fmt(U32,4)} V<sup>3/2</sup><small>(${fx(st.U,0)} V)<sup>3/2</sup></small></dd>
+    </dl>
+    <div class="cmp">${R.regime==='C'?'Ideale Kathode: Das Modell stimmt exakt mit der Formel überein. Schalte sie aus, um den Einfluss der Temperatur zu sehen.':`Die Temperatur kommt in der Formel nicht vor. Vollständiges Modell (thermische Startenergie, ${fx(st.T,0)} K): <b>${fI(Imod)}</b>, das ${fx(Imod/Icl,2)}-Fache – ${R.regime==='S'?'raumladungsbegrenzt, das Gesetz gilt (bis auf die Startenergie).':'<span style="color:var(--c-warn)">temperaturbegrenzt: Es fließt der gesamte Emissionsstrom, die Raumladung begrenzt nicht.</span>'}`}</div>`;
+  if(lastKey){clearTimeout(updateLaw.t);updateLaw.t=setTimeout(()=>document.querySelectorAll('#lawF .flash').forEach(e=>e.classList.remove('flash')),900);}
+}
+// Messreihen: jede Einstellung setzt einen Punkt (U^(3/2), I); neue Reihe, wenn sich d, T, Material oder Modus ändern
+let SER=[];
+const SCOL=['c-el','c-ion','c-ret','c-th','c-phi'];
+function serKey(){return st.ideal?`i|${st.d}`:`${st.mat}|${st.T}|${st.d}`;}
+function serLabel(){return (st.ideal?'ideale Kathode':`${MAT[st.mat].name}, ${fx(st.T,0)} K`)+`, d = ${fx(st.d,1)} mm`;}
+function recordPoint(){
+  const key=serKey();let S=SER.find(x=>x.key===key);
+  if(!S){const used=SER.map(x=>x.col);S={key,label:serLabel(),col:SCOL.find(c=>!used.includes(c))||SCOL[SER.length%SCOL.length],pts:[]};SER.push(S);if(SER.length>5)SER.shift();}
+  else{SER.splice(SER.indexOf(S),1);SER.push(S);}
+  const I=R.j*st.A*1e-4;
+  const sat=R.regime==='T',old=S.pts.find(q=>Math.abs(q.U-st.U)<0.5);if(old){old.I=I;old.sat=sat;}else S.pts.push({U:st.U,x:Math.pow(st.U,1.5),I,sat});
+}
+const fitK=S=>{let a=0,b=0;for(const q of S.pts){if(q.sat)continue;a+=q.x*q.I;b+=q.x*q.x;}return b>0?a/b:NaN;};
+function drawLaw(){
+  if(!R)return;
+  const cur=SER[SER.length-1],A=st.A*1e-4,d=st.d*1e-3,K=perveance(A,d,ME);
+  let xm=0,ym=0;for(const S of SER)for(const q of S.pts){xm=Math.max(xm,q.x);ym=Math.max(ym,q.I);}
+  xm=Math.max(xm*1.15,50);ym=Math.max(ym*1.15,1e-9);
+  const mA=ym<1,sc=mA?1e3:1,series=[],pts=[];
+  for(const S of SER){const c=C[S.col],k=fitK(S);
+    if(S.pts.filter(q=>!q.sat).length>=2&&isFinite(k))series.push({x:[0,xm],y:[0,k*xm*sc],c,dash:S===cur?[]:[5,4],w:S===cur?2:1.2});
+    for(const q of S.pts)pts.push({x:q.x,y:q.I*sc,c,hollow:q.sat});}
+  const n=cur?cur.pts.filter(q=>!q.sat).length:0,kc=cur?fitK(cur):NaN;
+  plot($('#pLin'),{xr:[0,xm],yr:[0,ym*sc],xl:'U³ᐟ² in V³ᐟ²',yl:mA?'I in mA':'I in A',series,pts,
+    draw:(g,X,Y,b)=>{
+      const q=cur&&cur.pts.find(p=>Math.abs(p.U-st.U)<0.5);
+      if(q){g.strokeStyle=C.ink;g.lineWidth=1.5;g.beginPath();g.arc(X(q.x),Y(q.I*sc),7,0,7);g.stroke();}
+      if(n>=2&&isFinite(kc)){ // Steigungsdreieck zwischen kleinstem und größtem Punkt der aktuellen Reihe
+        const xs=cur.pts.filter(p=>!p.sat).map(p=>p.x),x1=Math.min(...xs),x2=Math.max(...xs);
+        if(x2>x1*1.05){const y1=kc*x1*sc,y2=kc*x2*sc;
+          g.strokeStyle=C.ink;g.lineWidth=1.2;g.setLineDash([4,3]);g.beginPath();g.moveTo(X(x1),Y(y1));g.lineTo(X(x2),Y(y1));g.lineTo(X(x2),Y(y2));g.stroke();g.setLineDash([]);
+          g.fillStyle=C.ink;g.font='13px '+getComputedStyle(document.body).fontFamily;g.textAlign='center';g.textBaseline='top';
+          g.fillText('Δ(U³ᐟ²)',(X(x1)+X(x2))/2,Y(y1)+4);g.textAlign='left';g.textBaseline='middle';g.fillText('ΔI',X(x2)+6,(Y(y1)+Y(y2))/2);}
+        g.font='600 14px '+getComputedStyle(document.body).fontFamily;g.fillStyle=C[cur.col];g.textAlign='right';g.textBaseline='bottom';
+        g.fillText('Steigung K = ΔI/Δ(U³ᐟ²) = '+sci(kc,3)+' A/V³ᐟ²',b.L+b.pw-10,b.T+b.ph-10);}
+      else{g.font='13px '+getComputedStyle(document.body).fontFamily;g.fillStyle=C.muted;g.textAlign='center';g.textBaseline='middle';
+        g.fillText('Verstelle die Anodenspannung U: Jeder neue Wert setzt einen Messpunkt.',b.L+b.pw/2,b.T+b.ph*0.3);}}});
+  const lst=SER.map(S=>{const k=fitK(S);const ns=S.pts.filter(q=>q.sat).length,nf=S.pts.length-ns;return `<span style="color:${C[S.col]}">●</span> ${S.label}: ${S.pts.length} Punkt${S.pts.length===1?'':'e'}`+(ns?` (davon ${ns} gesättigt)`:'')+(nf>=2?`, <i class="m">K</i> = ${sci(k,3)} A/V<sup>3/2</sup>`:'');}).join('<br>');
+  $('#nLin').innerHTML=`Ab zwei Punkten erscheint die Ausgleichsgerade durch den Ursprung; ihre Steigung ist die Perveanz. Ändert man <i class="m">d</i>, <i class="m">T</i>, das Material oder den Kathodenmodus, beginnt eine neue Messreihe. Offene Kreise: temperaturbegrenzt (Sättigung), sie zählen nicht zur Geraden. Child-Langmuir für <i class="m">d</i> = ${fx(st.d,1)} mm: <i class="m">K</i> = ${sci(K,3)} A/V<sup>3/2</sup>.<br>${lst}`;
+}
+$('#clearPts').addEventListener('click',()=>{SER=[];recordPoint();drawLaw();});
+
+/* ----- Animation der Diode ----- */
+const cv=$('#view');let parts=[],lastT=0,spawnAcc=0;
+function phiAt(x){const a=P.x;if(x<=a[0])return P.phi[0];if(x>=a[a.length-1])return P.phi[a.length-1];
+  let lo=0,hi=a.length-1;while(hi-lo>1){const m=(lo+hi)>>1;if(a[m]>x)hi=m;else lo=m;}const t=(x-a[lo])/(a[hi]-a[lo]||1);return P.phi[lo]+t*(P.phi[hi]-P.phi[lo]);}
+function step(dt){
+  if(!R)return;
+  const d=R.d,kT=KB*R.T,vA=Math.sqrt(2*QE*Math.max(R.U,1)/ME),tau=3*d/vA,scale=tau/st.dur; // Child-Langmuir-Flugzeit 3d/v_A ↦ dur
+  // Emission: Punkte pro Sekunde nicht maßstäblich, Anteil der Umkehrer wie im Modell
+  const ideal=R.regime==='C',ratio=ideal?1:R.js/R.j,shown=Math.min(ratio,8),rate=45*shown,pPass=1/shown,thr=-R.phim*QE;
+  spawnAcc+=rate*dt;
+  while(spawnAcc>=1&&parts.length<1600){spawnAcc-=1;let eps;
+    if(ideal)eps=0; // ideale Kathode: Start aus der Ruhe
+    else if(Math.random()<pPass)eps=thr-kT*Math.log(1-Math.random()); // passiert das Minimum
+    else{const u=Math.random();eps=-kT*Math.log(1-u*(1-Math.exp(-thr/kT)));} // kehrt um
+    parts.push({x:0,eps,dir:1,y:Math.random(),ret:eps<thr});}
+  if(spawnAcc>1)spawnAcc=0;
+  const sub=4,h=dt/sub;
+  for(const p of parts){
+    for(let s=0;s<sub;s++){const K=p.eps+QE*phiAt(p.x);const v=Math.sqrt(Math.max(K,0.02*kT)*2/ME);
+      const nx=p.x+p.dir*v*h*scale;
+      if(p.dir>0&&p.eps+QE*phiAt(nx)<=0){p.dir=-1;continue;}
+      p.x=nx;}
+  }
+  parts=parts.filter(p=>p.x>0&&p.x<d);
+}
+function drawView(){
+  const {g,w,h}=fit(cv);readColors();g.clearRect(0,0,w,h);if(!R)return;
+  const L=86,Rr=86,T=26,B=40,pw=w-L-Rr,ph=h-T-B,X=x=>L+x/R.d*pw;
+  // Platten
+  const hot=R.regime==='C'?0.55:Math.max(0,Math.min(1,(R.T-1000)/2000));
+  g.fillStyle=`rgba(${Math.round(120+130*hot)},${Math.round(110+40*hot*(1-hot))},${Math.round(100-60*hot)},1)`;
+  g.fillRect(L-14,T,14,ph);
+  if(hot>0.3){g.save();g.globalAlpha=(hot-0.3)*0.6;const gr=g.createLinearGradient(L,0,L+40,0);gr.addColorStop(0,'rgba(255,140,40,0.7)');gr.addColorStop(1,'rgba(255,140,40,0)');g.fillStyle=gr;g.fillRect(L,T,40,ph);g.restore();}
+  g.fillStyle=C['c-plate'];g.fillRect(L+pw,T,14,ph);
+  g.font='12px '+getComputedStyle(document.body).fontFamily;g.fillStyle=C.ink;g.textAlign='center';g.textBaseline='top';
+  g.fillText('Kathode',L-7,T+ph+6);g.fillText('Anode',L+pw+7,T+ph+6);
+  g.fillStyle=C.muted;g.fillText(R.regime==='C'?'ideal, 0 V':fx(R.T,0)+' K, 0 V',L-7,T+ph+21);g.fillText(fx(R.U,0)+' V',L+pw+7,T+ph+21);
+  // Elektronen
+  for(const p of parts){g.fillStyle=p.ret?C['c-ret']:C['c-el'];g.globalAlpha=p.dir<0?0.9:0.75;g.fillRect(X(p.x)-1.6,T+4+p.y*(ph-8)-1.6,3.2,3.2);}
+  g.globalAlpha=1;
+  // Potential (Skala rechts)
+  const pmin=Math.min(R.phim,0),pmax=R.U,Yp=v=>T+ph-(v-pmin)/(pmax-pmin||1)*ph*0.92-ph*0.04;
+  // Bereich nahe der Kathode vergrößert zeigen, wenn das Minimum winzig ist: Zusatzskala
+  g.strokeStyle=C.muted;g.globalAlpha=.4;g.setLineDash([2,3]);g.beginPath();g.moveTo(L,Yp(0));g.lineTo(L+pw,Yp(0));g.stroke();g.setLineDash([]);g.globalAlpha=1;
+  if(st.cmp){g.strokeStyle=C['c-cmp'];g.lineWidth=1.4;g.setLineDash([5,4]);g.beginPath();g.moveTo(X(0),Yp(0));g.lineTo(X(R.d),Yp(R.U));g.stroke();g.setLineDash([]);}
+  g.strokeStyle=C['c-phi'];g.lineWidth=3;g.beginPath();P.x.forEach((x,i)=>{const px=X(x),py=Yp(P.phi[i]);i?g.lineTo(px,py):g.moveTo(px,py);});g.stroke();g.lineWidth=1;
+  g.fillStyle=C['c-phi'];g.textAlign='left';g.textBaseline='bottom';g.fillText('φ(x)',X(R.d*0.62)+6,Yp(phiAt(R.d*0.62))-4);
+  if(R.regime==='S'&&R.xm>0){
+    const px=X(R.xm);g.strokeStyle=C['c-ret'];g.setLineDash([3,3]);g.beginPath();g.moveTo(px,T);g.lineTo(px,T+ph);g.stroke();g.setLineDash([]);
+    const t1='virtuelle Kathode',t2='x_m = '+fL(R.xm)+', φ_m = '+fx(R.phim,2)+' V',tw=Math.max(g.measureText(t1).width,g.measureText(t2).width);
+    g.fillStyle=C.stage;g.globalAlpha=.85;g.fillRect(px+2,T+2,tw+8,33);g.globalAlpha=1;
+    g.fillStyle=C['c-ret'];g.textAlign='left';g.textBaseline='top';g.fillText(t1,px+5,T+4);g.fillText(t2,px+5,T+19);}
+  // Einsatz: Lupe auf das Gebiet vor der Kathode
+  if(R.regime==='S'&&R.xm>0){
+    const iw=Math.min(190,pw*0.36),ih=Math.min(110,ph*0.36),ix=L+pw-iw-12,iy=T+ph-ih-10,xr=Math.min(R.d,R.xm*4);
+    g.fillStyle=C.stage;g.globalAlpha=.92;g.fillRect(ix,iy,iw,ih);g.globalAlpha=1;g.strokeStyle=C.line;g.strokeRect(ix,iy,iw,ih);
+    let pa=Infinity,pb=-Infinity;const xi=[],yi=[];P.x.forEach((x,i)=>{if(x<=xr){xi.push(x);yi.push(P.phi[i]);pa=Math.min(pa,P.phi[i]);pb=Math.max(pb,P.phi[i]);}});
+    const sx=x=>ix+8+x/xr*(iw-16),sy=v=>iy+ih-18-(v-pa)/((pb-pa)||1)*(ih-34);
+    g.strokeStyle=C.muted;g.globalAlpha=.5;g.setLineDash([2,3]);g.beginPath();g.moveTo(ix+8,sy(0));g.lineTo(ix+iw-8,sy(0));g.stroke();g.setLineDash([]);g.globalAlpha=1;
+    g.strokeStyle=C['c-phi'];g.lineWidth=2;g.beginPath();xi.forEach((x,i)=>{i?g.lineTo(sx(x),sy(yi[i])):g.moveTo(sx(x),sy(yi[i]));});g.stroke();g.lineWidth=1;
+    g.fillStyle=C.muted;g.font='10.5px '+getComputedStyle(document.body).fontFamily;g.textAlign='left';g.textBaseline='top';g.fillText('Lupe: 0 bis '+fL(xr),ix+6,iy+3);
+    g.textBaseline='bottom';g.fillText('Minimum '+fx(R.phim,2)+' V',ix+6,iy+ih-2);}
+}
+function frame(t){const dt=Math.min(0.05,(t-lastT)/1000||0);lastT=t;if(playing)step(dt);drawView();requestAnimationFrame(frame);}
+$('#play').addEventListener('click',togglePlay);
+function togglePlay(){playing=!playing;$('#play').textContent=playing?'❚❚ Pause':'▶ Weiter';$('#play').setAttribute('aria-label',playing?'Animation anhalten':'Animation fortsetzen');}
+cv.addEventListener('keydown',e=>{if(e.key===' '){e.preventDefault();togglePlay();}
+  else if(!st.ideal&&(e.key==='ArrowLeft'||e.key==='ArrowRight')){e.preventDefault();st.T=Math.min(3200,Math.max(1000,st.T+(e.key==='ArrowRight'?20:-20)));changed('T');}});
+function legend(){readColors();const it=[[C['c-el'],'Elektron, erreicht die Anode','sq'],[C['c-ret'],'Elektron, kehrt vor dem Minimum um','sq'],[C['c-phi'],'Potential φ(x)','ln'],[C['c-cmp'],'Vakuum (ohne Raumladung)','da']];
+  $('#legend').innerHTML=it.map(([c,t,k])=>`<span><svg width="18" height="10">${k==='sq'?`<rect x="6" y="2" width="6" height="6" fill="${c}"/>`:`<line x1="1" y1="5" x2="17" y2="5" stroke="${c}" stroke-width="${k==='ln'?3:1.5}" ${k==='da'?'stroke-dasharray="4 3"':''}/>`}</svg>${t}</span>`).join('');}
+
+/* ----- Start ----- */
+buildControls();legend();setState({});
+const ro=new ResizeObserver(()=>{drawPlots();});document.querySelectorAll('.cwrap').forEach(e=>ro.observe(e));
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{legend();drawPlots();});
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
